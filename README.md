@@ -170,8 +170,8 @@ pnpm harness recompute-metrics  --experiment <name> --run <name> [--arm <arm>]
 
 ## Status of the two experiments in this checkout
 
-- **Playwright — runnable now.** A smoke matrix (`smoke-n1`, N=1 across all 4 Tier 1 and 2 Tier 2 tasks × 3 arms) has been executed end-to-end. See `experiments/playwright/runs/smoke-n1/findings.md` for the summary and `report.md` for the raw per-task table.
-- **GitHub — framework only.** Scaffolding, classifier, MCP configs, provisioner, and Tier 1 tasks are wired up and typecheck-clean, but no live trial has been executed because that requires a sandbox owner + tokens that this project intentionally does not bundle. See `experiments/github/STATUS.md` for what's in place and the run prerequisites.
+- **Playwright — smoke run complete.** N=1 across 4 Tier 1 tasks + 2 Tier 2 tasks × 3 arms (18 trials). Tier 1 skill **1.82× MCP tokens** at 100% success. See `experiments/playwright/runs/smoke-n1/findings.md`.
+- **GitHub — Tier 1 smoke run complete.** N=1 across 3 Tier 1 tasks × 3 arms (9 trials). Tier 1 skill **0.79× MCP tokens** at 100% success — opposite of Playwright, because `gh --json --jq` projects minimal output. See `experiments/github/runs/smoke-n1/findings.md`.
 
 ## Docs
 

@@ -31,6 +31,12 @@ interface GhRequest {
   path: string;
   body?: unknown;
   acceptNotFound?: boolean;
+  /**
+   * If true, treat 422 "already_exists" responses as successful no-ops.
+   * Used for label creation, which races against GitHub's auto-created
+   * default labels (bug, enhancement, "good first issue", etc.).
+   */
+  acceptConflict?: boolean;
 }
 
 async function ghRequest<T = unknown>(cfg: GhConfig, req: GhRequest): Promise<T | null> {
@@ -48,6 +54,11 @@ async function ghRequest<T = unknown>(cfg: GhConfig, req: GhRequest): Promise<T 
   if (req.body !== undefined) init.body = JSON.stringify(req.body);
   const res = await fetch(url, init);
   if (res.status === 404 && req.acceptNotFound) return null;
+  if (res.status === 422 && req.acceptConflict) {
+    const text = await res.text();
+    if (text.includes('already_exists')) return null;
+    throw new Error(`GitHub API ${req.method} ${req.path} -> 422: ${text.slice(0, 500)}`);
+  }
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`GitHub API ${req.method} ${req.path} -> ${res.status}: ${text.slice(0, 500)}`);
@@ -107,7 +118,7 @@ export async function provisionRepo(
       name: repoName,
       private: true,
       description: seed.description ?? 'cli-vs-mcp experiment sandbox',
-      auto_init: true,
+      auto_init: false,
     },
   });
 
@@ -140,6 +151,7 @@ export async function provisionRepo(
         method: 'POST',
         path: `/repos/${fullName}/labels`,
         body: { name: label.name, color: label.color },
+        acceptConflict: true,
       });
     }
   }
@@ -197,15 +209,15 @@ async function waitForRepoReady(cfg: GhConfig, fullName: string): Promise<void> 
 }
 
 /**
- * Cleanup strategy: archive, not delete. Fine-grained PATs typically lack
- * delete-repo permission. A periodic admin sweep can delete archived sandbox
- * repos older than N days.
+ * Cleanup strategy: delete. Works when the controller PAT has Administration:
+ * write on the sandbox owner. If your token lacks delete permission, swap
+ * this for an archive (PATCH archived=true) but expect retried runs to fail
+ * with "name already exists" because paired seeds produce deterministic names.
  */
 async function archiveRepo(cfg: GhConfig, fullName: string): Promise<void> {
   await ghRequest(cfg, {
-    method: 'PATCH',
+    method: 'DELETE',
     path: `/repos/${fullName}`,
-    body: { archived: true },
     acceptNotFound: true,
   });
 }

@@ -1,0 +1,113 @@
+{
+  "experiment": "github",
+  "runName": "smoke-n1",
+  "arm": "baseline",
+  "taskId": "tier1_issue_triage",
+  "tier": 1,
+  "trialN": 1,
+  "timestamp": "2026-05-15T12:33:48.705Z",
+  "seed": "1b62716398809ef6",
+  "metrics": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedInputTokens": 0,
+    "cacheCreationInputTokens": 0,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 5
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 7
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 10
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 12
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 14
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 17
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 18
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 21
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 24
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 27
+      },
+      {
+        "name": "Read",
+        "turnIndex": 30
+      },
+      {
+        "name": "Read",
+        "turnIndex": 31
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 33
+      },
+      {
+        "name": "Read",
+        "turnIndex": 34
+      },
+      {
+        "name": "Read",
+        "turnIndex": 37
+      },
+      {
+        "name": "Read",
+        "turnIndex": 38
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 41
+      },
+      {
+        "name": "Read",
+        "turnIndex": 42
+      }
+    ],
+    "toolCallCount": 19,
+    "turns": 42,
+    "numTurns": 0,
+    "wallClockMs": 0,
+    "contextWindowPeak": 35482,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "missing or invalid JSON at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/smoke-n1/results/baseline/tier1_issue_triage/1/issue_triage.json"
+  },
+  "error": "claude timed out after 180000ms"
+}

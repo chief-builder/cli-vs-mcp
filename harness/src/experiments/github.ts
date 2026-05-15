@@ -9,7 +9,9 @@ import {
 const ALWAYS_BLOCKED = ['WebFetch', 'WebSearch', 'Monitor', 'CronCreate', 'RemoteTrigger'];
 const COMMON_FLAGS = ['--setting-sources', 'project,local', '--permission-mode', 'bypassPermissions'];
 
-const INVALID_HELPERS_RE = /\b(curl|wget|cat|ls|python|python3|node|npm|npx|sh|bash|zsh|jq|sed|awk|grep|head|tail|git)\b/;
+// Match helpers that appear as their own shell token — preceded by start-of-string or whitespace.
+// Crucially this must NOT match `gh`'s own `--jq` / `--sed` flags or paths containing the names.
+const INVALID_HELPERS_RE = /(?:^|\s)(curl|wget|cat|ls|python|python3|node|npm|npx|sh|bash|zsh|jq|sed|awk|grep|head|tail|git)\b/;
 
 /**
  * Tier 1 read-only mode flags obvious `gh` mutators. Maintained alongside the
