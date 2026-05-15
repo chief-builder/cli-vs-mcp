@@ -1,0 +1,78 @@
+{
+  "experiment": "playwright",
+  "runName": "smoke-n1",
+  "arm": "skill",
+  "taskId": "tier1_login",
+  "tier": 1,
+  "trialN": 1,
+  "timestamp": "2026-05-15T03:24:27.808Z",
+  "seed": "5bc330bbe80247c9",
+  "metrics": {
+    "inputTokens": 608,
+    "outputTokens": 1243,
+    "cachedInputTokens": 173301,
+    "cacheCreationInputTokens": 11013,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "playwright-cli open http://localhost:50474/login/index.html"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 7,
+        "command": "playwright-cli snapshot"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "playwright-cli fill e6 \"alice\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "playwright-cli fill e8 \"secret123\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 11,
+        "command": "playwright-cli click e9"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 13,
+        "command": "playwright-cli snapshot"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 15,
+        "command": "playwright-cli screenshot --filename=\"/var/folders/h7/mhpz888d6xzcm62796jyks1c0000gn/T/clivsmcp-playwright-skill-tier1_login-PC7RpX/login_landing.png\""
+      }
+    ],
+    "toolCallCount": 8,
+    "turns": 16,
+    "numTurns": 10,
+    "wallClockMs": 29603,
+    "contextWindowPeak": 21977,
+    "totalCostUsd": 0.11241804999999999,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "screenshot saved at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/smoke-n1/results/skill/tier1_login/1/login_landing.png"
+  }
+}

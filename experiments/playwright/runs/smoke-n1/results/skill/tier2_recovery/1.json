@@ -1,0 +1,102 @@
+{
+  "experiment": "playwright",
+  "runName": "smoke-n1",
+  "arm": "skill",
+  "taskId": "tier2_recovery",
+  "tier": 2,
+  "trialN": 1,
+  "timestamp": "2026-05-15T04:18:36.469Z",
+  "seed": "921e27ae2dffbad5",
+  "metrics": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedInputTokens": 0,
+    "cacheCreationInputTokens": 0,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "playwright-cli open http://localhost:50799/recovery/index.html"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "playwright-cli snapshot"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 8,
+        "command": "playwright-cli fill e5 \"Test User\" && playwright-cli fill e7 \"test@example.com\" && playwright-cli fill e9 \"unknown\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "playwright-cli click e10"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "playwright-cli snapshot"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 13,
+        "command": "playwright-cli fill e9 \"73dcdf8e\" && playwright-cli click e10"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 14,
+        "command": "playwright-cli --raw eval \"document.getElementById('token').textContent\""
+      },
+      {
+        "name": "Write",
+        "turnIndex": 16
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 17,
+        "command": "playwright-cli close"
+      }
+    ],
+    "toolCallCount": 10,
+    "turns": 17,
+    "numTurns": 0,
+    "wallClockMs": 0,
+    "contextWindowPeak": 22237,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": false,
+    "cliCommandGranularityViolations": [
+      {
+        "name": "Bash",
+        "turnIndex": 8,
+        "command": "playwright-cli fill e5 \"Test User\" && playwright-cli fill e7 \"test@example.com\" && playwright-cli fill e9 \"unknown\"",
+        "reason": "multiple shell operations in one Bash call: playwright-cli fill e5 \"Test User\" && playwright-cli fill e7 \"test@example.com\" && playwright-cli fill e9 \"unknown\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 13,
+        "command": "playwright-cli fill e9 \"73dcdf8e\" && playwright-cli click e10",
+        "reason": "multiple shell operations in one Bash call: playwright-cli fill e9 \"73dcdf8e\" && playwright-cli click e10"
+      }
+    ]
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "per-trial token present",
+    "extras": {
+      "recovery_attempts": 2,
+      "sessions_seen": 1
+    }
+  },
+  "error": "claude timed out after 180000ms"
+}

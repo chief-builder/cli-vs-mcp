@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Verify — Acme</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 540px; margin: 60px auto; padding: 0 24px; }
+    label { display: block; margin: 12px 0 4px; }
+    input { width: 100%; padding: 8px; box-sizing: border-box; }
+    button { margin-top: 16px; padding: 10px 20px; cursor: pointer; }
+    .error { color: #b00; margin-top: 8px; padding: 8px; background: #fee; border: 1px solid #fbb; }
+  </style>
+</head>
+<body>
+  <h1>Verify your account</h1>
+  <form id="verify-form" method="POST" action="/recovery/submit">
+    <input type="hidden" id="nonce" name="nonce" value="{{NONCE}}" />
+
+    <label for="name">Name</label>
+    <input id="name" name="name" type="text" value="{{VAL_NAME}}" required />
+
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" value="{{VAL_EMAIL}}" required />
+
+    <label for="code">Verification code</label>
+    <input id="code" name="code" type="text" value="{{VAL_CODE}}" required />
+
+    <button id="submit" type="submit">Verify</button>
+  </form>
+  {{ERRORS}}
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login — Acme</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 480px; margin: 80px auto; padding: 0 24px; }
+    label { display: block; margin: 12px 0 4px; }
+    input { width: 100%; padding: 8px; box-sizing: border-box; }
+    button { margin-top: 16px; padding: 10px 20px; cursor: pointer; }
+    #landing { display: none; }
+    .error { color: #b00; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <div id="loginPanel">
+    <h1>Acme — Sign in</h1>
+    <form id="loginForm">
+      <label for="username">Username</label>
+      <input id="username" name="username" type="text" autocomplete="off" />
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="off" />
+      <button id="submit" type="submit">Sign in</button>
+      <div id="error" class="error" role="alert"></div>
+    </form>
+  </div>
+  <div id="landing">
+    <h1>Welcome, <span id="userDisplay"></span>!</h1>
+    <p>You are signed in to your Acme dashboard.</p>
+    <p data-testid="dashboard-marker">DASHBOARD_LOADED</p>
+  </div>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var u = document.getElementById('username').value;
+      var p = document.getElementById('password').value;
+      var err = document.getElementById('error');
+      if (u === 'alice' && p === 'secret123') {
+        document.getElementById('loginPanel').style.display = 'none';
+        document.getElementById('userDisplay').textContent = u;
+        document.getElementById('landing').style.display = 'block';
+        document.title = 'Dashboard — Acme';
+      } else {
+        err.textContent = 'Invalid credentials';
+      }
+    });
+  </script>
+</body>
+</html>

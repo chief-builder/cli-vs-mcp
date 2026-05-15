@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Shop — Acme</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 24px; }
+    .product { padding: 16px; border: 1px solid #ddd; margin-bottom: 12px; }
+    .product-title { font-weight: bold; }
+    button { padding: 8px 16px; cursor: pointer; }
+    nav a { margin-right: 12px; }
+  </style>
+</head>
+<body>
+  <h1>Acme Shop</h1>
+  <nav><a href="/checkout/cart">View cart</a></nav>
+  <ul id="product-list" style="list-style: none; padding: 0;">
+    {{PRODUCTS}}
+  </ul>
+</body>
+</html>

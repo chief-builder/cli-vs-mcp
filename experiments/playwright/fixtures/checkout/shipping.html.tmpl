@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Shipping — Acme</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 540px; margin: 40px auto; padding: 0 24px; }
+    label { display: block; margin: 12px 0 4px; }
+    input { width: 100%; padding: 8px; box-sizing: border-box; }
+    button { margin-top: 16px; padding: 10px 20px; cursor: pointer; }
+    .error { color: #b00; margin-top: 12px; }
+  </style>
+</head>
+<body>
+  <h1>Shipping details</h1>
+  <form id="shipping-form" method="POST" action="/checkout/shipping/submit">
+    <label for="name">Name</label>
+    <input id="name" name="name" type="text" required />
+
+    <label for="address">Address</label>
+    <input id="address" name="address" type="text" required />
+
+    <label for="city">City</label>
+    <input id="city" name="city" type="text" required />
+
+    <label for="zip">ZIP</label>
+    <input id="zip" name="zip" type="text" required />
+
+    <button id="continue" type="submit">Continue</button>
+  </form>
+  {{ERROR}}
+</body>
+</html>

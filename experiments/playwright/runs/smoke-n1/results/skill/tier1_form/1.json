@@ -1,0 +1,107 @@
+{
+  "experiment": "playwright",
+  "runName": "smoke-n1",
+  "arm": "skill",
+  "taskId": "tier1_form",
+  "tier": 1,
+  "trialN": 1,
+  "timestamp": "2026-05-15T03:25:55.434Z",
+  "seed": "cfa013b92796da47",
+  "metrics": {
+    "inputTokens": 728,
+    "outputTokens": 1623,
+    "cachedInputTokens": 309768,
+    "cacheCreationInputTokens": 12021,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "playwright-cli open http://localhost:50518/form/index.html"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "playwright-cli snapshot"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "playwright-cli fill e5 \"Test User\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "playwright-cli fill e7 \"test@example.com\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 11,
+        "command": "playwright-cli fill e9 \"+1-555-0100\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 12,
+        "command": "playwright-cli fill e11 \"Acme Corp\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 13,
+        "command": "playwright-cli select e13 \"United States\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 14,
+        "command": "playwright-cli fill e15 \"This is a test message.\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 15,
+        "command": "playwright-cli click e16"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 16,
+        "command": "playwright-cli snapshot"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 18,
+        "command": "playwright-cli --raw eval \"document.getElementById('token').textContent\""
+      },
+      {
+        "name": "Write",
+        "turnIndex": 19
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 20,
+        "command": "playwright-cli close"
+      }
+    ],
+    "toolCallCount": 14,
+    "turns": 21,
+    "numTurns": 16,
+    "wallClockMs": 70000,
+    "contextWindowPeak": 22985,
+    "totalCostUsd": 0.16298015,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "per-trial token present"
+  }
+}

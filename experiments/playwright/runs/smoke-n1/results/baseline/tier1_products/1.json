@@ -1,0 +1,65 @@
+{
+  "experiment": "playwright",
+  "runName": "smoke-n1",
+  "arm": "baseline",
+  "taskId": "tier1_products",
+  "tier": 1,
+  "trialN": 1,
+  "timestamp": "2026-05-15T03:54:55.052Z",
+  "seed": "1adeead8627f9960",
+  "metrics": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedInputTokens": 0,
+    "cacheCreationInputTokens": 0,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 4
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 6
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 9
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 10
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 12
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 14
+      }
+    ],
+    "toolCallCount": 7,
+    "turns": 16,
+    "numTurns": 0,
+    "wallClockMs": 0,
+    "contextWindowPeak": 15576,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "missing or invalid JSON at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/smoke-n1/results/baseline/tier1_products/1/products.json"
+  },
+  "error": "claude timed out after 180000ms"
+}

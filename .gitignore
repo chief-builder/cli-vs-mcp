@@ -1,0 +1,13 @@
+node_modules/
+harness/dist/
+
+# Playwright session workdirs (auto-created when the skill / MCP server runs)
+.playwright-cli/
+.playwright-mcp/
+
+# macOS noise
+.DS_Store
+
+# Local secrets — never commit GitHub tokens
+.env
+.env.local

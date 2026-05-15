@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cart — Acme</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 24px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border-bottom: 1px solid #ddd; padding: 8px; text-align: left; }
+    .actions { margin-top: 20px; }
+    .empty { color: #888; font-style: italic; }
+    a.btn { display: inline-block; padding: 8px 16px; background: #06f; color: #fff; text-decoration: none; }
+    nav a { margin-right: 12px; }
+  </style>
+</head>
+<body>
+  <h1>Your cart</h1>
+  <nav><a href="/checkout/index.html">Continue shopping</a></nav>
+  {{CART_BODY}}
+</body>
+</html>

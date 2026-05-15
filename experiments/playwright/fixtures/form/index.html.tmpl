@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Contact us — Acme</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 540px; margin: 60px auto; padding: 0 24px; }
+    label { display: block; margin: 12px 0 4px; }
+    input, textarea, select { width: 100%; padding: 8px; box-sizing: border-box; }
+    button { margin-top: 16px; padding: 10px 20px; cursor: pointer; }
+    #success { display: none; margin-top: 24px; padding: 16px; background: #e6ffe6; border: 1px solid #5c5; }
+    .error { color: #b00; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Contact us</h1>
+  <form id="contactForm">
+    <input type="hidden" id="nonce" name="nonce" value="{{NONCE}}" />
+
+    <label for="name">Name</label>
+    <input id="name" name="name" type="text" required />
+
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" required />
+
+    <label for="phone">Phone</label>
+    <input id="phone" name="phone" type="tel" required />
+
+    <label for="company">Company</label>
+    <input id="company" name="company" type="text" required />
+
+    <label for="country">Country</label>
+    <select id="country" name="country" required>
+      <option value="">— Select —</option>
+      <option value="US">United States</option>
+      <option value="UK">United Kingdom</option>
+      <option value="DE">Germany</option>
+      <option value="JP">Japan</option>
+      <option value="IN">India</option>
+    </select>
+
+    <label for="message">Message</label>
+    <textarea id="message" name="message" rows="4" required></textarea>
+
+    <button id="submit" type="submit">Send</button>
+    <div id="error" class="error" role="alert"></div>
+  </form>
+
+  <div id="success" role="alert">
+    <strong>Thank you!</strong> Your message has been received. Confirmation token:
+    <p data-testid="success-token" id="token"></p>
+  </div>
+
+  <script>
+    document.getElementById('contactForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var fd = new FormData(document.getElementById('contactForm'));
+      var params = new URLSearchParams();
+      fd.forEach(function (v, k) { params.append(k, v); });
+      var errEl = document.getElementById('error');
+      errEl.textContent = '';
+      try {
+        var resp = await fetch('/form/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: params.toString(),
+        });
+        if (!resp.ok) {
+          var msg = await resp.text();
+          errEl.textContent = 'Submission failed (' + resp.status + '): ' + msg;
+          return;
+        }
+        var data = await resp.json();
+        document.getElementById('contactForm').style.display = 'none';
+        document.getElementById('token').textContent = data.token;
+        document.getElementById('success').style.display = 'block';
+      } catch (err) {
+        errEl.textContent = String(err);
+      }
+    });
+  </script>
+</body>
+</html>

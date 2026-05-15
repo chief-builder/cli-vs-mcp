@@ -1,0 +1,55 @@
+{
+  "experiment": "playwright",
+  "runName": "smoke-n1",
+  "arm": "mcp",
+  "taskId": "tier1_scrape",
+  "tier": 1,
+  "trialN": 1,
+  "timestamp": "2026-05-15T03:28:35.719Z",
+  "seed": "e17d65100d1a988d",
+  "metrics": {
+    "inputTokens": 669,
+    "outputTokens": 714,
+    "cachedInputTokens": 59289,
+    "cacheCreationInputTokens": 6688,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 5
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 7
+      },
+      {
+        "name": "Write",
+        "turnIndex": 10
+      }
+    ],
+    "toolCallCount": 4,
+    "turns": 11,
+    "numTurns": 5,
+    "wallClockMs": 19117,
+    "contextWindowPeak": 14181,
+    "totalCostUsd": 0.054123700000000004,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "all 5 rows match"
+  }
+}

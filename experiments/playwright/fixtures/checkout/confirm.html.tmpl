@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Confirm order — Acme</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 24px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border-bottom: 1px solid #ddd; padding: 8px; text-align: left; }
+    .ship { margin-top: 24px; padding: 12px; background: #f5f5f5; }
+    button { margin-top: 20px; padding: 10px 20px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Confirm your order</h1>
+  <h2>Items</h2>
+  <table id="items">
+    <thead><tr><th>Product</th><th>Price</th></tr></thead>
+    <tbody>{{ITEMS}}</tbody>
+  </table>
+  <div class="ship">
+    <h2>Shipping to</h2>
+    <p>{{SHIP_NAME}}<br/>{{SHIP_ADDRESS}}<br/>{{SHIP_CITY}}, {{SHIP_ZIP}}</p>
+  </div>
+  <form id="place-order-form" method="POST" action="/checkout/place_order">
+    <button id="place-order" type="submit">Place order</button>
+  </form>
+</body>
+</html>
