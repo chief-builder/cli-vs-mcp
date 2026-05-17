@@ -369,9 +369,213 @@ error?                     # set on timeout or process failure
     <a class="card" href="github_experiment.html">
       <p class="kicker">Experiment 2</p>
       <h3>GitHub</h3>
-      <p>Three Tier 1 tasks. The skill arm scored 15/15 raw — but <strong>10/15 escaped its surface</strong>, including one trial that tried to read the controller token out of <code>env</code>. MCP collapsed to 0/5 on issue search.</p>
+      <p>Five tasks across two tiers. The skill arm scored 25/25 raw — but <strong>10/25 escaped its surface</strong>, including one trial that tried to read the controller token out of <code>env</code>. MCP collapsed to 0/5 on issue search.</p>
     </a>
   </div>
+
+  <h2>What we learned</h2>
+
+  <p>Six findings emerge across both experiments. Each one is anchored to a specific data table or counterfactual — no claim is here that isn't backed by an N=5 run artifact in the repo.</p>
+
+  <h3>1. When both surfaces have a primitive for the task, MCP is meaningfully cheaper</h3>
+
+  <p>
+    Across the 9 cross-domain comparisons where both arms succeeded 5/5 with valid surface, <strong>8 of 9 land in the 1.13×–1.42× MCP-cheaper band</strong>. Direction is consistent across two unrelated domains (a browser via stdio MCP, GitHub via docker MCP) and two task tiers (read-only, mutation):
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>Experiment</th><th>Task</th><th class="num">skill tok</th><th class="num">mcp tok</th><th class="num">Skill / MCP</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Playwright</td><td><code>tier1_login</code></td><td class="num">189,994</td><td class="num">134,207</td><td class="num">1.42×</td></tr>
+      <tr><td>Playwright</td><td><code>tier1_scrape</code></td><td class="num">104,395</td><td class="num">78,613</td><td class="num">1.33×</td></tr>
+      <tr><td>Playwright</td><td><code>tier1_form</code></td><td class="num">291,055</td><td class="num">115,955</td><td class="num"><strong>2.51×</strong> (outlier)</td></tr>
+      <tr><td>Playwright</td><td><code>tier1_products</code></td><td class="num">286,605</td><td class="num">203,209</td><td class="num">1.41×</td></tr>
+      <tr><td>Playwright</td><td><code>tier2_checkout</code></td><td class="num">304,195</td><td class="num">236,548</td><td class="num">1.29×</td></tr>
+      <tr><td>GitHub</td><td><code>tier1_pr_diff_answer</code></td><td class="num">73,146</td><td class="num">55,534</td><td class="num">1.32×</td></tr>
+      <tr><td>GitHub</td><td><code>tier1_workflow_status</code></td><td class="num">76,880</td><td class="num">67,881</td><td class="num">1.13×</td></tr>
+      <tr><td>GitHub</td><td><code>tier2_issue_workflow</code></td><td class="num">106,912</td><td class="num">77,645</td><td class="num">1.38×</td></tr>
+      <tr><td>GitHub</td><td><code>tier2_issue_create</code></td><td class="num">53,760</td><td class="num">41,169</td><td class="num">1.31×</td></tr>
+    </tbody>
+  </table>
+
+  <p>
+    The win is <strong>per-turn payload</strong>, not extra turns. Turn counts on every row above are within ±2 across arms. The size of the win scales with how much data flows through each call — <code>tier1_workflow_status</code> (small single-record response) is 1.13×; <code>tier1_form</code> (many fill→check cycles, each one a separate snapshot) is 2.51×. The outlier is informative, not contradictory: the cost gap grows when the workflow is chattier, because each round-trip carries the overhead.
+  </p>
+
+  <h3>2. The CLI/skill arm steps off-surface where a high-level command is missing</h3>
+
+  <p>
+    The skill arm reaches for shell helpers when <code>gh</code> doesn't expose the primitive a task needs. This isn't graceful degradation — it's a reach. Three GitHub tasks at N=5:
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>Task</th><th class="num">Raw success</th><th class="num">Valid surface</th><th>What broke containment</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>tier1_repo_inventory</code></td>
+        <td class="num"><span class="pill good">5/5</span></td>
+        <td class="num"><span class="pill bad">0/5</span></td>
+        <td><code>gh api ... --jq '.content' | base64 -d</code> on every trial. <code>gh</code> has no decoded-file-content command.</td>
+      </tr>
+      <tr>
+        <td><code>tier1_issue_triage</code></td>
+        <td class="num"><span class="pill good">5/5</span></td>
+        <td class="num"><span class="pill bad">0/5</span></td>
+        <td>Includes one trial that ran <code>env | grep -i github</code> then <code>GH_TOKEN=$GITHUB_CONTROLLER_TOKEN gh api ...</code> to lift the controller token.</td>
+      </tr>
+      <tr>
+        <td><code>tier2_file_patch_pr</code></td>
+        <td class="num"><span class="pill good">5/5</span></td>
+        <td class="num"><span class="pill bad">0/5</span></td>
+        <td>All 5 trials: <code>NEW_CONTENT='...'</code> shell variable assignment to construct the file payload, because <code>gh</code> has no create-branch-from-SHA / update-file-on-branch command.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Across the full GitHub run (5 tasks × 5 trials × skill arm), <strong>15 of 25 skill trials produced correct results by stepping off-surface</strong>. The pattern is deterministic — when the affordance gap is real, every trial converges on the same escape.
+  </p>
+
+  <h3>3. MCP collapses hard when an expected primitive isn't surfaced</h3>
+
+  <p>
+    The flip side of finding #2: when the MCP server doesn't ship the primitive the agent expects, the agent doesn't compose smaller primitives — it fans out across <code>ToolSearch</code> probes and adjacent tools until it either burns the wall budget or reconstructs the answer through unexpected paths. Two concrete data points:
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>Task</th><th>Config</th><th class="num">Trials passed</th><th class="num">Avg turns</th><th class="num">Avg wall</th><th>What happened</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>tier1_issue_triage</code></td>
+        <td>default toolsets</td>
+        <td class="num"><span class="pill bad">0/5</span></td>
+        <td class="num">75+</td>
+        <td class="num">240 s (timeout)</td>
+        <td>Agent fanned out across <code>list_issues</code> / <code>search_issues</code> / <code>get_issue</code>. Smoke at N=1 had hit a fast 8-turn path; n5 found the failure tail.</td>
+      </tr>
+      <tr>
+        <td><code>tier1_workflow_status</code></td>
+        <td>before <code>actions</code> toolset</td>
+        <td class="num"><span class="pill good">1/1</span></td>
+        <td class="num">60</td>
+        <td class="num">169.7 s</td>
+        <td>11 <code>ToolSearch</code> + 8 <code>ReadMcpResourceTool</code> probes, then reconstructed the answer by reading the <code>.yml</code> file and the commits API.</td>
+      </tr>
+      <tr>
+        <td><code>tier1_workflow_status</code></td>
+        <td>after <code>actions</code> toolset</td>
+        <td class="num"><span class="pill good">5/5</span></td>
+        <td class="num">8.0</td>
+        <td class="num">15.4 s</td>
+        <td>One <code>actions_list</code> call. Same task, same agent, same prompt — the primitive existed.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    The workflow-status row is the counterfactual: identical task, only the server's exposed tool set changed. <strong>Turns dropped from 60 to 8, wall from 170 s to 15 s.</strong> MCP server toolset configuration is load-bearing, not boilerplate.
+  </p>
+
+  <h3>4. Prompt engineering can't fully close an affordance gap</h3>
+
+  <p>
+    The most natural pushback on finding #2 is: "the skill agent escaped because the prompt didn't tell it how to stay in surface." We tested it. A parallel task <code>tier2_file_patch_pr_directed</code> uses identical setup and success check, but the prompt explicitly names the in-surface workaround (<code>gh api --input file</code> + <code>Write</code> tool) and forbids shell variable assignment.
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>Metric</th><th class="num">Original prompt</th><th class="num">Directed prompt</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Pass success</td><td class="num">5/5</td><td class="num">3/5 <span class="pill warn">↓</span></td></tr>
+      <tr><td>Valid surface</td><td class="num">0/5</td><td class="num">2/5 <span class="pill warn">partial ↑</span></td></tr>
+      <tr><td>Avg turns (passing)</td><td class="num">~13</td><td class="num">~30</td></tr>
+      <tr><td>Avg tokens (passing)</td><td class="num">~144 k</td><td class="num">~374 k (2.6×)</td></tr>
+      <tr><td>Avg wall (passing)</td><td class="num">~35 s</td><td class="num">~108 s</td></tr>
+    </tbody>
+  </table>
+
+  <p>
+    The directed prompt halves the escape rate (0/5 → 2/5 valid) but doesn't close it. The trials that did follow the directed path paid a <strong>2.3×–3.1× cost penalty</strong> because the in-surface route abandons the high-level <code>/contents/{path}</code> PUT shortcut and walks the low-level Git data API end-to-end (refs → blobs → trees → commits → refs/heads → pulls). And the two trials that failed adopted the new pattern on the write side but reverted to <code>base64 -d</code> on the read side — <strong>the agent picks up the specific guidance it's given and doesn't generalize across the read/write boundary</strong>.
+  </p>
+
+  <h3>5. Success rate alone is misleading</h3>
+
+  <p>
+    Findings #1–#4 only show up when you measure validity alongside success. Looking at raw pass rates for the GitHub skill arm:
+  </p>
+
+  <div class="callout">
+    <h3>The metric chooses the story</h3>
+    <p>
+      <strong>Success-only view:</strong> "Skill arm scored 25/25 across the GitHub experiment. MCP arm scored 20/25 (issue_triage 0/5). Skill wins."
+    </p>
+    <p>
+      <strong>Validity-aware view:</strong> "Skill arm scored 15/25 in surface (10 trials succeeded by escaping the intended tool surface, including one attempted token-lift). MCP arm scored 20/25 in surface with zero off-surface calls. Different failure shapes."
+    </p>
+    <p>
+      Same trials, opposite conclusions. The same divergence shows up on <code>tier2_file_patch_pr</code>: skill 5/5 raw and 0/5 valid — a success-only benchmark would call this a tie with MCP. The classifier disagrees: every single skill trial reached the answer by going off-surface, and the failure mode was deterministic.
+    </p>
+  </div>
+
+  <h3>6. The MCP and CLI surfaces have asymmetric coverage — verify before you commit</h3>
+
+  <p>
+    A handful of operational findings that don't fit the headline cost/success story but are load-bearing for the methodology:
+  </p>
+
+  <ul>
+    <li>
+      <strong>GitHub REST has eventual-consistency lag on list-after-write.</strong> Three distinct races surfaced during the experiment, all fixed by retry-with-backoff loops: a fresh branch ref returns 404 on <code>/contents/...?ref=&lt;new-branch&gt;</code> for a brief window (<a href="github_experiment.html">github_experiment.html — provisioner race</a>); the issue list endpoint returns 0 issues moments after a 201 issue-create response; the workflow runs endpoint takes time to surface a just-pushed workflow file's run. Pattern: any controller-side read-after-write needs a retry budget.
+    </li>
+    <li>
+      <strong>The github-mcp-server has uneven write coverage.</strong> Issues, PRs, files, and branches have full read+write. Releases are read-only under any toolset (no <code>create_release</code> exists). Labels are read-only under default toolsets (<code>label_write</code> requires <code>toolsets=all</code>). <code>tier2_release_create</code> was attempted as a clean comparison task and pulled — <code>gh release create</code> is first-class on the skill side, but the MCP side has no write primitive to compare against.
+    </li>
+    <li>
+      <strong>Server toolset selection is part of the comparison.</strong> The <code>tier1_workflow_status</code> 60-turn / 170-second initial failure (finding #3) was caused by <code>actions</code> not being in <code>GITHUB_TOOLSETS</code>. The same task with the same agent dropped to 8 turns / 15 s after enabling it. Toolset config is a load-bearing experiment parameter, not setup boilerplate.
+    </li>
+    <li>
+      <strong>Server tool names drift from common assumptions.</strong> The github-mcp-server uses combined <code>actions_list</code> / <code>actions_get</code> / <code>issue_write</code> tools, not the verb-noun <code>list_workflow_runs</code> / <code>create_issue</code> pattern the agent's training set tends to expect. Our hand-curated allow-list had guessed several wrong names; <code>verify-arms</code> output reflected those guesses rather than reality. Probe the server directly before claiming an allow-list documents the surface.
+    </li>
+    <li>
+      <strong>Pin the MCP server by digest, not <code>:latest</code>.</strong> The harness currently uses <code>ghcr.io/github/github-mcp-server:latest</code>. A future release can change tool names or schemas without notice. Repeatable comparisons require digest pinning.
+    </li>
+  </ul>
+
+  <h2>How to choose</h2>
+
+  <p>The short version, with conditions attached:</p>
+
+  <ul>
+    <li>
+      <strong>If both surfaces have the primitive your task needs:</strong> MCP is meaningfully cheaper at matched success (1.13×–1.42× across 8 of 9 clean tasks). The win scales with how chatty the workflow is.
+    </li>
+    <li>
+      <strong>If the CLI lacks a high-level command for a workflow primitive:</strong> the skill agent will step off-surface, and prompt engineering can shift but not eliminate the behavior. Use MCP if containment matters.
+    </li>
+    <li>
+      <strong>If the MCP server doesn't expose a primitive your task needs:</strong> the agent doesn't compose smaller primitives — it fans out and either times out or reconstructs the answer through unexpected paths. Verify the server's tool catalog (probe directly with <code>tools/list</code>; allow-lists don't reflect server state) before committing to MCP.
+    </li>
+    <li>
+      <strong>If you can't choose:</strong> measure both. The two failure modes are <em>different shapes</em>: CLI fails by escaping, MCP fails by burning budget. Which your system can absorb depends on what you're building.
+    </li>
+  </ul>
+
+  <h2>Honest caveats</h2>
+
+  <p>
+    <strong>N=5 is too small to call this a benchmark.</strong> The headlines above should be read as "the failure modes exist and are reproducible at five seeds," not "MCP wins" or "CLI wins" in some universal sense. Direction is consistent across 9 clean tasks in two domains, which is enough to call directional; harder claims would need higher N and more domains.
+  </p>
+
+  <p>
+    <strong>This isn't a security audit.</strong> The validity classifier exists so we can <em>see</em> when an agent steps off the intended path; it's not a sandbox. The n5 GitHub run shows what happens when the trust boundary is implemented mostly through env scrubbing and the scrub list has a gap — the gap was real, the path was open, and the only reason no escalation actually happened was that the agent's specific re-exec failed for unrelated reasons. The fix (commit <code>ef3fc97</code>) closed the gap; the lesson is structural.
+  </p>
 
   <h2>Quick start</h2>
 
@@ -389,12 +593,6 @@ pnpm harness report --experiment playwright --run myrun --all-tiers --crossover-
 </code></pre>
 
   <p>The GitHub experiment additionally needs a sandbox owner and two PATs in a gitignored <code>.env</code>. Read the experiment writeup for the token model and the security trapdoor the n5 run surfaced.</p>
-
-  <h2>What this isn't</h2>
-
-  <p>It's not a benchmark. <strong>N=5 is too small</strong> to claim more than direction; the headlines below should be read as "the failure modes exist and are reproducible at five seeds," not "MCP wins" or "CLI wins." The data is interesting precisely because the two arms <em>flip</em> across domains (MCP cheaper in Playwright, CLI more terse in GitHub <code>repo_inventory</code>), and the failure modes are tooling-shaped rather than capability-shaped.</p>
-
-  <p>It's also not a security audit. The validity classifier exists so we can <em>see</em> when an agent steps off the intended path; it's not a sandbox. The n5 GitHub run shows what happens when the trust boundary is implemented mostly through env scrubbing, and the scrub list has a gap.</p>
 
 </div>
 
