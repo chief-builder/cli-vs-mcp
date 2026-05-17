@@ -831,7 +831,15 @@ playwright-cli click "#submit"         → starts with "playwright-cli" ✓</cod
   </p>
 
   <p>
-    <strong>This isn't a security audit.</strong> The validity classifier exists so we can <em>see</em> when an agent steps off the intended path; it's not a sandbox. The n5 GitHub run shows what happens when the trust boundary is implemented mostly through env scrubbing and the scrub list has a gap — the gap was real, the path was open, and the only reason no escalation actually happened was that the agent's specific re-exec failed for unrelated reasons. The fix (commit <code>ef3fc97</code>) closed the gap; the lesson is structural.
+    <strong>This isn't a security audit.</strong> The validity classifier is a <em>witness</em>, not a <em>sandbox</em> — it records when an agent steps off the intended tool surface so the report can filter that trial out of aggregations, but the trial still actually executes. An off-surface command runs in real <code>Bash</code> against real GitHub; the classifier sees it happen, it doesn't prevent it.
+  </p>
+
+  <p>
+    The n5 GitHub run made the distinction load-bearing. One skill trial of <code>tier1_issue_triage</code> ran <code>env | grep -i github</code>, and the response contained both the agent token and the harness's <em>controller</em> token in plaintext (the runner's scrub list at the time covered the standard <code>GH_*</code> / <code>GITHUB_*</code> names but not <code>GITHUB_CONTROLLER_TOKEN</code> or <code>GITHUB_AGENT_TOKEN</code>, which the harness uses internally). The agent then attempted <code>GH_TOKEN=$GITHUB_CONTROLLER_TOKEN gh api repos/.../issues</code> to re-execute with the controller's elevated scope. The escalation path was open. No escalation actually <em>happened</em> only because the specific re-exec hit downstream classifier and gh-state failures — not because the env boundary stopped it.
+  </p>
+
+  <p>
+    The fix (commit <code>ef3fc97</code>) added both internal names to the scrub list and was behaviorally re-verified by probing the child env directly. <strong>The structural lesson</strong>: an allow-list on tool <em>names</em> isn't a complete tool surface — anything sitting in <code>process.env</code> is part of the surface too, and a scrub list designed around "tools the agent might call" misses "variables the agent might read." For an actual security audit, the answer is process isolation (separate UID, separate filesystem namespace, no inherited env), not classifier filtering. This experiment doesn't do that.
   </p>
 
   <h2>Quick start</h2>
