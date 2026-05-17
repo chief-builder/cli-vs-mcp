@@ -81,6 +81,15 @@ export function buildClaudeArgs(
  * experiment runs under the same cleanroom assumption.
  */
 const GITHUB_ENV_TO_SCRUB = [
+  // Harness-internal names — must not survive into the agent child.
+  // GITHUB_CONTROLLER_TOKEN is the elevated credential used to provision
+  // sandbox state; its presence in the child env would give the agent a
+  // path to escalation via `GH_TOKEN=$GITHUB_CONTROLLER_TOKEN gh api ...`.
+  // GITHUB_AGENT_TOKEN is the raw form; buildGithubAgentEnv injects the
+  // value under GH_TOKEN / GITHUB_TOKEN per arm, so the raw name has no
+  // legitimate use inside the child.
+  'GITHUB_CONTROLLER_TOKEN',
+  'GITHUB_AGENT_TOKEN',
   'GH_TOKEN',
   'GITHUB_TOKEN',
   'GH_ENTERPRISE_TOKEN',

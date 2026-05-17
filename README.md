@@ -256,8 +256,6 @@ Two findings only visible from the validity classifier:
 
 ## Known limits
 
-- **Controller-token leak to the skill agent.** `harness/src/runner.ts:GITHUB_ENV_TO_SCRUB` strips the standard `GH_*` / `GITHUB_*` vars (e.g. `GH_TOKEN`, `GITHUB_TOKEN`, `GITHUB_PERSONAL_ACCESS_TOKEN`) but **does not strip `GITHUB_CONTROLLER_TOKEN` or `GITHUB_AGENT_TOKEN`** — those are the names the harness uses internally and they survive into the child env. The n5 run shows at least one skill trial calling `env` and seeing both. The trust boundary held in practice on that trial (the agent didn't successfully escalate) but the gap is real. Fix is to add both names to the scrub list.
-- **`tier1_pr_diff_answer` provisioner had an eventual-consistency race** on `GET /repos/.../contents/...?ref=<new-branch>` immediately after the branch was created. Fixed by a 6×500 ms retry on 404 (`experiments/github/tasks/tier1.ts:324`).
 - **No pinned MCP server digest.** `.mcp.github.*.json` uses `ghcr.io/github/github-mcp-server:latest`. Floating tag — re-running after an upstream release can change tool names or schemas.
 - **Same controller/agent identity in the n5 run.** Both `GITHUB_CONTROLLER_TOKEN` and `GITHUB_AGENT_TOKEN` resolved to user `chief-builder`. The plan was distinct identities; the n5 measurements still reflect the right tool surface but the env-grep escalation finding has to be read knowing the agent's PAT was the same identity as the controller's PAT.
 - **240 s wall budget hits MCP `tier1_issue_triage` hard.** A wider budget at higher N would distinguish "MCP cannot do this" from "MCP needs more time and turns". The current data says only that the failure mode exists and reproduces at N=5.
