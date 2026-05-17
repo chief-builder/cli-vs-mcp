@@ -547,6 +547,69 @@ playwright-cli click "#submit"         → starts with "playwright-cli" ✓</cod
     The runner also scrubs GitHub-related environment variables before injecting the per-arm credentials — this matters when the harness itself has a controller token that should never reach the agent. (More on that in the GitHub writeup; the n5 run found a real gap here.)
   </p>
 
+  <h3>What each <code>claude -p</code> flag does</h3>
+
+  <p>
+    Step 4 is dense — eight separate flags, each pinning one degree of freedom. Walking through them in the order they appear:
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>Flag</th><th>What it does</th><th>Why the harness sets it</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>-p</code></td>
+        <td>Non-interactive "print" mode. Reads the prompt, runs the agent loop, emits a final result, exits.</td>
+        <td>The harness needs a single deterministic run per trial, not a REPL. Required to script trials.</td>
+      </tr>
+      <tr>
+        <td>fresh tempdir as cwd</td>
+        <td>The child's working directory is a freshly-created <code>os.tmpdir()/clivsmcp-&lt;exp&gt;-&lt;arm&gt;-&lt;task&gt;-...</code>. The harness copies the project's <code>.claude/skills/&lt;name&gt;/</code> bundle into this dir for the skill arm before launch.</td>
+        <td>No state leaks between trials (or between arms running the same task). Relative <code>Write</code>/<code>Read</code> paths land here, not in the project tree.</td>
+      </tr>
+      <tr>
+        <td><code>--strict-mcp-config</code></td>
+        <td>Ignore all other MCP server discovery (user-level, project-level). Use <em>only</em> the <code>--mcp-config</code> file/inline JSON passed alongside.</td>
+        <td>Pins MCP exposure to exactly what the experiment specifies; a developer with extra MCP servers in <code>~/.claude/mcp.json</code> can't accidentally widen the surface.</td>
+      </tr>
+      <tr>
+        <td><code>--mcp-config &lt;cfg&gt;</code></td>
+        <td>Either an inline JSON string or a file path. baseline + skill use <code>'{"mcpServers":{}}'</code>; mcp arm points at <code>.mcp.playwright.json</code> / <code>.mcp.github.{ro,rw}.json</code>.</td>
+        <td>Switches the MCP surface per arm.</td>
+      </tr>
+      <tr>
+        <td><code>--allowed-tools / --disallowed-tools</code></td>
+        <td>Positive allow-list + explicit deny-list, space-separated. A tool must be on the allow-list AND not on the deny-list. Strict for built-in tools; for MCP tools the allow-list is documentation rather than strict enforcement under bypass-permissions.</td>
+        <td>The per-arm tool surfaces shown at the top of this page.</td>
+      </tr>
+      <tr>
+        <td><code>--setting-sources project,local</code></td>
+        <td>Limits which Claude Code settings files are loaded to <code>./.claude/settings.json</code> and <code>./.claude/settings.local.json</code> in the child's cwd. Skips <code>~/.claude/settings.json</code>.</td>
+        <td>Keeps the developer's user-level skills, hooks, and settings out of the trial. Without this, anyone with the <code>github-cli</code> skill installed globally would have it active in every arm — including baseline.</td>
+      </tr>
+      <tr>
+        <td><code>--permission-mode bypassPermissions</code></td>
+        <td>Skip the "Allow Bash to run this command?" prompts. Required for non-interactive runs (there's no human to answer).</td>
+        <td>Without it, <code>-p</code> mode would either hang or fail on every prompted tool. The cost is that the allow-list is the only line of defense — which is why the env-scrub gap mattered: an in-allow-list <code>Bash</code> call could still read out-of-allow-list env vars.</td>
+      </tr>
+      <tr>
+        <td><code>--model claude-sonnet-4-6</code></td>
+        <td>The model identifier the agent uses. Overridable via <code>pnpm harness run --model &lt;id&gt;</code>.</td>
+        <td>Reproducibility against a specific model. Note that Claude Code can route internally between models within one trial — the <code>modelsUsed</code> field on each result record captures what actually ran (sometimes Sonnet + Haiku in the same trial).</td>
+      </tr>
+      <tr>
+        <td><code>--output-format stream-json</code></td>
+        <td>One JSON event per line on stdout: <code>system</code>, <code>assistant</code>, <code>user</code> (tool results), and a final <code>result</code> event with <code>duration_ms</code>, <code>total_cost_usd</code>, <code>num_turns</code>, <code>modelUsage</code>.</td>
+        <td>The transcript file. Every <code>tool_use</code> event in here is what the validity classifier inspects after the fact; without it the metrics layer couldn't exist.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    The flags work together as a cleanroom: <code>--strict-mcp-config</code> pins MCP exposure, the allow/deny lists pin Claude's built-in tool surface, <code>--setting-sources project,local</code> pins which skills are discoverable, <code>--permission-mode bypassPermissions</code> keeps the non-interactive run from hanging, <code>--model</code> makes the run reproducible against a specific model, and <code>--output-format stream-json</code> makes the transcript machine-readable. Drop any one and the experiment leaks something it wasn't meant to test.
+  </p>
+
   <h2>The two experiments</h2>
 
   <p>Two domains are wired up in this repo. They were chosen because both have a mature CLI <em>and</em> a maintained MCP server, which keeps the comparison about <em>shape of the surface</em> rather than the maturity of either implementation.</p>
