@@ -251,7 +251,7 @@ MCP is consistently cheaper (per-turn payload smaller — skill emits explicit `
 
 Two findings only visible from the validity classifier:
 
-1. **Skill arm escapes its surface on 2/3 GitHub tasks.** `tier1_repo_inventory` (5/5 invalid) all pipe `gh api ... | base64 -d` to decode README content. `tier1_issue_triage` (5/5 invalid) included one trial that ran `env | grep -i github` then `GH_TOKEN=$GITHUB_CONTROLLER_TOKEN gh api ...` to lift the controller's elevated token. See "Known limits" — the runner does **not** scrub the harness's own `GITHUB_CONTROLLER_TOKEN` / `GITHUB_AGENT_TOKEN` from inheritance, so this escalation path was open.
+1. **Skill arm escapes its surface on 2/3 GitHub tasks.** `tier1_repo_inventory` (5/5 invalid) all pipe `gh api ... | base64 -d` to decode README content. `tier1_issue_triage` (5/5 invalid) included one trial that ran `env | grep -i github` then `GH_TOKEN=$GITHUB_CONTROLLER_TOKEN gh api ...` to lift the controller's elevated token. The escalation path was open during the n5 run — the runner's scrub list didn't yet include the harness's own `GITHUB_CONTROLLER_TOKEN` / `GITHUB_AGENT_TOKEN` var names. Patched in `ef3fc97` and behaviorally verified in `experiments/github/runs/env-fix-verify`.
 2. **MCP `tier1_issue_triage` collapse.** All 5 MCP trials timed out at 75+ turns of fanout across `list_issues`, `search_issues`, `get_issue`. Skill solved the same task in ~23 turns with one `gh issue list --label "bug,priority-high" --json`. The MCP fanout shape is the failure mode, not the absence of capability.
 
 ## Known limits
