@@ -1,0 +1,141 @@
+{
+  "experiment": "playwright",
+  "runName": "n5",
+  "arm": "baseline",
+  "taskId": "tier1_login",
+  "tier": 1,
+  "trialN": 5,
+  "timestamp": "2026-05-16T12:58:38.310Z",
+  "seed": "2cd23a9966e8ad7c",
+  "metrics": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedInputTokens": 0,
+    "cacheCreationInputTokens": 0,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 4
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 6
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 8
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 10
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 13
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 15
+      },
+      {
+        "name": "Write",
+        "turnIndex": 18
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 21
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 23
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 26
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 28
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 29
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 31
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 33
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 35
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 37
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 40
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 41
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 44
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 45
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 47
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 49
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 52
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 55
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 56
+      }
+    ],
+    "toolCallCount": 26,
+    "turns": 56,
+    "numTurns": 0,
+    "wallClockMs": 0,
+    "contextWindowPeak": 43446,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "expected screenshot at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/baseline/tier1_login/5/login_landing.png (>1KB)"
+  },
+  "error": "claude timed out after 240000ms"
+}

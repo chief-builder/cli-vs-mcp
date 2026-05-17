@@ -1,0 +1,113 @@
+{
+  "experiment": "playwright",
+  "runName": "n5",
+  "arm": "skill",
+  "taskId": "tier2_checkout",
+  "tier": 2,
+  "trialN": 5,
+  "timestamp": "2026-05-16T18:40:48.300Z",
+  "seed": "817da9c287b8c171",
+  "metrics": {
+    "inputTokens": 724,
+    "outputTokens": 1425,
+    "cachedInputTokens": 289278,
+    "cacheCreationInputTokens": 12458,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "playwright-cli open http://localhost:61824/checkout/index.html"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "playwright-cli snapshot"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "playwright-cli click e20"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "playwright-cli snapshot"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 11,
+        "command": "playwright-cli click e15"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 12,
+        "command": "playwright-cli snapshot"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 13,
+        "command": "playwright-cli fill e5 \"Test User\" && playwright-cli fill e7 \"123 Main St\" && playwright-cli fill e9 \"Springfield\" && playwright-cli fill e11 \"12345\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 14,
+        "command": "playwright-cli click e12"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 15,
+        "command": "playwright-cli snapshot"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 16,
+        "command": "playwright-cli click e17"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 17,
+        "command": "playwright-cli --raw eval \"document.getElementById('order-id').textContent\""
+      },
+      {
+        "name": "Write",
+        "turnIndex": 18
+      }
+    ],
+    "toolCallCount": 13,
+    "turns": 19,
+    "numTurns": 15,
+    "wallClockMs": 39275,
+    "contextWindowPeak": 23422,
+    "totalCostUsd": 0.1554859,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": false,
+    "cliCommandGranularityViolations": [
+      {
+        "name": "Bash",
+        "turnIndex": 13,
+        "command": "playwright-cli fill e5 \"Test User\" && playwright-cli fill e7 \"123 Main St\" && playwright-cli fill e9 \"Springfield\" && playwright-cli fill e11 \"12345\"",
+        "reason": "multiple shell operations in one Bash call: playwright-cli fill e5 \"Test User\" && playwright-cli fill e7 \"123 Main St\" && playwright-cli fill e9 \"Springfield\" && pl"
+      }
+    ]
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "order placed with target product",
+    "extras": {
+      "orders_placed": 1,
+      "sessions_seen": 1
+    }
+  }
+}

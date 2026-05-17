@@ -1,0 +1,99 @@
+{
+  "experiment": "playwright",
+  "runName": "n5",
+  "arm": "baseline",
+  "taskId": "tier1_login",
+  "tier": 1,
+  "trialN": 1,
+  "timestamp": "2026-05-16T12:45:48.635Z",
+  "seed": "cfdae24c5e7773b8",
+  "metrics": {
+    "inputTokens": 629,
+    "outputTokens": 6447,
+    "cachedInputTokens": 316284,
+    "cacheCreationInputTokens": 23526,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 4
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 7
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 9
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 11
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 14
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 17
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 20
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 21
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 24
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 25
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 28
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 31
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 33
+      },
+      {
+        "name": "Write",
+        "turnIndex": 36
+      }
+    ],
+    "toolCallCount": 15,
+    "turns": 38,
+    "numTurns": 16,
+    "wallClockMs": 153457,
+    "contextWindowPeak": 31019,
+    "totalCostUsd": 0.2803797,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "expected screenshot at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/baseline/tier1_login/1/login_landing.png (>1KB)"
+  }
+}

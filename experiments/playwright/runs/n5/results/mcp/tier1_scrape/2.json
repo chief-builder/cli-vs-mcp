@@ -1,0 +1,59 @@
+{
+  "experiment": "playwright",
+  "runName": "n5",
+  "arm": "mcp",
+  "taskId": "tier1_scrape",
+  "tier": 1,
+  "trialN": 2,
+  "timestamp": "2026-05-16T18:49:21.951Z",
+  "seed": "c2a9de0d7e645b82",
+  "metrics": {
+    "inputTokens": 671,
+    "outputTokens": 952,
+    "cachedInputTokens": 72852,
+    "cacheCreationInputTokens": 6952,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 5
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 7
+      },
+      {
+        "name": "mcp__playwright__browser_evaluate",
+        "turnIndex": 9
+      },
+      {
+        "name": "Write",
+        "turnIndex": 11
+      }
+    ],
+    "toolCallCount": 5,
+    "turns": 12,
+    "numTurns": 6,
+    "wallClockMs": 18232,
+    "contextWindowPeak": 14445,
+    "totalCostUsd": 0.0627606,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "all 5 rows match"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "experiment": "github",
+  "runName": "n5",
+  "arm": "baseline",
+  "taskId": "tier1_pr_diff_answer",
+  "tier": 1,
+  "trialN": 4,
+  "timestamp": "2026-05-16T21:11:57.205Z",
+  "seed": "20a6c6b242014eb7",
+  "metrics": {
+    "inputTokens": 717,
+    "outputTokens": 780,
+    "cachedInputTokens": 94355,
+    "cacheCreationInputTokens": 9829,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 6
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 7
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 9
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 11
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 14
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 16
+      }
+    ],
+    "toolCallCount": 7,
+    "turns": 16,
+    "numTurns": 8,
+    "wallClockMs": 18328,
+    "contextWindowPeak": 17117,
+    "totalCostUsd": 0.07745025,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "missing or invalid JSON at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/n5/results/baseline/tier1_pr_diff_answer/4/pr_diff.json"
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "experiment": "playwright",
+  "runName": "n5",
+  "arm": "mcp",
+  "taskId": "tier1_products",
+  "tier": 1,
+  "trialN": 2,
+  "timestamp": "2026-05-16T18:53:30.904Z",
+  "seed": "c45358ac751af219",
+  "metrics": {
+    "inputTokens": 707,
+    "outputTokens": 1753,
+    "cachedInputTokens": 206028,
+    "cacheCreationInputTokens": 8445,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 5
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 6
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 8
+      },
+      {
+        "name": "mcp__playwright__browser_evaluate",
+        "turnIndex": 10
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 11
+      },
+      {
+        "name": "mcp__playwright__browser_evaluate",
+        "turnIndex": 12
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 13
+      },
+      {
+        "name": "mcp__playwright__browser_evaluate",
+        "turnIndex": 14
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 16
+      },
+      {
+        "name": "mcp__playwright__browser_evaluate",
+        "turnIndex": 17
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 18
+      },
+      {
+        "name": "mcp__playwright__browser_evaluate",
+        "turnIndex": 19
+      },
+      {
+        "name": "Write",
+        "turnIndex": 21
+      }
+    ],
+    "toolCallCount": 14,
+    "turns": 22,
+    "numTurns": 15,
+    "wallClockMs": 41525,
+    "contextWindowPeak": 15938,
+    "totalCostUsd": 0.12038515000000001,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "all 5 products match"
+  }
+}

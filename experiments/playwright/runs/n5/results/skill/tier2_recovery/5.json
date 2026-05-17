@@ -1,0 +1,106 @@
+{
+  "experiment": "playwright",
+  "runName": "n5",
+  "arm": "skill",
+  "taskId": "tier2_recovery",
+  "tier": 2,
+  "trialN": 5,
+  "timestamp": "2026-05-16T18:44:55.224Z",
+  "seed": "61b5f3b0e8cba190",
+  "metrics": {
+    "inputTokens": 707,
+    "outputTokens": 1605,
+    "cachedInputTokens": 285420,
+    "cacheCreationInputTokens": 11792,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "playwright-cli open http://localhost:61984/recovery/index.html"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "playwright-cli snapshot"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 8,
+        "command": "playwright-cli fill e5 \"Test User\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "playwright-cli fill e7 \"test@example.com\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "playwright-cli fill e9 \"unknown\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 11,
+        "command": "playwright-cli click e10"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 12,
+        "command": "playwright-cli snapshot"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 15,
+        "command": "playwright-cli fill e9 \"9035245c\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 16,
+        "command": "playwright-cli click e10"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 17,
+        "command": "playwright-cli --raw eval \"document.getElementById('token').textContent\""
+      },
+      {
+        "name": "Write",
+        "turnIndex": 19
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 20,
+        "command": "playwright-cli close"
+      }
+    ],
+    "toolCallCount": 13,
+    "turns": 21,
+    "numTurns": 15,
+    "wallClockMs": 59994,
+    "contextWindowPeak": 22756,
+    "totalCostUsd": 0.15453399999999998,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "per-trial token present",
+    "extras": {
+      "recovery_attempts": 2,
+      "sessions_seen": 1
+    }
+  }
+}

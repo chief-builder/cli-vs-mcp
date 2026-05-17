@@ -179,7 +179,7 @@ export async function runTrial(opts: RunTrialOptions): Promise<TrialResult> {
   let stderrText = '';
   let cliError: string | undefined;
 
-  const TRIAL_TIMEOUT_MS = 180_000;
+  const TRIAL_TIMEOUT_MS = 240_000;
 
   try {
     const result = await execa('claude', args, {

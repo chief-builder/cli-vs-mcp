@@ -1,0 +1,103 @@
+{
+  "experiment": "playwright",
+  "runName": "n5",
+  "arm": "mcp",
+  "taskId": "tier2_checkout",
+  "tier": 2,
+  "trialN": 1,
+  "timestamp": "2026-05-16T18:56:10.606Z",
+  "seed": "628e8cd48f8381eb",
+  "metrics": {
+    "inputTokens": 735,
+    "outputTokens": 1724,
+    "cachedInputTokens": 237589,
+    "cacheCreationInputTokens": 10202,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 5
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 6
+      },
+      {
+        "name": "mcp__playwright__browser_click",
+        "turnIndex": 9
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 11
+      },
+      {
+        "name": "mcp__playwright__browser_click",
+        "turnIndex": 12
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 14
+      },
+      {
+        "name": "mcp__playwright__browser_fill_form",
+        "turnIndex": 16
+      },
+      {
+        "name": "mcp__playwright__browser_click",
+        "turnIndex": 17
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 18
+      },
+      {
+        "name": "mcp__playwright__browser_click",
+        "turnIndex": 19
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 20
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 23
+      },
+      {
+        "name": "mcp__playwright__browser_evaluate",
+        "turnIndex": 24
+      },
+      {
+        "name": "Write",
+        "turnIndex": 26
+      }
+    ],
+    "toolCallCount": 15,
+    "turns": 27,
+    "numTurns": 16,
+    "wallClockMs": 64076,
+    "contextWindowPeak": 17695,
+    "totalCostUsd": 0.13602720000000001,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "order placed with target product",
+    "extras": {
+      "orders_placed": 1,
+      "sessions_seen": 1
+    }
+  }
+}

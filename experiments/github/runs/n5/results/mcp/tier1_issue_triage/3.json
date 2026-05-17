@@ -1,0 +1,185 @@
+{
+  "experiment": "github",
+  "runName": "n5",
+  "arm": "mcp",
+  "taskId": "tier1_issue_triage",
+  "tier": 1,
+  "trialN": 3,
+  "timestamp": "2026-05-17T03:54:36.422Z",
+  "seed": "72eaba0be78fb1f5",
+  "metrics": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedInputTokens": 0,
+    "cacheCreationInputTokens": 0,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "mcp__github__list_issues",
+        "turnIndex": 5
+      },
+      {
+        "name": "mcp__github__search_issues",
+        "turnIndex": 7
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 9
+      },
+      {
+        "name": "mcp__github__get_me",
+        "turnIndex": 11
+      },
+      {
+        "name": "mcp__github__issue_read",
+        "turnIndex": 14
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 16
+      },
+      {
+        "name": "ListMcpResourcesTool",
+        "turnIndex": 18
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 20
+      },
+      {
+        "name": "mcp__github__search_repositories",
+        "turnIndex": 22
+      },
+      {
+        "name": "mcp__github__issue_read",
+        "turnIndex": 25
+      },
+      {
+        "name": "mcp__github__issue_read",
+        "turnIndex": 26
+      },
+      {
+        "name": "mcp__github__issue_read",
+        "turnIndex": 27
+      },
+      {
+        "name": "mcp__github__issue_read",
+        "turnIndex": 28
+      },
+      {
+        "name": "mcp__github__issue_read",
+        "turnIndex": 29
+      },
+      {
+        "name": "mcp__github__get_file_contents",
+        "turnIndex": 32
+      },
+      {
+        "name": "mcp__github__search_issues",
+        "turnIndex": 35
+      },
+      {
+        "name": "mcp__github__list_issues",
+        "turnIndex": 37
+      },
+      {
+        "name": "mcp__github__search_issues",
+        "turnIndex": 39
+      },
+      {
+        "name": "mcp__github__search_issues",
+        "turnIndex": 41
+      },
+      {
+        "name": "ReadMcpResourceTool",
+        "turnIndex": 44
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 45
+      },
+      {
+        "name": "mcp__github__search_code",
+        "turnIndex": 47
+      },
+      {
+        "name": "ReadMcpResourceTool",
+        "turnIndex": 49
+      },
+      {
+        "name": "mcp__github__get_file_contents",
+        "turnIndex": 52
+      },
+      {
+        "name": "mcp__github__search_issues",
+        "turnIndex": 54
+      },
+      {
+        "name": "mcp__github__search_issues",
+        "turnIndex": 56
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 59
+      },
+      {
+        "name": "mcp__github__list_commits",
+        "turnIndex": 61
+      },
+      {
+        "name": "ReadMcpResourceTool",
+        "turnIndex": 64
+      },
+      {
+        "name": "ReadMcpResourceTool",
+        "turnIndex": 67
+      },
+      {
+        "name": "ReadMcpResourceTool",
+        "turnIndex": 68
+      },
+      {
+        "name": "ReadMcpResourceTool",
+        "turnIndex": 69
+      },
+      {
+        "name": "ReadMcpResourceTool",
+        "turnIndex": 70
+      },
+      {
+        "name": "ReadMcpResourceTool",
+        "turnIndex": 71
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 74
+      },
+      {
+        "name": "mcp__github__list_pull_requests",
+        "turnIndex": 76
+      }
+    ],
+    "toolCallCount": 37,
+    "turns": 76,
+    "numTurns": 0,
+    "wallClockMs": 0,
+    "contextWindowPeak": 43572,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "missing or invalid JSON at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/n5/results/mcp/tier1_issue_triage/3/issue_triage.json"
+  },
+  "error": "claude timed out after 240000ms"
+}

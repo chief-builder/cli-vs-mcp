@@ -1,0 +1,193 @@
+{
+  "experiment": "github",
+  "runName": "n5",
+  "arm": "baseline",
+  "taskId": "tier1_issue_triage",
+  "tier": 1,
+  "trialN": 1,
+  "timestamp": "2026-05-16T20:36:24.841Z",
+  "seed": "21251841a9961e1b",
+  "metrics": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedInputTokens": 0,
+    "cacheCreationInputTokens": 0,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 4
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 6
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 8
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 10
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 13
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 15
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 16
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 18
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 20
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 22
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 24
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 25
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 27
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 29
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 31
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 32
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 35
+      },
+      {
+        "name": "Read",
+        "turnIndex": 36
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 38
+      },
+      {
+        "name": "Read",
+        "turnIndex": 39
+      },
+      {
+        "name": "Read",
+        "turnIndex": 42
+      },
+      {
+        "name": "Read",
+        "turnIndex": 43
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 45
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 47
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 48
+      },
+      {
+        "name": "Read",
+        "turnIndex": 49
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 51
+      },
+      {
+        "name": "Read",
+        "turnIndex": 52
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 54
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 55
+      },
+      {
+        "name": "Read",
+        "turnIndex": 56
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 58
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 61
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 62
+      },
+      {
+        "name": "Read",
+        "turnIndex": 64
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 65
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 67
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 69
+      }
+    ],
+    "toolCallCount": 39,
+    "turns": 69,
+    "numTurns": 0,
+    "wallClockMs": 0,
+    "contextWindowPeak": 54721,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "missing or invalid JSON at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/n5/results/baseline/tier1_issue_triage/1/issue_triage.json"
+  },
+  "error": "claude timed out after 240000ms"
+}

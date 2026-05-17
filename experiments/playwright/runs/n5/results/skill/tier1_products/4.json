@@ -1,0 +1,112 @@
+{
+  "experiment": "playwright",
+  "runName": "n5",
+  "arm": "skill",
+  "taskId": "tier1_products",
+  "tier": 1,
+  "trialN": 4,
+  "timestamp": "2026-05-16T18:35:55.233Z",
+  "seed": "3a6ccc53131077f7",
+  "metrics": {
+    "inputTokens": 705,
+    "outputTokens": 1986,
+    "cachedInputTokens": 329453,
+    "cacheCreationInputTokens": 11976,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "playwright-cli open http://localhost:61650/products/index.html"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "playwright-cli --raw eval \"JSON.stringify([...document.querySelectorAll('.product-title, .price')].map(el => ({class: el.className, text: el.textContent}))\" "
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 7,
+        "command": "playwright-cli goto http://localhost:61650/products/p1.html"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 8,
+        "command": "playwright-cli --raw eval \"document.querySelector('.product-title').textContent + '|' + document.querySelector('.price').textContent\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "playwright-cli goto http://localhost:61650/products/p2.html"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "playwright-cli --raw eval \"document.querySelector('.product-title').textContent + '|' + document.querySelector('.price').textContent\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 11,
+        "command": "playwright-cli goto http://localhost:61650/products/p3.html"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 12,
+        "command": "playwright-cli --raw eval \"document.querySelector('.product-title').textContent + '|' + document.querySelector('.price').textContent\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 13,
+        "command": "playwright-cli goto http://localhost:61650/products/p4.html"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 14,
+        "command": "playwright-cli --raw eval \"document.querySelector('.product-title').textContent + '|' + document.querySelector('.price').textContent\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 15,
+        "command": "playwright-cli goto http://localhost:61650/products/p5.html"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 16,
+        "command": "playwright-cli --raw eval \"document.querySelector('.product-title').textContent + '|' + document.querySelector('.price').textContent\""
+      },
+      {
+        "name": "Write",
+        "turnIndex": 18
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 19,
+        "command": "playwright-cli close"
+      }
+    ],
+    "toolCallCount": 15,
+    "turns": 20,
+    "numTurns": 17,
+    "wallClockMs": 54153,
+    "contextWindowPeak": 22940,
+    "totalCostUsd": 0.17413089999999998,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "all 5 products match"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "experiment": "github",
+  "runName": "n5",
+  "arm": "mcp",
+  "taskId": "tier1_repo_inventory",
+  "tier": 1,
+  "trialN": 3,
+  "timestamp": "2026-05-17T03:43:40.852Z",
+  "seed": "19a259bbf0ed9a87",
+  "metrics": {
+    "inputTokens": 662,
+    "outputTokens": 2409,
+    "cachedInputTokens": 177010,
+    "cacheCreationInputTokens": 15108,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "mcp__github__search_repositories",
+        "turnIndex": 5
+      },
+      {
+        "name": "mcp__github__get_file_contents",
+        "turnIndex": 6
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 9
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 11
+      },
+      {
+        "name": "ReadMcpResourceTool",
+        "turnIndex": 13
+      },
+      {
+        "name": "ReadMcpResourceTool",
+        "turnIndex": 15
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 17
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 20
+      },
+      {
+        "name": "mcp__github__list_branches",
+        "turnIndex": 22
+      },
+      {
+        "name": "mcp__github__search_repositories",
+        "turnIndex": 23
+      },
+      {
+        "name": "Write",
+        "turnIndex": 26
+      }
+    ],
+    "toolCallCount": 12,
+    "turns": 27,
+    "numTurns": 13,
+    "wallClockMs": 72279,
+    "contextWindowPeak": 22601,
+    "totalCostUsd": 0.14645099999999997,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "all repo facts match",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier1-repo-inventory-19a259bb",
+      "expectedDescription": "cli-vs-mcp sandbox repo (19a259)",
+      "expectedTopics": [
+        "topic-5e4f",
+        "topic-ed7a",
+        "cli-vs-mcp"
+      ]
+    }
+  }
+}

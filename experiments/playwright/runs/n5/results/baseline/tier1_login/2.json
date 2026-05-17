@@ -1,0 +1,151 @@
+{
+  "experiment": "playwright",
+  "runName": "n5",
+  "arm": "baseline",
+  "taskId": "tier1_login",
+  "tier": 1,
+  "trialN": 2,
+  "timestamp": "2026-05-16T12:48:22.465Z",
+  "seed": "6e95540295ac644c",
+  "metrics": {
+    "inputTokens": 652,
+    "outputTokens": 10341,
+    "cachedInputTokens": 788612,
+    "cacheCreationInputTokens": 42753,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 4
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 7
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 9
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 11
+      },
+      {
+        "name": "Write",
+        "turnIndex": 14
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 17
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 19
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 21
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 22
+      },
+      {
+        "name": "Write",
+        "turnIndex": 25
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 28
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 31
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 34
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 37
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 38
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 39
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 41
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 42
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 44
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 45
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 48
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 51
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 54
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 55
+      },
+      {
+        "name": "EnterPlanMode",
+        "turnIndex": 58
+      },
+      {
+        "name": "Write",
+        "turnIndex": 60
+      },
+      {
+        "name": "ExitPlanMode",
+        "turnIndex": 61
+      }
+    ],
+    "toolCallCount": 28,
+    "turns": 61,
+    "numTurns": 29,
+    "wallClockMs": 218979,
+    "contextWindowPeak": 50139,
+    "totalCostUsd": 0.5526363499999999,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "expected screenshot at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/baseline/tier1_login/2/login_landing.png (>1KB)"
+  }
+}

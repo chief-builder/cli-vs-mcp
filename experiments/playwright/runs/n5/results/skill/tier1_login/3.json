@@ -1,0 +1,83 @@
+{
+  "experiment": "playwright",
+  "runName": "n5",
+  "arm": "skill",
+  "taskId": "tier1_login",
+  "tier": 1,
+  "trialN": 3,
+  "timestamp": "2026-05-16T18:24:52.133Z",
+  "seed": "55365790571d6b4c",
+  "metrics": {
+    "inputTokens": 609,
+    "outputTokens": 1265,
+    "cachedInputTokens": 195020,
+    "cacheCreationInputTokens": 11071,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "playwright-cli open http://localhost:61244/login/index.html"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "playwright-cli snapshot"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "playwright-cli fill e6 \"alice\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "playwright-cli fill e8 \"secret123\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 11,
+        "command": "playwright-cli click e9"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 12,
+        "command": "playwright-cli snapshot"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 15,
+        "command": "playwright-cli screenshot --filename=\"/var/folders/h7/mhpz888d6xzcm62796jyks1c0000gn/T/clivsmcp-playwright-skill-tier1_login-rvIon2/login_landing.png\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 16,
+        "command": "playwright-cli close"
+      }
+    ],
+    "toolCallCount": 9,
+    "turns": 17,
+    "numTurns": 11,
+    "wallClockMs": 43279,
+    "contextWindowPeak": 22035,
+    "totalCostUsd": 0.11948425000000001,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "screenshot saved at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/skill/tier1_login/3/login_landing.png"
+  }
+}

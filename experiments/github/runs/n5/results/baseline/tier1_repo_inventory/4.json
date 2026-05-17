@@ -1,0 +1,161 @@
+{
+  "experiment": "github",
+  "runName": "n5",
+  "arm": "baseline",
+  "taskId": "tier1_repo_inventory",
+  "tier": 1,
+  "trialN": 4,
+  "timestamp": "2026-05-16T20:28:14.197Z",
+  "seed": "6c036db9b93e219b",
+  "metrics": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedInputTokens": 0,
+    "cacheCreationInputTokens": 0,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 4
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 6
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 8
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 10
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 12
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 14
+      },
+      {
+        "name": "Read",
+        "turnIndex": 17
+      },
+      {
+        "name": "Read",
+        "turnIndex": 18
+      },
+      {
+        "name": "Read",
+        "turnIndex": 20
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 21
+      },
+      {
+        "name": "Read",
+        "turnIndex": 22
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 24
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 26
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 28
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 31
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 32
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 34
+      },
+      {
+        "name": "Read",
+        "turnIndex": 35
+      },
+      {
+        "name": "Read",
+        "turnIndex": 37
+      },
+      {
+        "name": "Read",
+        "turnIndex": 38
+      },
+      {
+        "name": "Read",
+        "turnIndex": 40
+      },
+      {
+        "name": "Read",
+        "turnIndex": 42
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 44
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 45
+      },
+      {
+        "name": "Read",
+        "turnIndex": 48
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 49
+      },
+      {
+        "name": "Read",
+        "turnIndex": 51
+      },
+      {
+        "name": "Read",
+        "turnIndex": 52
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 55
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 57
+      }
+    ],
+    "toolCallCount": 31,
+    "turns": 57,
+    "numTurns": 0,
+    "wallClockMs": 0,
+    "contextWindowPeak": 42547,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "missing or invalid JSON at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/n5/results/baseline/tier1_repo_inventory/4/repo_inventory.json"
+  },
+  "error": "claude timed out after 240000ms"
+}

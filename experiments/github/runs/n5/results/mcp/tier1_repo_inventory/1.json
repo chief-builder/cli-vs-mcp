@@ -1,0 +1,104 @@
+{
+  "experiment": "github",
+  "runName": "n5",
+  "arm": "mcp",
+  "taskId": "tier1_repo_inventory",
+  "tier": 1,
+  "trialN": 1,
+  "timestamp": "2026-05-17T03:41:35.775Z",
+  "seed": "40686185ecfeb352",
+  "metrics": {
+    "inputTokens": 657,
+    "outputTokens": 3210,
+    "cachedInputTokens": 144062,
+    "cacheCreationInputTokens": 22044,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "mcp__github__search_repositories",
+        "turnIndex": 5
+      },
+      {
+        "name": "mcp__github__get_file_contents",
+        "turnIndex": 6
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 9
+      },
+      {
+        "name": "mcp__github__get_file_contents",
+        "turnIndex": 10
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 13
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 14
+      },
+      {
+        "name": "mcp__github__list_branches",
+        "turnIndex": 16
+      },
+      {
+        "name": "ReadMcpResourceTool",
+        "turnIndex": 17
+      },
+      {
+        "name": "ListMcpResourcesTool",
+        "turnIndex": 19
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 22
+      },
+      {
+        "name": "mcp__github__search_repositories",
+        "turnIndex": 25
+      },
+      {
+        "name": "mcp__github__get_commit",
+        "turnIndex": 26
+      },
+      {
+        "name": "Write",
+        "turnIndex": 29
+      }
+    ],
+    "toolCallCount": 14,
+    "turns": 30,
+    "numTurns": 15,
+    "wallClockMs": 79309,
+    "contextWindowPeak": 22045,
+    "totalCostUsd": 0.1745806,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "all repo facts match",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier1-repo-inventory-40686185",
+      "expectedDescription": "cli-vs-mcp sandbox repo (406861)",
+      "expectedTopics": [
+        "topic-802d",
+        "topic-8ca2",
+        "cli-vs-mcp"
+      ]
+    }
+  }
+}

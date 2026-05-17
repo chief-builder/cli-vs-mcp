@@ -1,0 +1,111 @@
+{
+  "experiment": "playwright",
+  "runName": "n5",
+  "arm": "skill",
+  "taskId": "tier2_recovery",
+  "tier": 2,
+  "trialN": 4,
+  "timestamp": "2026-05-16T18:43:47.952Z",
+  "seed": "c11719729b3ff823",
+  "metrics": {
+    "inputTokens": 708,
+    "outputTokens": 2513,
+    "cachedInputTokens": 309278,
+    "cacheCreationInputTokens": 12718,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "playwright-cli open http://localhost:61952/recovery/index.html"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "playwright-cli snapshot"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 8,
+        "command": "playwright-cli fill e5 \"Test User\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "playwright-cli fill e7 \"test@example.com\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "playwright-cli fill e9 \"unknown\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 11,
+        "command": "playwright-cli click e10"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 12,
+        "command": "playwright-cli snapshot"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 15,
+        "command": "playwright-cli fill e9 \"7c664538\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 16,
+        "command": "playwright-cli click e10"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 17,
+        "command": "playwright-cli snapshot"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 20,
+        "command": "playwright-cli --raw eval \"document.getElementById('token')?.textContent || document.querySelector('[id=token]')?.textContent\""
+      },
+      {
+        "name": "Write",
+        "turnIndex": 23
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 24,
+        "command": "playwright-cli close"
+      }
+    ],
+    "toolCallCount": 14,
+    "turns": 25,
+    "numTurns": 16,
+    "wallClockMs": 66912,
+    "contextWindowPeak": 23682,
+    "totalCostUsd": 0.17878690000000003,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "per-trial token present",
+    "extras": {
+      "recovery_attempts": 2,
+      "sessions_seen": 1
+    }
+  }
+}

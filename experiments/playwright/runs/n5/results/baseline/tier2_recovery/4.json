@@ -1,0 +1,213 @@
+{
+  "experiment": "playwright",
+  "runName": "n5",
+  "arm": "baseline",
+  "taskId": "tier2_recovery",
+  "tier": 2,
+  "trialN": 4,
+  "timestamp": "2026-05-16T17:43:22.560Z",
+  "seed": "c11719729b3ff823",
+  "metrics": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedInputTokens": 0,
+    "cacheCreationInputTokens": 0,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 4
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 6
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 7
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 9
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 11
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 13
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 14
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 16
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 19
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 20
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 22
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 25
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 26
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 29
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 30
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 33
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 34
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 35
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 38
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 41
+      },
+      {
+        "name": "Read",
+        "turnIndex": 42
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 45
+      },
+      {
+        "name": "Read",
+        "turnIndex": 46
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 47
+      },
+      {
+        "name": "Read",
+        "turnIndex": 50
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 53
+      },
+      {
+        "name": "Read",
+        "turnIndex": 54
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 57
+      },
+      {
+        "name": "Read",
+        "turnIndex": 58
+      },
+      {
+        "name": "Read",
+        "turnIndex": 60
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 63
+      },
+      {
+        "name": "Read",
+        "turnIndex": 64
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 67
+      },
+      {
+        "name": "Read",
+        "turnIndex": 70
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 71
+      },
+      {
+        "name": "Read",
+        "turnIndex": 74
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 75
+      },
+      {
+        "name": "Read",
+        "turnIndex": 76
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 77
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 80
+      },
+      {
+        "name": "Read",
+        "turnIndex": 81
+      },
+      {
+        "name": "Read",
+        "turnIndex": 82
+      }
+    ],
+    "toolCallCount": 43,
+    "turns": 82,
+    "numTurns": 0,
+    "wallClockMs": 0,
+    "contextWindowPeak": 86736,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "missing /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/baseline/tier2_recovery/4/recovery_token.txt",
+    "extras": {
+      "recovery_attempts": 0,
+      "sessions_seen": 0
+    }
+  },
+  "error": "claude timed out after 240000ms"
+}

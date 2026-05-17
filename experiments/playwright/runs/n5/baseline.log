@@ -1,0 +1,92 @@
+=== playwright baseline tier 1 ===
+$ node --import tsx harness/src/cli.ts run --experiment playwright --run n5 --arm baseline --tier 1 --trials 5
+→ playwright/n5  tier1_login  arm=baseline  trial=1/5
+  ✗ score=0.00  valid  tokens_in=629  turns=38  time=153.5s
+→ playwright/n5  tier1_login  arm=baseline  trial=2/5
+  ✗ score=0.00  valid  tokens_in=652  turns=61  time=219.0s
+→ playwright/n5  tier1_login  arm=baseline  trial=3/5
+  ✗ score=0.00  valid  tokens_in=0  turns=61  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier1_login  arm=baseline  trial=4/5
+  ✗ score=0.00  valid  tokens_in=646  turns=46  time=155.9s
+→ playwright/n5  tier1_login  arm=baseline  trial=5/5
+  ✗ score=0.00  valid  tokens_in=0  turns=56  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier1_scrape  arm=baseline  trial=1/5
+  ✗ score=0.00  valid  tokens_in=0  turns=55  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier1_scrape  arm=baseline  trial=2/5
+  ✗ score=0.00  valid  tokens_in=0  turns=5  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier1_scrape  arm=baseline  trial=3/5
+  ✗ score=0.00  valid  tokens_in=0  turns=7  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier1_scrape  arm=baseline  trial=4/5
+  ✗ score=0.00  valid  tokens_in=0  turns=0  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier1_scrape  arm=baseline  trial=5/5
+  ✗ score=0.00  valid  tokens_in=0  turns=5  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier1_form  arm=baseline  trial=1/5
+  ✗ score=0.00  valid  tokens_in=0  turns=2  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier1_form  arm=baseline  trial=2/5
+  ✗ score=0.00  valid  tokens_in=0  turns=9  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier1_form  arm=baseline  trial=3/5
+  ✗ score=0.00  valid  tokens_in=0  turns=7  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier1_form  arm=baseline  trial=4/5
+  ✗ score=0.00  valid  tokens_in=0  turns=3  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier1_form  arm=baseline  trial=5/5
+  ✗ score=0.00  valid  tokens_in=0  turns=4  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier1_products  arm=baseline  trial=1/5
+  ✗ score=0.00  valid  tokens_in=0  turns=0  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier1_products  arm=baseline  trial=2/5
+  ✗ score=0.00  valid  tokens_in=0  turns=0  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier1_products  arm=baseline  trial=3/5
+  ✗ score=0.00  valid  tokens_in=0  turns=8  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier1_products  arm=baseline  trial=4/5
+  ✗ score=0.00  valid  tokens_in=0  turns=3  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier1_products  arm=baseline  trial=5/5
+  ✗ score=0.00  valid  tokens_in=0  turns=0  time=0.0s
+  error: claude timed out after 240000ms
+=== playwright baseline tier 2 ===
+$ node --import tsx harness/src/cli.ts run --experiment playwright --run n5 --arm baseline --tier 2 --trials 5
+→ playwright/n5  tier2_checkout  arm=baseline  trial=1/5
+  ✗ score=0.00  valid  tokens_in=0  turns=0  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier2_checkout  arm=baseline  trial=2/5
+  ✗ score=0.00  valid  tokens_in=0  turns=4  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier2_checkout  arm=baseline  trial=3/5
+  ✗ score=0.00  valid  tokens_in=0  turns=6  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier2_checkout  arm=baseline  trial=4/5
+  ✗ score=0.00  valid  tokens_in=0  turns=5  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier2_checkout  arm=baseline  trial=5/5
+  ✗ score=0.00  valid  tokens_in=0  turns=9  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier2_recovery  arm=baseline  trial=1/5
+  ✗ score=0.00  valid  tokens_in=0  turns=4  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier2_recovery  arm=baseline  trial=2/5
+  ✗ score=0.00  valid  tokens_in=0  turns=2  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier2_recovery  arm=baseline  trial=3/5
+  ✗ score=0.00  valid  tokens_in=0  turns=64  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier2_recovery  arm=baseline  trial=4/5
+  ✗ score=0.00  valid  tokens_in=0  turns=82  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier2_recovery  arm=baseline  trial=5/5
+  ✗ score=0.00  valid  tokens_in=0  turns=66  time=0.0s
+  error: claude timed out after 240000ms
+=== DONE playwright baseline ===

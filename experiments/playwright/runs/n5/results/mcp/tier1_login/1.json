@@ -1,0 +1,75 @@
+{
+  "experiment": "playwright",
+  "runName": "n5",
+  "arm": "mcp",
+  "taskId": "tier1_login",
+  "tier": 1,
+  "trialN": 1,
+  "timestamp": "2026-05-16T18:46:10.907Z",
+  "seed": "cfdae24c5e7773b8",
+  "metrics": {
+    "inputTokens": 611,
+    "outputTokens": 1073,
+    "cachedInputTokens": 136077,
+    "cacheCreationInputTokens": 8308,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 6
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 7
+      },
+      {
+        "name": "mcp__playwright__browser_fill_form",
+        "turnIndex": 8
+      },
+      {
+        "name": "mcp__playwright__browser_click",
+        "turnIndex": 9
+      },
+      {
+        "name": "mcp__playwright__browser_wait_for",
+        "turnIndex": 10
+      },
+      {
+        "name": "mcp__playwright__browser_wait_for",
+        "turnIndex": 11
+      },
+      {
+        "name": "mcp__playwright__browser_take_screenshot",
+        "turnIndex": 13
+      },
+      {
+        "name": "mcp__playwright__browser_take_screenshot",
+        "turnIndex": 16
+      }
+    ],
+    "toolCallCount": 9,
+    "turns": 17,
+    "numTurns": 10,
+    "wallClockMs": 30506,
+    "contextWindowPeak": 15801,
+    "totalCostUsd": 0.08856209999999998,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "screenshot saved at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/mcp/tier1_login/1/login_landing.png"
+  }
+}

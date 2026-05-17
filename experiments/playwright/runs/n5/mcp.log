@@ -1,0 +1,68 @@
+=== playwright mcp tier 1 ===
+$ node --import tsx harness/src/cli.ts run --experiment playwright --run n5 --arm mcp --tier 1 --trials 5
+→ playwright/n5  tier1_login  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=611  turns=17  time=30.5s
+→ playwright/n5  tier1_login  arm=mcp  trial=2/5
+  ✓ score=1.00  valid  tokens_in=611  turns=16  time=22.7s
+→ playwright/n5  tier1_login  arm=mcp  trial=3/5
+  ✓ score=1.00  valid  tokens_in=613  turns=19  time=33.9s
+→ playwright/n5  tier1_login  arm=mcp  trial=4/5
+  ✓ score=1.00  valid  tokens_in=608  turns=18  time=35.2s
+→ playwright/n5  tier1_login  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=609  turns=17  time=28.6s
+→ playwright/n5  tier1_scrape  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=672  turns=12  time=16.7s
+→ playwright/n5  tier1_scrape  arm=mcp  trial=2/5
+  ✓ score=1.00  valid  tokens_in=671  turns=12  time=18.2s
+→ playwright/n5  tier1_scrape  arm=mcp  trial=3/5
+  ✓ score=1.00  valid  tokens_in=670  turns=9  time=21.8s
+→ playwright/n5  tier1_scrape  arm=mcp  trial=4/5
+  ✓ score=1.00  valid  tokens_in=668  turns=10  time=13.7s
+→ playwright/n5  tier1_scrape  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=671  turns=12  time=20.3s
+→ playwright/n5  tier1_form  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=724  turns=14  time=23.1s
+→ playwright/n5  tier1_form  arm=mcp  trial=2/5
+  ✓ score=1.00  valid  tokens_in=724  turns=14  time=21.8s
+→ playwright/n5  tier1_form  arm=mcp  trial=3/5
+  ✓ score=1.00  valid  tokens_in=724  turns=14  time=25.9s
+→ playwright/n5  tier1_form  arm=mcp  trial=4/5
+  ✓ score=1.00  valid  tokens_in=723  turns=13  time=21.3s
+→ playwright/n5  tier1_form  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=724  turns=14  time=24.3s
+→ playwright/n5  tier1_products  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=708  turns=22  time=39.8s
+→ playwright/n5  tier1_products  arm=mcp  trial=2/5
+  ✓ score=1.00  valid  tokens_in=707  turns=22  time=41.5s
+→ playwright/n5  tier1_products  arm=mcp  trial=3/5
+  ✓ score=1.00  valid  tokens_in=703  turns=19  time=26.1s
+→ playwright/n5  tier1_products  arm=mcp  trial=4/5
+  ✓ score=1.00  valid  tokens_in=708  turns=24  time=42.6s
+→ playwright/n5  tier1_products  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=703  turns=19  time=27.9s
+=== playwright mcp tier 2 ===
+$ node --import tsx harness/src/cli.ts run --experiment playwright --run n5 --arm mcp --tier 2 --trials 5
+→ playwright/n5  tier2_checkout  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=735  turns=27  time=64.1s
+→ playwright/n5  tier2_checkout  arm=mcp  trial=2/5
+  ✓ score=1.00  valid  tokens_in=736  turns=26  time=51.5s
+→ playwright/n5  tier2_checkout  arm=mcp  trial=3/5
+  ✓ score=1.00  valid  tokens_in=734  turns=28  time=58.1s
+→ playwright/n5  tier2_checkout  arm=mcp  trial=4/5
+  ✓ score=1.00  valid  tokens_in=730  turns=26  time=51.6s
+→ playwright/n5  tier2_checkout  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=736  turns=28  time=37.8s
+→ playwright/n5  tier2_recovery  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=707  turns=20  time=36.6s
+→ playwright/n5  tier2_recovery  arm=mcp  trial=2/5
+  ✗ score=0.00  valid  tokens_in=0  turns=9  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier2_recovery  arm=mcp  trial=3/5
+  ✗ score=0.00  valid  tokens_in=0  turns=8  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier2_recovery  arm=mcp  trial=4/5
+  ✗ score=0.00  valid  tokens_in=0  turns=3  time=0.0s
+  error: claude timed out after 240000ms
+→ playwright/n5  tier2_recovery  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=708  turns=19  time=33.9s
+=== DONE playwright mcp ===

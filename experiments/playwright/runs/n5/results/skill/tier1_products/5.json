@@ -1,0 +1,114 @@
+{
+  "experiment": "playwright",
+  "runName": "n5",
+  "arm": "skill",
+  "taskId": "tier1_products",
+  "tier": 1,
+  "trialN": 5,
+  "timestamp": "2026-05-16T18:36:49.745Z",
+  "seed": "a3385c8782abbcab",
+  "metrics": {
+    "inputTokens": 703,
+    "outputTokens": 1950,
+    "cachedInputTokens": 307478,
+    "cacheCreationInputTokens": 11925,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "playwright-cli open http://localhost:61686/products/index.html"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "playwright-cli --raw eval \"JSON.stringify({title: document.querySelector('.product-title')?.textContent, price: document.querySelector('.price')?.textContent})\" && playwright-cli goto http://localhost:61686/products/p1.html"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 7,
+        "command": "playwright-cli --raw eval \"JSON.stringify({title: document.querySelector('.product-title')?.textContent?.trim(), price: document.querySelector('.price')?.textContent?.trim()})\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 8,
+        "command": "playwright-cli goto http://localhost:61686/products/p2.html"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "playwright-cli --raw eval \"JSON.stringify({title: document.querySelector('.product-title')?.textContent?.trim(), price: document.querySelector('.price')?.textContent?.trim()})\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "playwright-cli goto http://localhost:61686/products/p3.html"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 11,
+        "command": "playwright-cli --raw eval \"JSON.stringify({title: document.querySelector('.product-title')?.textContent?.trim(), price: document.querySelector('.price')?.textContent?.trim()})\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 12,
+        "command": "playwright-cli goto http://localhost:61686/products/p4.html"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 13,
+        "command": "playwright-cli --raw eval \"JSON.stringify({title: document.querySelector('.product-title')?.textContent?.trim(), price: document.querySelector('.price')?.textContent?.trim()})\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 14,
+        "command": "playwright-cli goto http://localhost:61686/products/p5.html"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 15,
+        "command": "playwright-cli --raw eval \"JSON.stringify({title: document.querySelector('.product-title')?.textContent?.trim(), price: document.querySelector('.price')?.textContent?.trim()})\""
+      },
+      {
+        "name": "Write",
+        "turnIndex": 17
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 18,
+        "command": "playwright-cli close"
+      }
+    ],
+    "toolCallCount": 14,
+    "turns": 19,
+    "numTurns": 16,
+    "wallClockMs": 55277,
+    "contextWindowPeak": 22889,
+    "totalCostUsd": 0.16680314999999998,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": false,
+    "cliCommandGranularityViolations": [
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "playwright-cli --raw eval \"JSON.stringify({title: document.querySelector('.product-title')?.textContent, price: document.querySelector('.price')?.textContent})\" && playwright-cli goto http://localhost:61686/products/p1.html",
+        "reason": "multiple shell operations in one Bash call: playwright-cli --raw eval \"JSON.stringify({title: document.querySelector('.product-title')?.textContent, price: document"
+      }
+    ]
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "all 5 products match"
+  }
+}

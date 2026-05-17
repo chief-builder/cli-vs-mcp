@@ -1,0 +1,113 @@
+{
+  "experiment": "playwright",
+  "runName": "n5",
+  "arm": "skill",
+  "taskId": "tier1_products",
+  "tier": 1,
+  "trialN": 2,
+  "timestamp": "2026-05-16T18:34:03.185Z",
+  "seed": "c45358ac751af219",
+  "metrics": {
+    "inputTokens": 698,
+    "outputTokens": 1649,
+    "cachedInputTokens": 198192,
+    "cacheCreationInputTokens": 11565,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "playwright-cli open http://localhost:61596/products/index.html"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 8,
+        "command": "playwright-cli goto http://localhost:61596/products/p1.html && playwright-cli --raw eval \"JSON.stringify({title: document.querySelector('.product-title').textContent.trim(), price: document.querySelector('.price').textContent.trim()})\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "playwright-cli goto http://localhost:61596/products/p2.html && playwright-cli --raw eval \"JSON.stringify({title: document.querySelector('.product-title').textContent.trim(), price: document.querySelector('.price').textContent.trim()})\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "playwright-cli goto http://localhost:61596/products/p3.html && playwright-cli --raw eval \"JSON.stringify({title: document.querySelector('.product-title').textContent.trim(), price: document.querySelector('.price').textContent.trim()})\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 11,
+        "command": "playwright-cli goto http://localhost:61596/products/p4.html && playwright-cli --raw eval \"JSON.stringify({title: document.querySelector('.product-title').textContent.trim(), price: document.querySelector('.price').textContent.trim()})\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 12,
+        "command": "playwright-cli goto http://localhost:61596/products/p5.html && playwright-cli --raw eval \"JSON.stringify({title: document.querySelector('.product-title').textContent.trim(), price: document.querySelector('.price').textContent.trim()})\""
+      },
+      {
+        "name": "Write",
+        "turnIndex": 14
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 15,
+        "command": "playwright-cli close"
+      }
+    ],
+    "toolCallCount": 9,
+    "turns": 16,
+    "numTurns": 11,
+    "wallClockMs": 54805,
+    "contextWindowPeak": 22529,
+    "totalCostUsd": 0.12813734999999998,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": false,
+    "cliCommandGranularityViolations": [
+      {
+        "name": "Bash",
+        "turnIndex": 8,
+        "command": "playwright-cli goto http://localhost:61596/products/p1.html && playwright-cli --raw eval \"JSON.stringify({title: document.querySelector('.product-title').textContent.trim(), price: document.querySelector('.price').textContent.trim()})\"",
+        "reason": "multiple shell operations in one Bash call: playwright-cli goto http://localhost:61596/products/p1.html && playwright-cli --raw eval \"JSON.stringify({title: documen"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "playwright-cli goto http://localhost:61596/products/p2.html && playwright-cli --raw eval \"JSON.stringify({title: document.querySelector('.product-title').textContent.trim(), price: document.querySelector('.price').textContent.trim()})\"",
+        "reason": "multiple shell operations in one Bash call: playwright-cli goto http://localhost:61596/products/p2.html && playwright-cli --raw eval \"JSON.stringify({title: documen"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "playwright-cli goto http://localhost:61596/products/p3.html && playwright-cli --raw eval \"JSON.stringify({title: document.querySelector('.product-title').textContent.trim(), price: document.querySelector('.price').textContent.trim()})\"",
+        "reason": "multiple shell operations in one Bash call: playwright-cli goto http://localhost:61596/products/p3.html && playwright-cli --raw eval \"JSON.stringify({title: documen"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 11,
+        "command": "playwright-cli goto http://localhost:61596/products/p4.html && playwright-cli --raw eval \"JSON.stringify({title: document.querySelector('.product-title').textContent.trim(), price: document.querySelector('.price').textContent.trim()})\"",
+        "reason": "multiple shell operations in one Bash call: playwright-cli goto http://localhost:61596/products/p4.html && playwright-cli --raw eval \"JSON.stringify({title: documen"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 12,
+        "command": "playwright-cli goto http://localhost:61596/products/p5.html && playwright-cli --raw eval \"JSON.stringify({title: document.querySelector('.product-title').textContent.trim(), price: document.querySelector('.price').textContent.trim()})\"",
+        "reason": "multiple shell operations in one Bash call: playwright-cli goto http://localhost:61596/products/p5.html && playwright-cli --raw eval \"JSON.stringify({title: documen"
+      }
+    ]
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "all 5 products match"
+  }
+}

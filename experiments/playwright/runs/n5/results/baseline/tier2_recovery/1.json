@@ -1,0 +1,49 @@
+{
+  "experiment": "playwright",
+  "runName": "n5",
+  "arm": "baseline",
+  "taskId": "tier2_recovery",
+  "tier": 2,
+  "trialN": 1,
+  "timestamp": "2026-05-16T17:01:48.632Z",
+  "seed": "d34034cedae43d05",
+  "metrics": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedInputTokens": 0,
+    "cacheCreationInputTokens": 0,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 4
+      }
+    ],
+    "toolCallCount": 2,
+    "turns": 4,
+    "numTurns": 0,
+    "wallClockMs": 0,
+    "contextWindowPeak": 12211,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "missing /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/baseline/tier2_recovery/1/recovery_token.txt",
+    "extras": {
+      "recovery_attempts": 0,
+      "sessions_seen": 0
+    }
+  },
+  "error": "claude timed out after 240000ms"
+}

@@ -1,0 +1,67 @@
+{
+  "experiment": "playwright",
+  "runName": "n5",
+  "arm": "mcp",
+  "taskId": "tier1_form",
+  "tier": 1,
+  "trialN": 4,
+  "timestamp": "2026-05-16T18:51:58.263Z",
+  "seed": "d902fe4b25a8b9c2",
+  "metrics": {
+    "inputTokens": 723,
+    "outputTokens": 955,
+    "cachedInputTokens": 106218,
+    "cacheCreationInputTokens": 7875,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 2
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 4
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 5
+      },
+      {
+        "name": "mcp__playwright__browser_fill_form",
+        "turnIndex": 8
+      },
+      {
+        "name": "mcp__playwright__browser_click",
+        "turnIndex": 9
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 10
+      },
+      {
+        "name": "Write",
+        "turnIndex": 12
+      }
+    ],
+    "toolCallCount": 7,
+    "turns": 13,
+    "numTurns": 8,
+    "wallClockMs": 21315,
+    "contextWindowPeak": 15368,
+    "totalCostUsd": 0.07631865,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "per-trial token present"
+  }
+}

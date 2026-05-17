@@ -1,0 +1,129 @@
+{
+  "experiment": "github",
+  "runName": "n5",
+  "arm": "baseline",
+  "taskId": "tier1_repo_inventory",
+  "tier": 1,
+  "trialN": 1,
+  "timestamp": "2026-05-16T20:16:49.309Z",
+  "seed": "40686185ecfeb352",
+  "metrics": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedInputTokens": 0,
+    "cacheCreationInputTokens": 0,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 5
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 7
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 8
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 11
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 13
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 15
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 17
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 19
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 21
+      },
+      {
+        "name": "Read",
+        "turnIndex": 24
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 25
+      },
+      {
+        "name": "Read",
+        "turnIndex": 28
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 29
+      },
+      {
+        "name": "Read",
+        "turnIndex": 31
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 32
+      },
+      {
+        "name": "Read",
+        "turnIndex": 35
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 36
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 39
+      },
+      {
+        "name": "AskUserQuestion",
+        "turnIndex": 42
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 45
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 48
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 49
+      }
+    ],
+    "toolCallCount": 23,
+    "turns": 49,
+    "numTurns": 0,
+    "wallClockMs": 0,
+    "contextWindowPeak": 49704,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "missing or invalid JSON at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/n5/results/baseline/tier1_repo_inventory/1/repo_inventory.json"
+  },
+  "error": "claude timed out after 240000ms"
+}

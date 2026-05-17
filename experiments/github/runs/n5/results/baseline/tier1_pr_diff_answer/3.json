@@ -1,0 +1,177 @@
+{
+  "experiment": "github",
+  "runName": "n5",
+  "arm": "baseline",
+  "taskId": "tier1_pr_diff_answer",
+  "tier": 1,
+  "trialN": 3,
+  "timestamp": "2026-05-16T21:07:50.829Z",
+  "seed": "5613968331afec84",
+  "metrics": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedInputTokens": 0,
+    "cacheCreationInputTokens": 0,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 6
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 8
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 10
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 12
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 14
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 16
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 17
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 20
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 22
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 24
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 27
+      },
+      {
+        "name": "Read",
+        "turnIndex": 30
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 32
+      },
+      {
+        "name": "Read",
+        "turnIndex": 35
+      },
+      {
+        "name": "Read",
+        "turnIndex": 36
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 39
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 40
+      },
+      {
+        "name": "Read",
+        "turnIndex": 43
+      },
+      {
+        "name": "Read",
+        "turnIndex": 44
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 47
+      },
+      {
+        "name": "Read",
+        "turnIndex": 48
+      },
+      {
+        "name": "Read",
+        "turnIndex": 51
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 54
+      },
+      {
+        "name": "Read",
+        "turnIndex": 55
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 58
+      },
+      {
+        "name": "Read",
+        "turnIndex": 59
+      },
+      {
+        "name": "Read",
+        "turnIndex": 62
+      },
+      {
+        "name": "Read",
+        "turnIndex": 63
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 66
+      },
+      {
+        "name": "Read",
+        "turnIndex": 69
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 72
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 75
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 77
+      },
+      {
+        "name": "Read",
+        "turnIndex": 80
+      }
+    ],
+    "toolCallCount": 35,
+    "turns": 80,
+    "numTurns": 0,
+    "wallClockMs": 0,
+    "contextWindowPeak": 79088,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "missing or invalid JSON at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/n5/results/baseline/tier1_pr_diff_answer/3/pr_diff.json"
+  },
+  "error": "claude timed out after 240000ms"
+}

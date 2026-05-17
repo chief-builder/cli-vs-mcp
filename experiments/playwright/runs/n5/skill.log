@@ -1,0 +1,65 @@
+=== playwright skill tier 1 ===
+$ node --import tsx harness/src/cli.ts run --experiment playwright --run n5 --arm skill --tier 1 --trials 5
+→ playwright/n5  tier1_login  arm=skill  trial=1/5
+  ✓ score=1.00  valid  tokens_in=609  turns=15  time=26.8s
+→ playwright/n5  tier1_login  arm=skill  trial=2/5
+  ✓ score=1.00  valid  tokens_in=609  turns=14  time=51.5s
+→ playwright/n5  tier1_login  arm=skill  trial=3/5
+  ✓ score=1.00  valid  tokens_in=609  turns=17  time=43.3s
+→ playwright/n5  tier1_login  arm=skill  trial=4/5
+  ✓ score=1.00  valid  tokens_in=607  turns=14  time=33.1s
+→ playwright/n5  tier1_login  arm=skill  trial=5/5
+  ✓ score=1.00  valid  tokens_in=609  turns=13  time=36.5s
+→ playwright/n5  tier1_scrape  arm=skill  trial=1/5
+  ✓ score=1.00  valid  tokens_in=668  turns=8  time=39.2s
+→ playwright/n5  tier1_scrape  arm=skill  trial=2/5
+  ✓ score=1.00  valid  tokens_in=667  turns=10  time=18.7s
+→ playwright/n5  tier1_scrape  arm=skill  trial=3/5
+  ✓ score=1.00  valid  tokens_in=667  turns=8  time=44.7s
+→ playwright/n5  tier1_scrape  arm=skill  trial=4/5
+  ✓ score=1.00  valid  tokens_in=669  turns=9  time=18.6s
+→ playwright/n5  tier1_scrape  arm=skill  trial=5/5
+  ✓ score=1.00  valid  tokens_in=667  turns=8  time=17.2s
+→ playwright/n5  tier1_form  arm=skill  trial=1/5
+  ✓ score=1.00  valid  tokens_in=728  turns=20  time=33.9s
+→ playwright/n5  tier1_form  arm=skill  trial=2/5
+  ✓ score=1.00  valid  tokens_in=728  turns=19  time=46.8s
+→ playwright/n5  tier1_form  arm=skill  trial=3/5
+  ✓ score=1.00  valid  tokens_in=727  turns=19  time=41.6s
+→ playwright/n5  tier1_form  arm=skill  trial=4/5
+  ✓ score=1.00  valid  tokens_in=728  turns=20  time=69.5s
+→ playwright/n5  tier1_form  arm=skill  trial=5/5
+  ✓ score=1.00  valid  tokens_in=728  turns=19  time=39.8s
+→ playwright/n5  tier1_products  arm=skill  trial=1/5
+  ✓ score=1.00  valid  tokens_in=704  turns=19  time=62.9s
+→ playwright/n5  tier1_products  arm=skill  trial=2/5
+  ✓ score=1.00  valid  tokens_in=698  turns=16  time=54.8s
+→ playwright/n5  tier1_products  arm=skill  trial=3/5
+  ✓ score=1.00  valid  tokens_in=700  turns=18  time=56.5s
+→ playwright/n5  tier1_products  arm=skill  trial=4/5
+  ✓ score=1.00  valid  tokens_in=705  turns=20  time=54.2s
+→ playwright/n5  tier1_products  arm=skill  trial=5/5
+  ✓ score=1.00  valid  tokens_in=703  turns=19  time=55.3s
+=== playwright skill tier 2 ===
+$ node --import tsx harness/src/cli.ts run --experiment playwright --run n5 --arm skill --tier 2 --trials 5
+→ playwright/n5  tier2_checkout  arm=skill  trial=1/5
+  ✓ score=1.00  valid  tokens_in=727  turns=21  time=40.2s
+→ playwright/n5  tier2_checkout  arm=skill  trial=2/5
+  ✓ score=1.00  valid  tokens_in=728  turns=23  time=44.1s
+→ playwright/n5  tier2_checkout  arm=skill  trial=3/5
+  ✓ score=1.00  valid  tokens_in=728  turns=19  time=49.6s
+→ playwright/n5  tier2_checkout  arm=skill  trial=4/5
+  ✓ score=1.00  valid  tokens_in=726  turns=20  time=47.1s
+→ playwright/n5  tier2_checkout  arm=skill  trial=5/5
+  ✓ score=1.00  valid  tokens_in=724  turns=19  time=39.3s
+→ playwright/n5  tier2_recovery  arm=skill  trial=1/5
+  ✓ score=1.00  valid  tokens_in=706  turns=23  time=49.5s
+→ playwright/n5  tier2_recovery  arm=skill  trial=2/5
+  ✓ score=1.00  valid  tokens_in=706  turns=22  time=52.9s
+→ playwright/n5  tier2_recovery  arm=skill  trial=3/5
+  ✓ score=1.00  valid  tokens_in=707  turns=21  time=36.4s
+→ playwright/n5  tier2_recovery  arm=skill  trial=4/5
+  ✓ score=1.00  valid  tokens_in=708  turns=25  time=66.9s
+→ playwright/n5  tier2_recovery  arm=skill  trial=5/5
+  ✓ score=1.00  valid  tokens_in=707  turns=21  time=60.0s
+=== DONE playwright skill ===

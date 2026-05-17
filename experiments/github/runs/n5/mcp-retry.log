@@ -1,0 +1,48 @@
+=== github mcp retry2 ===
+$ node --import tsx harness/src/cli.ts run --experiment github --run n5 --arm mcp --tier 1 --trials 5
+→ github/n5  tier1_repo_inventory  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=657  turns=30  time=79.3s
+→ github/n5  tier1_repo_inventory  arm=mcp  trial=2/5
+  ✓ score=1.00  valid  tokens_in=653  turns=21  time=37.8s
+→ github/n5  tier1_repo_inventory  arm=mcp  trial=3/5
+  ✓ score=1.00  valid  tokens_in=662  turns=27  time=72.3s
+→ github/n5  tier1_repo_inventory  arm=mcp  trial=4/5
+  ✓ score=1.00  valid  tokens_in=647  turns=10  time=20.3s
+→ github/n5  tier1_repo_inventory  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=657  turns=25  time=54.2s
+→ github/n5  tier1_issue_triage  arm=mcp  trial=1/5
+  ✗ score=0.00  valid  tokens_in=0  turns=58  time=0.0s
+  error: claude timed out after 240000ms
+→ github/n5  tier1_issue_triage  arm=mcp  trial=2/5
+  ✗ score=0.00  valid  tokens_in=0  turns=75  time=0.0s
+  error: claude timed out after 240000ms
+→ github/n5  tier1_issue_triage  arm=mcp  trial=3/5
+  ✗ score=0.00  valid  tokens_in=0  turns=76  time=0.0s
+  error: claude timed out after 240000ms
+→ github/n5  tier1_issue_triage  arm=mcp  trial=4/5
+  ✗ score=0.00  valid  tokens_in=0  turns=78  time=0.0s
+  error: claude timed out after 240000ms
+→ github/n5  tier1_issue_triage  arm=mcp  trial=5/5
+  ✗ score=0.00  valid  tokens_in=0  turns=77  time=0.0s
+  error: claude timed out after 240000ms
+→ github/n5  tier1_pr_diff_answer  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=701  turns=8  time=12.9s
+→ github/n5  tier1_pr_diff_answer  arm=mcp  trial=2/5
+  trial 2 threw: Error: GET /repos/chief-builder-lab/clivsmcp-tier1-pr-diff-answer-f85b3d7e/contents/src/widget.ts?ref=feature-f85b3d7e -> 404: {"message":"Not Found","documentation_url":"https://docs.github.com/rest/repos/contents#get-repository-content","status":"404"}
+    at fetchJson (/Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/tasks/tier1.ts:405:22)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Object.setup (/Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/tasks/tier1.ts:325:25)
+    at async runTrial (/Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/harness/src/runner.ts:155:30)
+    at async Command.<anonymous> (/Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/harness/src/cli.ts:103:26)
+→ github/n5  tier1_pr_diff_answer  arm=mcp  trial=3/5
+  trial 3 threw: Error: GET /repos/chief-builder-lab/clivsmcp-tier1-pr-diff-answer-56139683/contents/src/widget.ts?ref=feature-56139683 -> 404: {"message":"Not Found","documentation_url":"https://docs.github.com/rest/repos/contents#get-repository-content","status":"404"}
+    at fetchJson (/Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/tasks/tier1.ts:405:22)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Object.setup (/Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/tasks/tier1.ts:325:25)
+    at async runTrial (/Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/harness/src/runner.ts:155:30)
+    at async Command.<anonymous> (/Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/harness/src/cli.ts:103:26)
+→ github/n5  tier1_pr_diff_answer  arm=mcp  trial=4/5
+  ✓ score=1.00  valid  tokens_in=707  turns=8  time=13.7s
+→ github/n5  tier1_pr_diff_answer  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=704  turns=9  time=12.9s
+=== DONE ===

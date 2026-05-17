@@ -1,0 +1,45 @@
+{
+  "experiment": "playwright",
+  "runName": "n5",
+  "arm": "baseline",
+  "taskId": "tier1_products",
+  "tier": 1,
+  "trialN": 4,
+  "timestamp": "2026-05-16T15:38:38.350Z",
+  "seed": "3a6ccc53131077f7",
+  "metrics": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedInputTokens": 0,
+    "cacheCreationInputTokens": 0,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 2
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      }
+    ],
+    "toolCallCount": 2,
+    "turns": 3,
+    "numTurns": 0,
+    "wallClockMs": 0,
+    "contextWindowPeak": 12214,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "missing or invalid JSON at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/baseline/tier1_products/4/products.json"
+  },
+  "error": "claude timed out after 240000ms"
+}

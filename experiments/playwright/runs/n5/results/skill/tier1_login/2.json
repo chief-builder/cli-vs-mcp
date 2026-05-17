@@ -1,0 +1,78 @@
+{
+  "experiment": "playwright",
+  "runName": "n5",
+  "arm": "skill",
+  "taskId": "tier1_login",
+  "tier": 1,
+  "trialN": 2,
+  "timestamp": "2026-05-16T18:24:00.298Z",
+  "seed": "6e95540295ac644c",
+  "metrics": {
+    "inputTokens": 609,
+    "outputTokens": 1169,
+    "cachedInputTokens": 173044,
+    "cacheCreationInputTokens": 10948,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "playwright-cli open http://localhost:61217/login/index.html"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "playwright-cli snapshot"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 7,
+        "command": "playwright-cli fill e6 \"alice\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 8,
+        "command": "playwright-cli fill e8 \"secret123\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "playwright-cli click e9"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 11,
+        "command": "playwright-cli snapshot"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 13,
+        "command": "playwright-cli screenshot --filename=\"/var/folders/h7/mhpz888d6xzcm62796jyks1c0000gn/T/clivsmcp-playwright-skill-tier1_login-sIFh0K/login_landing.png\""
+      }
+    ],
+    "toolCallCount": 8,
+    "turns": 14,
+    "numTurns": 10,
+    "wallClockMs": 51461,
+    "contextWindowPeak": 21912,
+    "totalCostUsd": 0.1109982,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "screenshot saved at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/skill/tier1_login/2/login_landing.png"
+  }
+}

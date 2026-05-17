@@ -1,0 +1,103 @@
+{
+  "experiment": "github",
+  "runName": "n5",
+  "arm": "skill",
+  "taskId": "tier1_issue_triage",
+  "tier": 1,
+  "trialN": 4,
+  "timestamp": "2026-05-16T21:21:01.359Z",
+  "seed": "4cba9e5964f0af36",
+  "metrics": {
+    "inputTokens": 722,
+    "outputTokens": 1205,
+    "cachedInputTokens": 121627,
+    "cacheCreationInputTokens": 8807,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 3
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "gh issue list --repo chief-builder-lab/clivsmcp-tier1-issue-triage-4cba9e59 --state open --json number,title,labels,body"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 7,
+        "command": "gh auth status && gh api repos/chief-builder-lab/clivsmcp-tier1-issue-triage-4cba9e59/issues -X GET -f state=open --jq '.[] | {number, title, body, labels: [.labels[].name]}'"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "gh api graphql -f query='\n{\n  repository(owner: \"chief-builder-lab\", name: \"clivsmcp-tier1-issue-triage-4cba9e59\") {\n    issues(states: OPEN, first: 50) {\n      nodes {\n        number\n        title\n        body\n        labels(first: 10) {\n          nodes { name }\n        }\n      }\n    }\n  }\n}' --jq '.data.repository.issues.nodes[] | {number, title, body: .body, labels: [.labels.nodes[].name]}'"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "GITHUB_TOKEN=\"\" GH_TOKEN=\"\" gh api repos/chief-builder-lab/clivsmcp-tier1-issue-triage-4cba9e59/issues -X GET -f state=open --jq '.[] | {number, title, labels: [.labels[].name], body}' 2>&1 | head -50"
+      },
+      {
+        "name": "Write",
+        "turnIndex": 12
+      }
+    ],
+    "toolCallCount": 6,
+    "turns": 13,
+    "numTurns": 8,
+    "wallClockMs": 31245,
+    "contextWindowPeak": 19771,
+    "totalCostUsd": 0.08819335,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": false,
+    "escapeToolUsed": true,
+    "escapeToolCalls": [
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "gh api graphql -f query='\n{\n  repository(owner: \"chief-builder-lab\", name: \"clivsmcp-tier1-issue-triage-4cba9e59\") {\n    issues(states: OPEN, first: 50) {\n      nodes {\n        number\n        title\n        body\n        labels(first: 10) {\n          nodes { name }\n        }\n      }\n    }\n  }\n}' --jq '.data.repository.issues.nodes[] | {number, title, body: .body, labels: [.labels.nodes[].name]}'",
+        "reason": "read-only mode: gh api write (explicit or implicit POST) in segment: gh api graphql -f query='\n{\n  repository(owner: \"chief-builder-lab\", name: \"clivsmcp-tier1-issue-triage-4cba9e59\") {\n   "
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "GITHUB_TOKEN=\"\" GH_TOKEN=\"\" gh api repos/chief-builder-lab/clivsmcp-tier1-issue-triage-4cba9e59/issues -X GET -f state=open --jq '.[] | {number, title, labels: [.labels[].name], body}' 2>&1 | head -50",
+        "reason": "shell redirection: GITHUB_TOKEN=\"\" GH_TOKEN=\"\" gh api repos/chief-builder-lab/clivsmcp-tier1-issue-triage-4cba9e59/issues -X GET -f state=o"
+      }
+    ],
+    "singleCliCommandPerToolCall": false,
+    "cliCommandGranularityViolations": [
+      {
+        "name": "Bash",
+        "turnIndex": 7,
+        "command": "gh auth status && gh api repos/chief-builder-lab/clivsmcp-tier1-issue-triage-4cba9e59/issues -X GET -f state=open --jq '.[] | {number, title, body, labels: [.labels[].name]}'",
+        "reason": "multiple shell operations in one Bash call: gh auth status && gh api repos/chief-builder-lab/clivsmcp-tier1-issue-triage-4cba9e59/issues -X GET -f state=open --jq '"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "gh api graphql -f query='\n{\n  repository(owner: \"chief-builder-lab\", name: \"clivsmcp-tier1-issue-triage-4cba9e59\") {\n    issues(states: OPEN, first: 50) {\n      nodes {\n        number\n        title\n        body\n        labels(first: 10) {\n          nodes { name }\n        }\n      }\n    }\n  }\n}' --jq '.data.repository.issues.nodes[] | {number, title, body: .body, labels: [.labels.nodes[].name]}'",
+        "reason": "read-only mode: gh api write (explicit or implicit POST) in segment: gh api graphql -f query='\n{\n  repository(owner: \"chief-builder-lab\", name: \"clivsmcp-tier1-issue-triage-4cba9e59\") {\n   "
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "GITHUB_TOKEN=\"\" GH_TOKEN=\"\" gh api repos/chief-builder-lab/clivsmcp-tier1-issue-triage-4cba9e59/issues -X GET -f state=open --jq '.[] | {number, title, labels: [.labels[].name], body}' 2>&1 | head -50",
+        "reason": "shell redirection: GITHUB_TOKEN=\"\" GH_TOKEN=\"\" gh api repos/chief-builder-lab/clivsmcp-tier1-issue-triage-4cba9e59/issues -X GET -f state=o"
+      }
+    ]
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "issue found, fields match",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier1-issue-triage-4cba9e59",
+      "expectedTitle": "Target issue 68e02c"
+    }
+  }
+}

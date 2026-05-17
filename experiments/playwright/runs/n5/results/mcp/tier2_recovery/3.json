@@ -1,0 +1,57 @@
+{
+  "experiment": "playwright",
+  "runName": "n5",
+  "arm": "mcp",
+  "taskId": "tier2_recovery",
+  "tier": 2,
+  "trialN": 3,
+  "timestamp": "2026-05-16T19:12:37.508Z",
+  "seed": "5453181b024a994b",
+  "metrics": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedInputTokens": 0,
+    "cacheCreationInputTokens": 0,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 5
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 6
+      },
+      {
+        "name": "mcp__playwright__browser_fill_form",
+        "turnIndex": 8
+      }
+    ],
+    "toolCallCount": 4,
+    "turns": 8,
+    "numTurns": 0,
+    "wallClockMs": 0,
+    "contextWindowPeak": 14123,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "missing /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/mcp/tier2_recovery/3/recovery_token.txt",
+    "extras": {
+      "recovery_attempts": 0,
+      "sessions_seen": 1
+    }
+  },
+  "error": "claude timed out after 240000ms"
+}

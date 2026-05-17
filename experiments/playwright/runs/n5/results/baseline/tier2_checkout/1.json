@@ -1,0 +1,40 @@
+{
+  "experiment": "playwright",
+  "runName": "n5",
+  "arm": "baseline",
+  "taskId": "tier2_checkout",
+  "tier": 2,
+  "trialN": 1,
+  "timestamp": "2026-05-16T16:00:20.717Z",
+  "seed": "628e8cd48f8381eb",
+  "metrics": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedInputTokens": 0,
+    "cacheCreationInputTokens": 0,
+    "toolCalls": [],
+    "toolCallCount": 0,
+    "turns": 0,
+    "numTurns": 0,
+    "wallClockMs": 0,
+    "contextWindowPeak": 0,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "missing /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/baseline/tier2_checkout/1/order_id.txt",
+    "extras": {
+      "orders_placed": 0,
+      "sessions_seen": 0
+    }
+  },
+  "error": "claude timed out after 240000ms"
+}

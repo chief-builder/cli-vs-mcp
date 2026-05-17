@@ -1,0 +1,102 @@
+{
+  "experiment": "github",
+  "runName": "n5",
+  "arm": "skill",
+  "taskId": "tier1_repo_inventory",
+  "tier": 1,
+  "trialN": 4,
+  "timestamp": "2026-05-16T21:17:25.910Z",
+  "seed": "6c036db9b93e219b",
+  "metrics": {
+    "inputTokens": 647,
+    "outputTokens": 1000,
+    "cachedInputTokens": 83896,
+    "cacheCreationInputTokens": 8624,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "gh repo view chief-builder-lab/clivsmcp-tier1-repo-inventory-6c036db9 --json description,topics,defaultBranchRef"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier1-repo-inventory-6c036db9/contents/README.md --jq '.content' | base64 -d"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 7,
+        "command": "gh repo view chief-builder-lab/clivsmcp-tier1-repo-inventory-6c036db9 --json description,repositoryTopics,defaultBranchRef"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 8,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier1-repo-inventory-6c036db9/contents/README.md --jq '.content' | base64 -d"
+      },
+      {
+        "name": "Write",
+        "turnIndex": 10
+      }
+    ],
+    "toolCallCount": 6,
+    "turns": 11,
+    "numTurns": 8,
+    "wallClockMs": 17188,
+    "contextWindowPeak": 19588,
+    "totalCostUsd": 0.0730138,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": false,
+    "escapeToolUsed": true,
+    "escapeToolCalls": [
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier1-repo-inventory-6c036db9/contents/README.md --jq '.content' | base64 -d",
+        "reason": "non-gh Bash segment: base64 -d"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 8,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier1-repo-inventory-6c036db9/contents/README.md --jq '.content' | base64 -d",
+        "reason": "non-gh Bash segment: base64 -d"
+      }
+    ],
+    "singleCliCommandPerToolCall": false,
+    "cliCommandGranularityViolations": [
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier1-repo-inventory-6c036db9/contents/README.md --jq '.content' | base64 -d",
+        "reason": "non-gh Bash segment: base64 -d"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 8,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier1-repo-inventory-6c036db9/contents/README.md --jq '.content' | base64 -d",
+        "reason": "non-gh Bash segment: base64 -d"
+      }
+    ]
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "all repo facts match",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier1-repo-inventory-6c036db9",
+      "expectedDescription": "cli-vs-mcp sandbox repo (6c036d)",
+      "expectedTopics": [
+        "topic-b4b0",
+        "topic-1aef",
+        "cli-vs-mcp"
+      ]
+    }
+  }
+}

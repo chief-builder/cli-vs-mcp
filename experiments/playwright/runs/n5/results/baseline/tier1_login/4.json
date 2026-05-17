@@ -1,0 +1,131 @@
+{
+  "experiment": "playwright",
+  "runName": "n5",
+  "arm": "baseline",
+  "taskId": "tier1_login",
+  "tier": 1,
+  "trialN": 4,
+  "timestamp": "2026-05-16T12:56:01.988Z",
+  "seed": "5f9426080a708830",
+  "metrics": {
+    "inputTokens": 646,
+    "outputTokens": 6086,
+    "cachedInputTokens": 497902,
+    "cacheCreationInputTokens": 28997,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 4
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 6
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 8
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 11
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 12
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 14
+      },
+      {
+        "name": "Write",
+        "turnIndex": 17
+      },
+      {
+        "name": "TaskCreate",
+        "turnIndex": 18
+      },
+      {
+        "name": "TaskUpdate",
+        "turnIndex": 19
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 22
+      },
+      {
+        "name": "TaskCreate",
+        "turnIndex": 25
+      },
+      {
+        "name": "TaskOutput",
+        "turnIndex": 26
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 28
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 31
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 33
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 35
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 36
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 38
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 40
+      },
+      {
+        "name": "EnterPlanMode",
+        "turnIndex": 43
+      },
+      {
+        "name": "Write",
+        "turnIndex": 45
+      },
+      {
+        "name": "ExitPlanMode",
+        "turnIndex": 46
+      }
+    ],
+    "toolCallCount": 23,
+    "turns": 46,
+    "numTurns": 24,
+    "wallClockMs": 155911,
+    "contextWindowPeak": 36381,
+    "totalCostUsd": 0.35000535,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "expected screenshot at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/baseline/tier1_login/4/login_landing.png (>1KB)"
+  }
+}

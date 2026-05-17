@@ -1,0 +1,95 @@
+{
+  "experiment": "playwright",
+  "runName": "n5",
+  "arm": "mcp",
+  "taskId": "tier2_checkout",
+  "tier": 2,
+  "trialN": 4,
+  "timestamp": "2026-05-16T18:59:07.117Z",
+  "seed": "6fb57114d7856ec1",
+  "metrics": {
+    "inputTokens": 730,
+    "outputTokens": 1566,
+    "cachedInputTokens": 200789,
+    "cacheCreationInputTokens": 9442,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 5
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 6
+      },
+      {
+        "name": "mcp__playwright__browser_click",
+        "turnIndex": 9
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 12
+      },
+      {
+        "name": "mcp__playwright__browser_click",
+        "turnIndex": 14
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 16
+      },
+      {
+        "name": "mcp__playwright__browser_fill_form",
+        "turnIndex": 17
+      },
+      {
+        "name": "mcp__playwright__browser_click",
+        "turnIndex": 18
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 19
+      },
+      {
+        "name": "mcp__playwright__browser_click",
+        "turnIndex": 21
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 22
+      },
+      {
+        "name": "Write",
+        "turnIndex": 25
+      }
+    ],
+    "toolCallCount": 13,
+    "turns": 26,
+    "numTurns": 14,
+    "wallClockMs": 51564,
+    "contextWindowPeak": 16935,
+    "totalCostUsd": 0.11975419999999998,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "order placed with target product",
+    "extras": {
+      "orders_placed": 1,
+      "sessions_seen": 1
+    }
+  }
+}
