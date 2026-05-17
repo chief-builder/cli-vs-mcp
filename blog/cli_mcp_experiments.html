@@ -483,8 +483,42 @@ error?                     # set on timeout or process failure
     <li><strong>mcp:</strong> only <code>Write</code>, <code>TodoWrite</code>, <code>ToolSearch</code>, and the intended <code>mcp__&lt;prefix&gt;__*</code> set are valid.</li>
   </ul>
 
+  <h3>How <code>classifyShellCommand</code> actually works</h3>
+
   <p>
-    <code>classifyShellCommand</code> parses the Bash command into top-level segments (respecting quotes, <code>;</code>, <code>&amp;&amp;</code>, <code>||</code>, <code>|</code>, and shell redirections). Each segment must start with the intended CLI binary. Segments may not contain backticks, <code>$(…)</code> command substitution, or shell helpers (<code>curl</code>, <code>cat</code>, <code>python</code>, <code>sed</code>, <code>awk</code>, <code>jq</code>, <code>base64</code>, …). Shell redirections (<code>&gt;</code>, <code>&gt;&gt;</code>, <code>2&gt;&amp;1</code>) invalidate the segment in every mode — file output must go through the <code>Write</code> tool, not shell plumbing.
+    The Bash classifier runs in four phases. Each phase looks at the agent's literal command string — what the agent wrote into the <code>command</code> field of the <code>Bash</code> tool call — and applies one rule.
+  </p>
+
+  <p><strong>Phase 1 — split into top-level segments.</strong> The command is broken at <code>;</code>, <code>&amp;&amp;</code>, <code>||</code>, and <code>|</code>, but only when those characters appear <em>outside</em> quoted regions. Quotes are tracked, backslash-escapes are respected (<code>harness/src/shell.ts:splitTopLevelShellSegments</code>). So:</p>
+
+<pre><code>gh issue list; gh issue view 5         → 2 segments
+gh api repos/... | base64 -d           → 2 segments
+gh issue list --title "a; b"           → 1 segment (semicolon is inside quotes)
+gh pr view 1 &amp;&amp; gh pr review --approve → 2 segments</code></pre>
+
+  <p><strong>Phase 2 — strip redirections, then check each segment starts with the intended binary.</strong> Redirections (<code>&gt;</code>, <code>&gt;&gt;</code>, <code>&lt;</code>, <code>2&gt;&amp;1</code>) are stripped from the segment string first so the binary check looks at just the command, then each cleaned segment must start with <code>gh</code> or <code>playwright-cli</code> (depending on the experiment). Examples:</p>
+
+<pre><code>gh issue list --json title             → starts with "gh" ✓
+NEW_CONTENT='...' gh api ...           → starts with shell var assignment ✗
+base64 -d                              → second segment of a pipe, doesn't start with gh ✗
+playwright-cli click "#submit"         → starts with "playwright-cli" ✓</code></pre>
+
+  <p><strong>Phase 3 — reject command substitution and shell helpers.</strong> Even when a segment starts with the right binary, two patterns mean the agent reached for shell semantics that should have come from a tool:</p>
+
+  <ul>
+    <li><strong>Command substitution:</strong> any backtick or <code>$(…)</code> anywhere in the segment. <code>gh api -F "content=$(cat file)"</code> looks like a single <code>gh</code> command but actually shells out to <code>cat</code> inside the argument expansion.</li>
+    <li><strong>Helper word inside the rest of the segment:</strong> after stripping the leading <code>gh</code>/<code>playwright-cli</code>, the regex <code>\b(curl|wget|cat|ls|python|node|npm|npx|sh|bash|zsh|jq|sed|awk|grep|head|tail|base64)\b</code> must not match. The most common real hit is <code>base64</code> — five of the GitHub <code>tier1_repo_inventory</code> skill trials piped <code>gh api</code> output through <code>base64 -d</code>, which was flagged on this rule.</li>
+  </ul>
+
+  <p><strong>Phase 4 — flag granularity in addition to validity.</strong> Two return values come out of the classifier:</p>
+
+  <ul>
+    <li><code>surfaceReason</code> — <em>any</em> reason the call is off-surface. Failing phases 1–3 sets this and flips <code>validToolSurface</code> to <code>false</code> on the trial.</li>
+    <li><code>granularityReason</code> — set whenever the call has more than one top-level segment <em>or</em> any redirection character at all. This doesn't fail the trial in <code>practical</code> mode, but the <code>--single-cli-command</code> report mode reads it as an off-surface signal. A redirection that survives phase 2 (because the segment otherwise looks clean) still trips this flag — file output is meant to go through the <code>Write</code> tool, not <code>&gt;</code>/<code>&gt;&gt;</code>.</li>
+  </ul>
+
+  <p>
+    The two flags let one stored result serve two reporting modes: the same trial can be valid under <code>practical</code> and invalid under <code>research-single</code> if it chained two <code>gh</code> calls. The report tool picks which view to surface from the same per-trial JSON without re-running anything.
   </p>
 
   <h3>Run modes</h3>
