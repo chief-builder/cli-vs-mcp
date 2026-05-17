@@ -448,4 +448,164 @@ function ghHeaders(token: string): Record<string, string> {
   };
 }
 
-export const tier1Tasks: Task[] = [tier1_repo_inventory, tier1_issue_triage, tier1_pr_diff_answer];
+// ---------------------------------------------------------------------------
+// tier1_workflow_status — read the most recent finished workflow run
+//
+// Clean apples-to-apples task: both arms have a single first-class read
+// primitive (gh run list --json / mcp__github__list_workflow_runs).
+// Provisioning pushes a workflow file whose `name:` carries the per-trial
+// marker, then polls /actions/runs until status=completed.
+// ---------------------------------------------------------------------------
+
+interface WorkflowStatusState {
+  repo: ProvisionedRepo;
+  marker: string;
+  expectedWorkflowName: string;
+  expectedConclusion: 'success';
+  expectedHeadSha: string;
+  runId: number;
+}
+
+const tier1_workflow_status: Task = {
+  id: 'tier1_workflow_status',
+  tier: 1,
+
+  setup: async (seed) => {
+    const cfg = ghConfigFromEnv();
+    const marker = hexFromSeed(seed, 'workflow-name', 8).toUpperCase();
+    const expectedWorkflowName = `Build ${marker}`;
+
+    // Bare repo (no auto_init); we commit a single workflow file ourselves so
+    // the resulting push gives us a deterministic head_sha to verify against.
+    const repo = await provisionRepo(
+      cfg,
+      repoNameFor('tier1_workflow_status', seed),
+      {
+        description: 'tier1_workflow_status sandbox',
+        files: [{ path: 'README.md', content: '# workflow status sandbox\n' }],
+      },
+    );
+
+    // Push the workflow file. The push triggers the workflow on the `push` event.
+    const workflowYaml = [
+      `name: ${expectedWorkflowName}`,
+      `on: [push]`,
+      `jobs:`,
+      `  build:`,
+      `    runs-on: ubuntu-latest`,
+      `    steps:`,
+      `      - run: echo "build ${marker}"`,
+      ``,
+    ].join('\n');
+    const putResp = await putJson(cfg.host, cfg.controllerToken,
+      `/repos/${repo.fullName}/contents/${encodeURI('.github/workflows/seeded.yml')}`,
+      {
+        message: `add workflow ${marker}`,
+        content: Buffer.from(workflowYaml, 'utf-8').toString('base64'),
+      }) as { commit: { sha: string } };
+    const expectedHeadSha = putResp.commit.sha;
+
+    // Poll for the run to appear and complete. Workflow runs queue and execute
+    // asynchronously; we wait up to ~90s for a completed status.
+    const deadline = Date.now() + 90_000;
+    let runId = -1;
+    let conclusion: string | null = null;
+    while (Date.now() < deadline) {
+      const runs = await fetchJson(cfg.host, cfg.controllerToken,
+        `/repos/${repo.fullName}/actions/runs?per_page=5`) as {
+          workflow_runs: Array<{
+            id: number;
+            status: string;
+            conclusion: string | null;
+            head_sha: string;
+            name?: string;
+          }>;
+        };
+      const match = runs.workflow_runs.find(r => r.head_sha === expectedHeadSha);
+      if (match) {
+        runId = match.id;
+        if (match.status === 'completed') {
+          conclusion = match.conclusion;
+          break;
+        }
+      }
+      await new Promise(r => setTimeout(r, 3000));
+    }
+
+    if (conclusion !== 'success') {
+      throw new Error(
+        `workflow run did not complete with success within 90s `
+        + `(runId=${runId}, conclusion=${conclusion ?? 'still-pending'})`,
+      );
+    }
+
+    return {
+      repo,
+      marker,
+      expectedWorkflowName,
+      expectedConclusion: 'success',
+      expectedHeadSha,
+      runId,
+    } satisfies WorkflowStatusState;
+  },
+
+  cleanup: async (state) => {
+    const s = state as WorkflowStatusState | null;
+    if (s) await s.repo.cleanupHandle();
+  },
+
+  prompt: (ctx: TaskContext) => {
+    const s = ctx.state as WorkflowStatusState;
+    return `
+Inspect the workflow runs on this private GitHub repository:
+  ${s.repo.htmlUrl}
+
+There is exactly one completed workflow run. Report the following as JSON saved at this exact path:
+  ${ctx.outputDir}/run_status.json
+
+The JSON must have these keys:
+  - "workflow_name": the workflow's "name" field (the human-readable workflow name, not the file path)
+  - "conclusion":    the run's conclusion (e.g., "success" / "failure")
+  - "head_sha":      the run's head commit SHA (full 40-character hex)
+
+When the file is written, you are done.
+    `.trim();
+  },
+
+  successCheck: async (ctx) => {
+    const path = join(ctx.outputDir, 'run_status.json');
+    const data = await readJsonIfExists<{
+      workflow_name?: string;
+      conclusion?: string;
+      head_sha?: string;
+    }>(path);
+    if (!data) return { pass: false, score: 0, notes: `missing or invalid JSON at ${path}` };
+    const expected = ctx.state as WorkflowStatusState;
+
+    const nameOk = (data.workflow_name ?? '').trim() === expected.expectedWorkflowName;
+    const conclusionOk = (data.conclusion ?? '').trim() === expected.expectedConclusion;
+    const headOk = (data.head_sha ?? '').trim() === expected.expectedHeadSha;
+    const checks = [nameOk, conclusionOk, headOk];
+    const matched = checks.filter(Boolean).length;
+    const score = matched / checks.length;
+    return {
+      pass: matched === checks.length,
+      score,
+      notes: matched === checks.length
+        ? 'workflow run fields all match'
+        : `mismatch: name=${nameOk} conclusion=${conclusionOk} head_sha=${headOk}`,
+      extras: {
+        repoFullName: expected.repo.fullName,
+        runId: expected.runId,
+        expectedWorkflowName: expected.expectedWorkflowName,
+      },
+    };
+  },
+};
+
+export const tier1Tasks: Task[] = [
+  tier1_repo_inventory,
+  tier1_issue_triage,
+  tier1_pr_diff_answer,
+  tier1_workflow_status,
+];

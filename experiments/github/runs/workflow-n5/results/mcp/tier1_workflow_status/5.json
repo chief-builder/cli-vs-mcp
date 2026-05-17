@@ -1,0 +1,56 @@
+{
+  "experiment": "github",
+  "runName": "workflow-n5",
+  "arm": "mcp",
+  "taskId": "tier1_workflow_status",
+  "tier": 1,
+  "trialN": 5,
+  "timestamp": "2026-05-17T18:00:13.633Z",
+  "seed": "c5902f51a19c0a76",
+  "metrics": {
+    "inputTokens": 662,
+    "outputTokens": 612,
+    "cachedInputTokens": 53802,
+    "cacheCreationInputTokens": 12459,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "mcp__github__actions_list",
+        "turnIndex": 5
+      },
+      {
+        "name": "Write",
+        "turnIndex": 7
+      }
+    ],
+    "toolCallCount": 3,
+    "turns": 8,
+    "numTurns": 4,
+    "wallClockMs": 16846,
+    "contextWindowPeak": 19952,
+    "totalCostUsd": 0.07258985,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "workflow run fields all match",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier1-workflow-status-c5902f51",
+      "runId": 25998468468,
+      "expectedWorkflowName": "Build 85120F22"
+    }
+  }
+}

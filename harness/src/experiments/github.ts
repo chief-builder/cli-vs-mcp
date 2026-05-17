@@ -128,6 +128,12 @@ const GITHUB_READ_TOOLS = [
   'mcp__github__get_file_contents',
   'mcp__github__list_releases',
   'mcp__github__get_release',
+  // actions (read) — enabled for tier1_workflow_status. The server collapses
+  // most actions ops into a combined `actions_list` / `actions_get` pair
+  // rather than separate get_workflow_run / list_workflow_runs verbs.
+  'mcp__github__actions_list',
+  'mcp__github__actions_get',
+  'mcp__github__get_job_logs',
   // issues (read)
   'mcp__github__list_issues',
   'mcp__github__get_issue',
@@ -169,7 +175,7 @@ function buildArms(readOnly: boolean): Record<'baseline' | 'skill' | 'mcp', ArmC
     ? GITHUB_READ_TOOLS
     : [...GITHUB_READ_TOOLS, ...GITHUB_WRITE_TOOLS];
   const mcpConfigPath = readOnly ? '.mcp.github.ro.json' : '.mcp.github.rw.json';
-  const toolsets = 'context,repos,issues,pull_requests,users';
+  const toolsets = 'context,repos,issues,pull_requests,users,actions';
 
   return {
     baseline: {

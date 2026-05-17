@@ -1,0 +1,57 @@
+{
+  "experiment": "github",
+  "runName": "workflow-n5",
+  "arm": "skill",
+  "taskId": "tier1_workflow_status",
+  "tier": 1,
+  "trialN": 1,
+  "timestamp": "2026-05-17T17:55:30.507Z",
+  "seed": "14736bd73647664a",
+  "metrics": {
+    "inputTokens": 659,
+    "outputTokens": 590,
+    "cachedInputTokens": 63977,
+    "cacheCreationInputTokens": 7639,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 3
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "gh run list --repo chief-builder-lab/clivsmcp-tier1-workflow-status-14736bd7 --json databaseId,name,conclusion,headSha,status --jq '.[]'"
+      },
+      {
+        "name": "Write",
+        "turnIndex": 7
+      }
+    ],
+    "toolCallCount": 3,
+    "turns": 8,
+    "numTurns": 5,
+    "wallClockMs": 11856,
+    "contextWindowPeak": 18603,
+    "totalCostUsd": 0.05723435,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "workflow run fields all match",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier1-workflow-status-14736bd7",
+      "runId": 25998369914,
+      "expectedWorkflowName": "Build A5554489"
+    }
+  }
+}

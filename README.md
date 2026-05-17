@@ -135,6 +135,7 @@ Each task provisions a fresh private repo under `GITHUB_SANDBOX_OWNER` via the c
 | `tier1_repo_inventory` | Private repo with seeded description, topics, and a README containing a hex marker | Report `description`, `topics`, `default_branch`, `readme_marker` as JSON |
 | `tier1_issue_triage` | Repo with 5 issues (1 target with a hidden marker in the body, 4 decoys) and a label palette | Find the target issue's number, title, labels, and marker |
 | `tier1_pr_diff_answer` | Repo with a feature branch and an open PR that adds one new function to `src/widget.ts` | Report PR number, changed file, and added function name |
+| `tier1_workflow_status` | Repo with a workflow `.yml` whose `name:` carries the per-trial marker; controller pushes it and polls until the run completes | Report `{workflow_name, conclusion, head_sha}` of the most recent run. Needs Actions:read on agent + Workflows:write on controller + `actions` in `GITHUB_TOOLSETS`. |
 
 **Tier 2 — mutation** (`experiments/github/tasks/tier2.ts`, selected via `--experiment github-rw`)
 
@@ -257,6 +258,7 @@ MCP is consistently cheaper (per-turn payload smaller — skill emits explicit `
 | `tier1_repo_inventory` | 0/5 | **5/5** | **5/5** |
 | `tier1_issue_triage` | 0/5 | **5/5** | **0/5** (all 240 s timeouts at 75+ turns) |
 | `tier1_pr_diff_answer` | 0/5 | **5/5** | **5/5** |
+| `tier1_workflow_status` | not run | **5/5** | **5/5** |
 
 Two findings only visible from the validity classifier:
 
@@ -274,7 +276,7 @@ Two findings only visible from the validity classifier:
 
 Both arms produce correct end state on `issue_workflow` and `issue_create`. The split shows up on `file_patch_pr`: **skill stays in surface where `gh` has first-class commands** (`gh issue edit/comment/close`, `gh issue create`) and **always escapes where it doesn't** — `file_patch_pr` needs create-branch-from-SHA and update-file-on-branch, neither of which has a high-level `gh` command, so the agent composes them out of `gh api` + shell variable assignment for the file content payload. All 5 trials hit the same escape. A directed-prompt variant (`tier2_file_patch_pr_directed`) that explicitly names the in-surface workaround halves the escape rate (2/5 valid) but doesn't close it and triples the cost.
 
-**Clean apples-to-apples cost (Tier 2):** MCP is 1.31× cheaper on `tier2_issue_create`, 1.38× on `tier2_issue_workflow`, and 1.59× on `tier2_file_patch_pr` (where skill's number includes an off-surface escape). Direction matches the Tier 1 `tier1_pr_diff_answer` ratio of 1.32×.
+**Clean apples-to-apples cost (4 GH tasks):** MCP is 1.13× cheaper on `tier1_workflow_status`, 1.32× on `tier1_pr_diff_answer`, 1.31× on `tier2_issue_create`, and 1.38× on `tier2_issue_workflow`. All four favor MCP; range 1.13×–1.38×. The tightest ratio (workflow_status, 1.13×) is the smallest-payload task — when the call shape and response size are nearly identical, the per-turn-payload gap nearly vanishes.
 
 ## Known limits
 

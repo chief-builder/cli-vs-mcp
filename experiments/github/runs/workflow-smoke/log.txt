@@ -1,0 +1,8 @@
+=== skill ===
+$ node --import tsx harness/src/cli.ts run --experiment github --run workflow-smoke --arm skill --task tier1_workflow_status --trials 1
+→ github/workflow-smoke  tier1_workflow_status  arm=skill  trial=1/1
+  ✓ score=1.00  valid  tokens_in=660  turns=8  time=12.8s
+=== mcp ===
+$ node --import tsx harness/src/cli.ts run --experiment github --run workflow-smoke --arm mcp --task tier1_workflow_status --trials 1
+→ github/workflow-smoke  tier1_workflow_status  arm=mcp  trial=1/1
+  ✓ score=1.00  valid  tokens_in=661  turns=8  time=15.3s

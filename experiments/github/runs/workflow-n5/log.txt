@@ -1,0 +1,25 @@
+=== skill ===
+$ node --import tsx harness/src/cli.ts run --experiment github --run workflow-n5 --arm skill --task tier1_workflow_status --trials 5
+→ github/workflow-n5  tier1_workflow_status  arm=skill  trial=1/5
+  ✓ score=1.00  valid  tokens_in=659  turns=8  time=11.9s
+→ github/workflow-n5  tier1_workflow_status  arm=skill  trial=2/5
+  ✓ score=1.00  valid  tokens_in=661  turns=8  time=13.4s
+→ github/workflow-n5  tier1_workflow_status  arm=skill  trial=3/5
+  ✓ score=1.00  valid  tokens_in=662  turns=9  time=23.6s
+→ github/workflow-n5  tier1_workflow_status  arm=skill  trial=4/5
+  ✓ score=1.00  valid  tokens_in=660  turns=8  time=13.7s
+→ github/workflow-n5  tier1_workflow_status  arm=skill  trial=5/5
+  ✓ score=1.00  valid  tokens_in=661  turns=11  time=18.0s
+=== mcp ===
+$ node --import tsx harness/src/cli.ts run --experiment github --run workflow-n5 --arm mcp --task tier1_workflow_status --trials 5
+→ github/workflow-n5  tier1_workflow_status  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=660  turns=8  time=13.4s
+→ github/workflow-n5  tier1_workflow_status  arm=mcp  trial=2/5
+  ✓ score=1.00  valid  tokens_in=662  turns=8  time=14.6s
+→ github/workflow-n5  tier1_workflow_status  arm=mcp  trial=3/5
+  ✓ score=1.00  valid  tokens_in=664  turns=8  time=17.4s
+→ github/workflow-n5  tier1_workflow_status  arm=mcp  trial=4/5
+  ✓ score=1.00  valid  tokens_in=662  turns=8  time=14.5s
+→ github/workflow-n5  tier1_workflow_status  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=662  turns=8  time=16.8s
+=== DONE ===

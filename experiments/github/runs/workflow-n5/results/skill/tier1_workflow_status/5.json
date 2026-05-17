@@ -1,0 +1,62 @@
+{
+  "experiment": "github",
+  "runName": "workflow-n5",
+  "arm": "skill",
+  "taskId": "tier1_workflow_status",
+  "tier": 1,
+  "trialN": 5,
+  "timestamp": "2026-05-17T17:57:34.572Z",
+  "seed": "c5902f51a19c0a76",
+  "metrics": {
+    "inputTokens": 661,
+    "outputTokens": 910,
+    "cachedInputTokens": 82639,
+    "cacheCreationInputTokens": 8034,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "gh run list --repo chief-builder-lab/clivsmcp-tier1-workflow-status-c5902f51 --json databaseId,name,conclusion,headSha,status --jq '.[] | select(.status == \"completed\")'"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 7,
+        "command": "gh run list --repo chief-builder-lab/clivsmcp-tier1-workflow-status-c5902f51 --json workflowName,conclusion,headSha --jq '.[] | select(.conclusion != null)'"
+      },
+      {
+        "name": "Write",
+        "turnIndex": 10
+      }
+    ],
+    "toolCallCount": 4,
+    "turns": 11,
+    "numTurns": 6,
+    "wallClockMs": 18023,
+    "contextWindowPeak": 18998,
+    "totalCostUsd": 0.0691082,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "workflow run fields all match",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier1-workflow-status-c5902f51",
+      "runId": 25998413308,
+      "expectedWorkflowName": "Build 85120F22"
+    }
+  }
+}

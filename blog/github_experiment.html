@@ -598,11 +598,19 @@
         <td class="num">41,169</td>
         <td class="num"><strong>1.31×</strong></td>
       </tr>
+      <tr>
+        <td><code>tier1_workflow_status</code></td>
+        <td class="num">8.8</td>
+        <td class="num">76,880</td>
+        <td class="num">8.0</td>
+        <td class="num">67,881</td>
+        <td class="num"><strong>1.13×</strong></td>
+      </tr>
     </tbody>
   </table>
 
   <p>
-    Direction is consistent: <strong>MCP is ~1.3–1.4× cheaper</strong> when both arms can complete the task cleanly. Turn counts are within two of each other; the cost gap is per-turn payload, not extra steps. The same pattern shows up across every clean Playwright task (1.29×–1.42× on five of six tasks, 2.51× on the form-fill task with many action↔check cycles).
+    Direction is consistent: <strong>MCP is 1.13×–1.38× cheaper</strong> when both arms can complete the task cleanly. Turn counts are within two of each other; the cost gap is per-turn payload, not extra steps. The same pattern shows up across every clean Playwright task (1.29×–1.42× on five of six tasks, 2.51× on the form-fill task with many action↔check cycles). The <code>tier1_workflow_status</code> ratio is the tightest yet (1.13×) because the response payload is small — one workflow-run record — so the per-turn-payload gap that drives larger ratios on chattier tasks barely fires.
   </p>
 
   <p>
@@ -616,7 +624,7 @@
   </ul>
 
   <p>
-    Three clean tasks at N=5 each (15 cross-arm data points) is enough to call this directional. Combined with the Playwright clean tasks, <strong>8 of 10 clean cross-domain cost comparisons</strong> land in the 1.29×–1.42× MCP-cheaper band; the form-fill outlier (2.51×) tracks the shape of the workflow rather than breaking the pattern. The original plan included <code>tier2_release_create</code> as a fourth clean task, but the github-mcp-server has no release write tool under any toolset config (the methodology note below has the details).
+    Four clean tasks at N=5 each (20 cross-arm data points) is enough to call this a result rather than a direction. Combined with the Playwright clean tasks, <strong>9 of 11 clean cross-domain cost comparisons</strong> land in the 1.13×–1.42× MCP-cheaper band; the form-fill outlier (2.51×) tracks the shape of the workflow rather than breaking the pattern. The <code>tier1_workflow_status</code> 1.13× ratio shows the lower bound — when the response payload is small and the call is identical on both sides, the per-turn-payload gap nearly vanishes.
   </p>
 
   <div class="callout">
@@ -729,7 +737,8 @@
   <h2>Caveats</h2>
 
   <ul>
-    <li><strong>Three clean apples-to-apples GitHub tasks.</strong> The cost direction (MCP 1.31×–1.38× cheaper) is consistent across all three, and consistent with the Playwright tasks (1.29×–2.51×). More clean tasks would harden the claim further; likely next addition is <code>tier1_workflow_status</code> (workflow run inspection) once Actions:read scope is added to the agent PAT.</li>
+    <li><strong>Four clean apples-to-apples GitHub tasks.</strong> The cost direction (MCP 1.13×–1.38× cheaper) is consistent across all four, and consistent with the Playwright tasks (1.29×–2.51×).</li>
+    <li><strong>MCP server toolset configuration is load-bearing.</strong> The first <code>tier1_workflow_status</code> smoke ran with the default toolsets (no <code>actions</code>) and the MCP arm spent 170 s / 60 turns probing for tools that weren't surfaced — same fan-out failure mode as <code>tier1_issue_triage</code>. Adding <code>actions</code> to <code>GITHUB_TOOLSETS</code> and using the correct tool name (<code>actions_list</code>, not the guessed <code>list_workflow_runs</code>) dropped it to 15 s / 8 turns. MCP doesn't degrade gracefully when an expected primitive is missing — it fans out.</li>
     <li><strong>GitHub list-after-create eventual consistency.</strong> Three separate races have shown up at this point: the provisioner branch-ref race (fixed in <code>64f9436</code>), the env-scrub gap on controller token leak (<code>ef3fc97</code>), and a list-issues race in this task's successCheck (fixed inline). The pattern is "any read-after-write on the GitHub REST API needs a retry budget" — applies to provisioner, classifier, <em>and</em> agent-facing tools.</li>
     <li><strong>Same controller/agent identity.</strong> Both PATs in the n5 run authenticated as <code>chief-builder</code>, scoped to <code>chief-builder-lab</code>. Smoke had distinct identities. The same-identity setup may have <em>encouraged</em> the env-grep escape attempt — the agent knew the controller was the same user — but it also bounded the blast radius (the controller PAT couldn't reach repos outside the sandbox owner).</li>
     <li><strong>No pinned MCP server digest.</strong> <code>.mcp.github.*.json</code> uses <code>ghcr.io/github/github-mcp-server:latest</code>. A future upstream release can change tool names or schemas. Pinning by digest is the right next step.</li>
