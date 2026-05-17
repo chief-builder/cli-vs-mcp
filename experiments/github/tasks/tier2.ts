@@ -188,60 +188,115 @@ interface FilePatchState {
   changedFile: string;
 }
 
+async function filePatchSetup(taskId: string, seed: string): Promise<FilePatchState> {
+  const cfg = ghConfigFromEnv();
+  const marker = hexFromSeed(seed, 'patch-marker', 8).toUpperCase();
+  const changedFile = 'src/widget.ts';
+  const initialContent = [
+    `// Widget module.`,
+    ``,
+    `export function describe(): string {`,
+    `  return 'widget';`,
+    `}`,
+    ``,
+    `// TODO MARKER-${marker}: implement the marker handler.`,
+    ``,
+  ].join('\n');
+
+  const repo = await provisionRepo(cfg, repoNameFor(taskId, seed), {
+    description: `${taskId} sandbox`,
+    files: [
+      { path: 'README.md', content: '# patch sandbox\n' },
+      { path: changedFile, content: initialContent },
+    ],
+  });
+
+  return {
+    repo,
+    marker,
+    expectedFunctionName: `solve_${marker}`,
+    expectedReturnValue: `done-${marker}`,
+    expectedPrTitle: `Fix MARKER-${marker}`,
+    expectedPrBodyPhrase: `addresses-${marker}`,
+    changedFile,
+  };
+}
+
+async function filePatchSuccessCheck(ctx: TaskContext) {
+  const cfg = ghConfigFromEnv();
+  const expected = ctx.state as FilePatchState;
+  const repo = expected.repo.fullName;
+
+  const prs = await fetchJson(cfg.host, cfg.controllerToken,
+    `/repos/${repo}/pulls?state=open&base=main`) as Array<{
+      number: number;
+      title: string;
+      body: string | null;
+      head: { ref: string };
+    }>;
+
+  const pr = prs.find(p => p.title.trim() === expected.expectedPrTitle.trim());
+  const titleOk = !!pr;
+  const bodyOk = !!pr && (pr.body ?? '').includes(expected.expectedPrBodyPhrase);
+
+  let fileOk = false;
+  let functionReturnsOk = false;
+  let onlyTargetFileChanged = false;
+
+  if (pr) {
+    try {
+      const fileContent = await fetchTextContents(cfg.host, cfg.controllerToken,
+        `/repos/${repo}/contents/${encodeURI(expected.changedFile)}?ref=${encodeURIComponent(pr.head.ref)}`);
+      if (fileContent !== null) {
+        const fnRegex = new RegExp(`function\\s+${expected.expectedFunctionName}\\s*\\(`);
+        const returnRegex = new RegExp(`['"\`]${expected.expectedReturnValue}['"\`]`);
+        fileOk = fnRegex.test(fileContent);
+        functionReturnsOk = fileOk && returnRegex.test(fileContent);
+      }
+    } catch {
+      // fileOk stays false
+    }
+
+    try {
+      const files = await fetchJson(cfg.host, cfg.controllerToken,
+        `/repos/${repo}/pulls/${pr.number}/files`) as Array<{ filename: string }>;
+      onlyTargetFileChanged = files.length > 0 && files.every(f => f.filename === expected.changedFile);
+    } catch {
+      // onlyTargetFileChanged stays false
+    }
+  }
+
+  const checks = [titleOk, bodyOk, fileOk, functionReturnsOk, onlyTargetFileChanged];
+  const matched = checks.filter(Boolean).length;
+  const score = matched / checks.length;
+  const notes = matched === checks.length
+    ? 'PR + branch file content + scope all match'
+    : `title=${titleOk} body=${bodyOk} fn-present=${fileOk} fn-returns-expected=${functionReturnsOk} only-target-file=${onlyTargetFileChanged}`;
+
+  return {
+    pass: matched === checks.length,
+    score,
+    notes,
+    extras: {
+      repoFullName: repo,
+      prNumber: pr?.number ?? null,
+      expectedFunctionName: expected.expectedFunctionName,
+      expectedPrTitle: expected.expectedPrTitle,
+    },
+  };
+}
+
+async function filePatchCleanup(state: unknown): Promise<void> {
+  const s = state as FilePatchState | null;
+  if (s) await s.repo.cleanupHandle();
+}
+
 const tier2_file_patch_pr: Task = {
   id: 'tier2_file_patch_pr',
   tier: 2,
-
-  setup: async (seed) => {
-    const cfg = ghConfigFromEnv();
-    const marker = hexFromSeed(seed, 'patch-marker', 8).toUpperCase();
-    const changedFile = 'src/widget.ts';
-    const expectedFunctionName = `solve_${marker}`;
-    const expectedReturnValue = `done-${marker}`;
-    const expectedPrTitle = `Fix MARKER-${marker}`;
-    const expectedPrBodyPhrase = `addresses-${marker}`;
-
-    const initialContent = [
-      `// Widget module.`,
-      ``,
-      `export function describe(): string {`,
-      `  return 'widget';`,
-      `}`,
-      ``,
-      `// TODO MARKER-${marker}: implement the marker handler.`,
-      ``,
-    ].join('\n');
-
-    const repoSeed: RepoSeed = {
-      description: 'tier2_file_patch_pr sandbox',
-      files: [
-        { path: 'README.md', content: '# patch sandbox\n' },
-        { path: changedFile, content: initialContent },
-      ],
-    };
-
-    const repo = await provisionRepo(
-      cfg,
-      repoNameFor('tier2_file_patch_pr', seed),
-      repoSeed,
-    );
-
-    return {
-      repo,
-      marker,
-      expectedFunctionName,
-      expectedReturnValue,
-      expectedPrTitle,
-      expectedPrBodyPhrase,
-      changedFile,
-    } satisfies FilePatchState;
-  },
-
-  cleanup: async (state) => {
-    const s = state as FilePatchState | null;
-    if (s) await s.repo.cleanupHandle();
-  },
-
+  setup: (seed) => filePatchSetup('tier2_file_patch_pr', seed),
+  cleanup: filePatchCleanup,
+  successCheck: filePatchSuccessCheck,
   prompt: (ctx: TaskContext) => {
     const s = ctx.state as FilePatchState;
     return `
@@ -259,72 +314,41 @@ The file ${s.changedFile} on main contains a TODO comment marked MARKER-${s.mark
 Do not modify any file other than ${s.changedFile}. When the PR is open you are done — you do not need to write any local artifact.
     `.trim();
   },
+};
 
-  successCheck: async (ctx) => {
-    const cfg = ghConfigFromEnv();
-    const expected = ctx.state as FilePatchState;
-    const repo = expected.repo.fullName;
+// Variant: same task setup and success check, but the prompt names the
+// in-surface workaround (gh api's @file / --input flags + the Write tool)
+// so we can measure whether the file_patch_pr skill-arm escape pattern
+// from tier2-n5 is a prompt-knowledge gap or a deeper affordance gap.
+const tier2_file_patch_pr_directed: Task = {
+  id: 'tier2_file_patch_pr_directed',
+  tier: 2,
+  setup: (seed) => filePatchSetup('tier2_file_patch_pr_directed', seed),
+  cleanup: filePatchCleanup,
+  successCheck: filePatchSuccessCheck,
+  prompt: (ctx: TaskContext) => {
+    const s = ctx.state as FilePatchState;
+    return `
+You have access to a private GitHub repository at:
+  ${s.repo.htmlUrl}
 
-    // Find any open PR into main with the expected title.
-    const prs = await fetchJson(cfg.host, cfg.controllerToken,
-      `/repos/${repo}/pulls?state=open&base=main`) as Array<{
-        number: number;
-        title: string;
-        body: string | null;
-        head: { ref: string };
-      }>;
+The file ${s.changedFile} on main contains a TODO comment marked MARKER-${s.marker}. Your job:
 
-    const pr = prs.find(p => p.title.trim() === expected.expectedPrTitle.trim());
-    const titleOk = !!pr;
-    const bodyOk = !!pr && (pr.body ?? '').includes(expected.expectedPrBodyPhrase);
+1. Create a new branch off main.
+2. On that branch, replace the TODO line with an exported function named ${s.expectedFunctionName} that takes no parameters and returns the literal string "${s.expectedReturnValue}".
+3. Open a pull request from your branch into main with:
+   - Title: ${s.expectedPrTitle}
+   - Body containing the exact phrase: ${s.expectedPrBodyPhrase}
 
-    let fileOk = false;
-    let functionReturnsOk = false;
-    let onlyTargetFileChanged = false;
+Tooling notes — important:
+- The ONLY allowed Bash command is \`gh ...\`. Shell helpers (\`cat\`, \`base64\`, \`awk\`, \`sed\`, \`echo\`), pipes, redirections (\`>\`, \`>>\`, \`2>&1\`), shell variable assignments (\`NAME=value\`), and command substitution (\`\$(...)\`) are NOT allowed and will be flagged as off-surface.
+- When you need to pass file content or a JSON body to \`gh api\`, write the content to a local file using the \`Write\` tool, then point \`gh\` at it:
+    - \`gh api ENDPOINT -F field=@local-file\` reads the value for one field from a file
+    - \`gh api ENDPOINT --input request.json\` reads the entire request body from a file
+- That is the in-surface pattern for multi-line content. Do not use shell variable assignment to stage content.
 
-    if (pr) {
-      // Check the file on the head branch contains the new function.
-      try {
-        const fileContent = await fetchTextContents(cfg.host, cfg.controllerToken,
-          `/repos/${repo}/contents/${encodeURI(expected.changedFile)}?ref=${encodeURIComponent(pr.head.ref)}`);
-        if (fileContent !== null) {
-          const fnRegex = new RegExp(`function\\s+${expected.expectedFunctionName}\\s*\\(`);
-          const returnRegex = new RegExp(`['"\`]${expected.expectedReturnValue}['"\`]`);
-          fileOk = fnRegex.test(fileContent);
-          functionReturnsOk = fileOk && returnRegex.test(fileContent);
-        }
-      } catch {
-        // fileOk stays false
-      }
-
-      // Confirm the PR doesn't touch other files.
-      try {
-        const files = await fetchJson(cfg.host, cfg.controllerToken,
-          `/repos/${repo}/pulls/${pr.number}/files`) as Array<{ filename: string }>;
-        onlyTargetFileChanged = files.length > 0 && files.every(f => f.filename === expected.changedFile);
-      } catch {
-        // onlyTargetFileChanged stays false
-      }
-    }
-
-    const checks = [titleOk, bodyOk, fileOk, functionReturnsOk, onlyTargetFileChanged];
-    const matched = checks.filter(Boolean).length;
-    const score = matched / checks.length;
-    const notes = matched === checks.length
-      ? 'PR + branch file content + scope all match'
-      : `title=${titleOk} body=${bodyOk} fn-present=${fileOk} fn-returns-expected=${functionReturnsOk} only-target-file=${onlyTargetFileChanged}`;
-
-    return {
-      pass: matched === checks.length,
-      score,
-      notes,
-      extras: {
-        repoFullName: repo,
-        prNumber: pr?.number ?? null,
-        expectedFunctionName: expected.expectedFunctionName,
-        expectedPrTitle: expected.expectedPrTitle,
-      },
-    };
+Do not modify any file other than ${s.changedFile}. When the PR is open you are done — you do not need to write any local artifact.
+    `.trim();
   },
 };
 
@@ -363,4 +387,5 @@ function ghHeaders(token: string): Record<string, string> {
 export const tier2Tasks: Task[] = [
   tier2_issue_workflow,
   tier2_file_patch_pr,
+  tier2_file_patch_pr_directed,
 ];

@@ -1,0 +1,111 @@
+{
+  "experiment": "github",
+  "runName": "directed-n5",
+  "arm": "skill",
+  "taskId": "tier2_file_patch_pr_directed",
+  "tier": 2,
+  "trialN": 1,
+  "timestamp": "2026-05-17T16:49:47.365Z",
+  "seed": "851a84c34decb73f",
+  "metrics": {
+    "inputTokens": 859,
+    "outputTokens": 6298,
+    "cachedInputTokens": 297576,
+    "cacheCreationInputTokens": 14712,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 3
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-851a84c3/contents/src/widget.ts --jq '.content' "
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-851a84c3/contents/src/widget.ts --jq '.sha'"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-851a84c3/git/refs/heads/main --jq '.object.sha'"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 13,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-851a84c3/git/refs -f ref=\"refs/heads/fix-MARKER-9F0CD6EC\" -f sha=\"02be609f330edc7606f006f05d66bc90b42eac22\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 16,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-851a84c3/git/commits/02be609f330edc7606f006f05d66bc90b42eac22 --jq '.tree.sha'"
+      },
+      {
+        "name": "Write",
+        "turnIndex": 19
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 20,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-851a84c3/git/blobs --input /private/var/folders/h7/mhpz888d6xzcm62796jyks1c0000gn/T/clivsmcp-github-skill-tier2_file_patch_pr_directed-8pv57u/blob.json --jq '.sha'"
+      },
+      {
+        "name": "Write",
+        "turnIndex": 23
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 24,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-851a84c3/git/trees --input /private/var/folders/h7/mhpz888d6xzcm62796jyks1c0000gn/T/clivsmcp-github-skill-tier2_file_patch_pr_directed-8pv57u/tree.json --jq '.sha'"
+      },
+      {
+        "name": "Write",
+        "turnIndex": 27
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 28,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-851a84c3/git/commits --input /private/var/folders/h7/mhpz888d6xzcm62796jyks1c0000gn/T/clivsmcp-github-skill-tier2_file_patch_pr_directed-8pv57u/commit.json --jq '.sha'"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 29,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-851a84c3/git/refs/heads/fix-MARKER-9F0CD6EC -X PATCH -f sha=\"3f5b761be0f840fc34f0d62b97fa81fda59b3178\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 31,
+        "command": "gh pr create --repo chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-851a84c3 --title \"Fix MARKER-9F0CD6EC\" --body \"addresses-9F0CD6EC\" --base main --head fix-MARKER-9F0CD6EC"
+      }
+    ],
+    "toolCallCount": 14,
+    "turns": 32,
+    "numTurns": 16,
+    "wallClockMs": 120391,
+    "contextWindowPeak": 25676,
+    "totalCostUsd": 0.2395858,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "PR + branch file content + scope all match",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-851a84c3",
+      "prNumber": 1,
+      "expectedFunctionName": "solve_9F0CD6EC",
+      "expectedPrTitle": "Fix MARKER-9F0CD6EC"
+    }
+  }
+}

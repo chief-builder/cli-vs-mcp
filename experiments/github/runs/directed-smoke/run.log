@@ -1,0 +1,3 @@
+$ node --import tsx harness/src/cli.ts run --experiment github-rw --run directed-smoke --arm skill --task tier2_file_patch_pr_directed --trials 1
+→ github/directed-smoke  tier2_file_patch_pr_directed  arm=skill  trial=1/1
+  ✓ score=1.00  valid  tokens_in=856  turns=34  time=118.3s

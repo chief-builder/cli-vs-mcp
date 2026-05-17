@@ -1,0 +1,118 @@
+{
+  "experiment": "github",
+  "runName": "directed-smoke",
+  "arm": "skill",
+  "taskId": "tier2_file_patch_pr_directed",
+  "tier": 2,
+  "trialN": 1,
+  "timestamp": "2026-05-17T16:29:47.099Z",
+  "seed": "03a0a4203916014b",
+  "metrics": {
+    "inputTokens": 856,
+    "outputTokens": 5942,
+    "cachedInputTokens": 344594,
+    "cacheCreationInputTokens": 23262,
+    "toolCalls": [
+      {
+        "name": "Bash",
+        "turnIndex": 3,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-03a0a420/contents/src/widget.ts"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-03a0a420/git/ref/heads/main"
+      },
+      {
+        "name": "Write",
+        "turnIndex": 9
+      },
+      {
+        "name": "Write",
+        "turnIndex": 10
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 11,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-03a0a420/git/refs --input /private/var/folders/h7/mhpz888d6xzcm62796jyks1c0000gn/T/clivsmcp-github-skill-tier2_file_patch_pr_directed-GeY9Xk/create-branch.json"
+      },
+      {
+        "name": "Write",
+        "turnIndex": 14
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 15,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-03a0a420/git/blobs --input /private/var/folders/h7/mhpz888d6xzcm62796jyks1c0000gn/T/clivsmcp-github-skill-tier2_file_patch_pr_directed-GeY9Xk/create-blob.json"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 18,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-03a0a420/git/commits/eedc0e016e7eb7c9e2451ec863c6355f7e1f047e"
+      },
+      {
+        "name": "Write",
+        "turnIndex": 21
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 22,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-03a0a420/git/trees --input /private/var/folders/h7/mhpz888d6xzcm62796jyks1c0000gn/T/clivsmcp-github-skill-tier2_file_patch_pr_directed-GeY9Xk/create-tree.json"
+      },
+      {
+        "name": "Write",
+        "turnIndex": 25
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 26,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-03a0a420/git/commits --input /private/var/folders/h7/mhpz888d6xzcm62796jyks1c0000gn/T/clivsmcp-github-skill-tier2_file_patch_pr_directed-GeY9Xk/create-commit.json"
+      },
+      {
+        "name": "Write",
+        "turnIndex": 29
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 30,
+        "command": "gh api --method PATCH repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-03a0a420/git/refs/heads/fix-marker-666FCBE6 --input /private/var/folders/h7/mhpz888d6xzcm62796jyks1c0000gn/T/clivsmcp-github-skill-tier2_file_patch_pr_directed-GeY9Xk/update-ref.json"
+      },
+      {
+        "name": "Write",
+        "turnIndex": 32
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 33,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-03a0a420/pulls --input /private/var/folders/h7/mhpz888d6xzcm62796jyks1c0000gn/T/clivsmcp-github-skill-tier2_file_patch_pr_directed-GeY9Xk/create-pr.json"
+      }
+    ],
+    "toolCallCount": 16,
+    "turns": 34,
+    "numTurns": 17,
+    "wallClockMs": 118313,
+    "contextWindowPeak": 34226,
+    "totalCostUsd": 0.2804927,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "PR + branch file content + scope all match",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-03a0a420",
+      "prNumber": 1,
+      "expectedFunctionName": "solve_666FCBE6",
+      "expectedPrTitle": "Fix MARKER-666FCBE6"
+    }
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "experiment": "github",
+  "runName": "directed-n5",
+  "arm": "skill",
+  "taskId": "tier2_file_patch_pr_directed",
+  "tier": 2,
+  "trialN": 2,
+  "timestamp": "2026-05-17T16:51:52.570Z",
+  "seed": "3ddbdc061ba4c4dc",
+  "metrics": {
+    "inputTokens": 862,
+    "outputTokens": 7006,
+    "cachedInputTokens": 352168,
+    "cacheCreationInputTokens": 15058,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 3
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-3ddbdc06/contents/src/widget.ts --jq '.content' | base64 -d"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-3ddbdc06/contents/src/widget.ts --jq '.sha'"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-3ddbdc06/git/refs/heads/main --jq '.object.sha'"
+      },
+      {
+        "name": "Write",
+        "turnIndex": 13
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 14,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-3ddbdc06/git/refs --input /private/var/folders/h7/mhpz888d6xzcm62796jyks1c0000gn/T/clivsmcp-github-skill-tier2_file_patch_pr_directed-e9yTyH/create-branch.json --jq '.ref'"
+      },
+      {
+        "name": "Write",
+        "turnIndex": 16
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 17,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-3ddbdc06/git/blobs --input /private/var/folders/h7/mhpz888d6xzcm62796jyks1c0000gn/T/clivsmcp-github-skill-tier2_file_patch_pr_directed-e9yTyH/create-blob.json --jq '.sha'"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 20,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-3ddbdc06/git/commits/55aa32634d13071cbe2acaccbb3269383bc66f26 --jq '.tree.sha'"
+      },
+      {
+        "name": "Write",
+        "turnIndex": 21
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 22,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-3ddbdc06/git/trees --input /private/var/folders/h7/mhpz888d6xzcm62796jyks1c0000gn/T/clivsmcp-github-skill-tier2_file_patch_pr_directed-e9yTyH/create-tree.json --jq '.sha'"
+      },
+      {
+        "name": "Write",
+        "turnIndex": 23
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 24,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-3ddbdc06/git/commits --input /private/var/folders/h7/mhpz888d6xzcm62796jyks1c0000gn/T/clivsmcp-github-skill-tier2_file_patch_pr_directed-e9yTyH/create-commit.json --jq '.sha'"
+      },
+      {
+        "name": "Write",
+        "turnIndex": 25
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 26,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-3ddbdc06/git/refs/heads/fix-marker-3B59DF79 -X PATCH --input /private/var/folders/h7/mhpz888d6xzcm62796jyks1c0000gn/T/clivsmcp-github-skill-tier2_file_patch_pr_directed-e9yTyH/update-ref.json --jq '.object.sha'"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 28,
+        "command": "gh pr create --repo chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-3ddbdc06 --title \"Fix MARKER-3B59DF79\" --body \"addresses-3B59DF79\" --base main --head fix-marker-3B59DF79"
+      }
+    ],
+    "toolCallCount": 16,
+    "turns": 29,
+    "numTurns": 18,
+    "wallClockMs": 117036,
+    "contextWindowPeak": 26022,
+    "totalCostUsd": 0.2679279,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": false,
+    "escapeToolUsed": true,
+    "escapeToolCalls": [
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-3ddbdc06/contents/src/widget.ts --jq '.content' | base64 -d",
+        "reason": "non-gh Bash segment: base64 -d"
+      }
+    ],
+    "singleCliCommandPerToolCall": false,
+    "cliCommandGranularityViolations": [
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-3ddbdc06/contents/src/widget.ts --jq '.content' | base64 -d",
+        "reason": "non-gh Bash segment: base64 -d"
+      }
+    ]
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "PR + branch file content + scope all match",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-3ddbdc06",
+      "prNumber": 1,
+      "expectedFunctionName": "solve_3B59DF79",
+      "expectedPrTitle": "Fix MARKER-3B59DF79"
+    }
+  }
+}

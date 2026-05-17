@@ -1,0 +1,13 @@
+$ node --import tsx harness/src/cli.ts run --experiment github-rw --run directed-n5 --arm skill --task tier2_file_patch_pr_directed --trials 5
+→ github/directed-n5  tier2_file_patch_pr_directed  arm=skill  trial=1/5
+  ✓ score=1.00  valid  tokens_in=859  turns=32  time=120.4s
+→ github/directed-n5  tier2_file_patch_pr_directed  arm=skill  trial=2/5
+  ✓ score=1.00  INVALID  tokens_in=862  turns=29  time=117.0s
+→ github/directed-n5  tier2_file_patch_pr_directed  arm=skill  trial=3/5
+  ✗ score=0.00  INVALID  tokens_in=0  turns=14  time=0.0s
+  error: claude timed out after 240000ms
+→ github/directed-n5  tier2_file_patch_pr_directed  arm=skill  trial=4/5
+  ✓ score=1.00  INVALID  tokens_in=859  turns=30  time=86.6s
+→ github/directed-n5  tier2_file_patch_pr_directed  arm=skill  trial=5/5
+  ✗ score=0.00  valid  tokens_in=0  turns=11  time=0.0s
+  error: claude timed out after 240000ms

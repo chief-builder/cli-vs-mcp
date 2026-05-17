@@ -1,0 +1,4 @@
+{
+  "content": "// Widget module.\n\nexport function describe(): string {\n  return 'widget';\n}\n\nexport function solve_9F0CD6EC(): string {\n  return \"done-9F0CD6EC\";\n}\n",
+  "encoding": "utf-8"
+}

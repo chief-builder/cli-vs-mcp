@@ -1,0 +1,66 @@
+{
+  "experiment": "github",
+  "runName": "directed-n5",
+  "arm": "skill",
+  "taskId": "tier2_file_patch_pr_directed",
+  "tier": 2,
+  "trialN": 5,
+  "timestamp": "2026-05-17T16:59:29.751Z",
+  "seed": "d8ea4cc3b39adcf3",
+  "metrics": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedInputTokens": 0,
+    "cacheCreationInputTokens": 0,
+    "toolCalls": [
+      {
+        "name": "Bash",
+        "turnIndex": 3,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-d8ea4cc3/contents/src/widget.ts"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-d8ea4cc3/git/ref/heads/main"
+      },
+      {
+        "name": "Write",
+        "turnIndex": 9
+      },
+      {
+        "name": "Write",
+        "turnIndex": 10
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 11,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-d8ea4cc3/git/refs --input /private/var/folders/h7/mhpz888d6xzcm62796jyks1c0000gn/T/clivsmcp-github-skill-tier2_file_patch_pr_directed-toJCrc/create-branch.json"
+      }
+    ],
+    "toolCallCount": 5,
+    "turns": 11,
+    "numTurns": 0,
+    "wallClockMs": 0,
+    "contextWindowPeak": 19021,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "title=false body=false fn-present=false fn-returns-expected=false only-target-file=false",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-d8ea4cc3",
+      "prNumber": null,
+      "expectedFunctionName": "solve_89E59AD6",
+      "expectedPrTitle": "Fix MARKER-89E59AD6"
+    }
+  },
+  "error": "claude timed out after 240000ms"
+}

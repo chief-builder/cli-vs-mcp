@@ -1,0 +1,11 @@
+{
+  "base_tree": "37dafa0544e4b5e287a3740f3310118147c75b38",
+  "tree": [
+    {
+      "path": "src/widget.ts",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "6253922ac504fd36dc1b914a851d1ded1fa1c10c"
+    }
+  ]
+}
