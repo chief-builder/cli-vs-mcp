@@ -190,7 +190,7 @@
   </table>
 
   <p>
-    The MCP set is enumerated tool-by-tool in <code>harness/src/experiments/playwright.ts</code> rather than allowed as a glob, so the surface survives any future change in how Claude Code matches allow-list patterns. The deny list strips <code>WebFetch</code>, <code>WebSearch</code>, and the out-of-band execution channels (<code>Monitor</code>, <code>CronCreate</code>, <code>RemoteTrigger</code>) — known escape paths if <code>Bash</code> is constrained.
+    The MCP set is enumerated tool-by-tool in <code>harness/src/experiments/playwright.ts</code> rather than allowed as a glob, so the surface survives any future change in how Claude Code matches allow-list patterns. The deny list strips Claude Code's network-fetch tools (<code>WebFetch</code>, <code>WebSearch</code>), the background-process listener (<code>Monitor</code>), the in-session scheduler (<code>CronCreate</code>), and the cloud-Routine creator (<code>RemoteTrigger</code>) — five side channels an agent could otherwise reach for when <code>Bash</code> is constrained.
   </p>
 
   <h2>Fixture isolation</h2>

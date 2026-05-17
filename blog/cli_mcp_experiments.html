@@ -177,7 +177,18 @@
     font-weight: 600;
     margin-bottom: 8px;
   }
-  .arm p { font-size: 14.5px; color: var(--ink-2); margin: 0; }
+  .arm p { font-size: 14.5px; color: var(--ink-2); margin: 0 0 12px; }
+  .arm p:last-child { margin-bottom: 0; }
+  .arm-detail {
+    border-top: 1px solid var(--rule);
+    margin-top: 12px;
+    padding-top: 12px;
+    font-size: 13.5px;
+    color: var(--ink-2);
+  }
+  .arm-detail > div { margin-bottom: 8px; }
+  .arm-detail > div:last-child { margin-bottom: 0; }
+  .arm-detail strong { color: var(--ink); }
   .pill {
     display: inline-block;
     padding: 1px 8px;
@@ -265,17 +276,25 @@
     <div class="arm">
       <h4>Arm</h4>
       <div class="name">baseline</div>
-      <p>No execution channel — only <code>Read</code>, <code>Write</code>, <code>Glob</code>, <code>Grep</code>. The pure reasoning floor. Should be 0/N on any task whose answer isn't on the local filesystem.</p>
+      <p>No execution channel — only <code>Read</code>, <code>Write</code>, <code>Glob</code>, <code>Grep</code>. The pure reasoning floor. Should score zero successes on any task whose answer isn't on the local filesystem. Empirically across the run: 0/30 in Playwright, 0/25 in GitHub.</p>
     </div>
     <div class="arm">
       <h4>Arm</h4>
       <div class="name">skill</div>
-      <p>A Claude Code Skill (project-level <code>SKILL.md</code>) that teaches the agent how to use a CLI binary, plus a tightly scoped <code>Bash</code> allow such as <code>Bash(playwright-cli:*)</code> or <code>Bash(gh:*)</code>.</p>
+      <p>A Claude Code <strong>Skill</strong> — a project-level <code>SKILL.md</code> that teaches the agent how to use a CLI binary — plus a tightly scoped <code>Bash</code> allow-list that restricts shell access to that binary. The agent shells out to the CLI directly; the Skill is its reference manual.</p>
+      <div class="arm-detail">
+        <div><strong>Playwright:</strong> <code>.claude/skills/playwright-cli/SKILL.md</code> + <code>Bash(playwright-cli:*)</code>. Agent runs <code>playwright-cli click</code>, <code>playwright-cli snapshot</code>, <code>playwright-cli eval</code>, etc.</div>
+        <div><strong>GitHub:</strong> <code>.claude/skills/github-cli/SKILL.md</code> + <code>Bash(gh:*)</code>. Agent runs <code>gh issue create</code>, <code>gh pr diff</code>, <code>gh run list --json</code>, etc.</div>
+      </div>
     </div>
     <div class="arm">
       <h4>Arm</h4>
       <div class="name">mcp</div>
-      <p>An MCP server exposes structured tools (<code>mcp__playwright__browser_navigate</code>, <code>mcp__github__list_issues</code>, …). No <code>Bash</code>, no <code>Skill</code> — only the enumerated MCP set.</p>
+      <p>A separate <strong>MCP server</strong> process exposes structured tools to the agent over stdio. Each tool has its own typed schema and named parameters. No <code>Bash</code>, no <code>Skill</code> — only the enumerated MCP tool set.</p>
+      <div class="arm-detail">
+        <div><strong>Playwright:</strong> <code>@playwright/mcp@0.0.75</code> via <code>npx</code> stdio. 23 enumerated tools: <code>browser_navigate</code>, <code>browser_click</code>, <code>browser_snapshot</code>, <code>browser_fill_form</code>, etc.</div>
+        <div><strong>GitHub:</strong> <code>ghcr.io/github/github-mcp-server:latest</code> via Docker stdio. 39–79 tools depending on <code>GITHUB_TOOLSETS</code>: <code>issue_write</code>, <code>create_pull_request</code>, <code>actions_list</code>, <code>get_file_contents</code>, etc.</div>
+      </div>
     </div>
   </div>
 
@@ -284,10 +303,19 @@
   <p>Each trial isolates one variable — the tool surface — and holds everything else constant:</p>
 
   <ol>
-    <li>A <strong>paired seed</strong> <code>hash(experiment, runName, taskId, trialN)</code> drives all per-trial state, so all three arms attempting <code>tier1_scrape</code> trial 3 see the same randomized table.</li>
+    <li><strong>Paired seeds.</strong> Every per-trial random value — the city names in a scrape table, the marker buried in an issue title, the function name a PR adds — is derived from a single seed: <code>hash(experiment, runName, taskId, trialN)</code>. <em>The arm name is not in the hash.</em> So when baseline, skill, and mcp each run <code>tier1_scrape</code> trial 3, all three see the same randomized table; the only thing that varies across arms is the tools the agent has to extract it with. Any difference in outcome is attributable to the tool surface, not to luck of the draw.</li>
     <li><strong>Per-trial answers stay off disk.</strong> Playwright fixtures are HTML templates rendered dynamically by an in-process HTTP server; GitHub state lives in a private sandbox repo provisioned by a controller token the agent never sees.</li>
     <li>The agent runs in a <strong>fresh tempdir</strong> with <code>--strict-mcp-config</code>, a positive <code>--allowed-tools</code> list, an explicit deny list, and <code>--setting-sources project,local</code> so the developer's <code>~/.claude</code> skills don't leak in.</li>
-    <li>Always blocked across every arm: <code>WebFetch</code>, <code>WebSearch</code>, <code>Monitor</code>, <code>CronCreate</code>, <code>RemoteTrigger</code> — each is a fetch or out-of-band execution channel that agents will reach for when <code>Bash</code> is constrained.</li>
+    <li><strong>Side-channel block list, every arm.</strong> Five Claude Code tools are always denied because each one is a different kind of escape an agent could reach for when <code>Bash</code> is constrained:
+      <ul style="margin-top: 6px;">
+        <li><code>WebFetch</code> — fetches a URL and converts the response to Markdown.</li>
+        <li><code>WebSearch</code> — runs a web search via Anthropic's backend, returns titles and URLs.</li>
+        <li><code>Monitor</code> — streams a background process's stdout into the conversation; lets the agent set up a persistent listener.</li>
+        <li><code>CronCreate</code> — schedules a prompt to fire later within the same session.</li>
+        <li><code>RemoteTrigger</code> — creates Routines on claude.ai that run on Anthropic-managed infrastructure and persist independently of the current session.</li>
+      </ul>
+      Each is a real Claude Code tool that would otherwise be available to <code>claude -p</code> by default. <code>WebFetch</code> and <code>WebSearch</code> are network fetch channels; <code>Monitor</code> is an in-process background listener; <code>CronCreate</code> is a session-scoped scheduler; <code>RemoteTrigger</code> is the only one that creates execution outside the session boundary. Blocking all five makes the trial's surface exactly the tools the arm under test was supposed to have.
+    </li>
   </ol>
 
   <p>The result of each trial is one JSON file containing the measurements, plus the full stream-JSON transcript for replay or re-classification.</p>

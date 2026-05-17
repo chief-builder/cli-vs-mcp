@@ -22,7 +22,7 @@ Each trial isolates one variable — the tool surface — and holds everything e
 1. A **paired seed** `hash(experiment, runName, taskId, trialN)` drives all per-trial state, so all three arms attempting `tier1_scrape` trial 3 see the same randomized table.
 2. **Per-trial answers stay off disk.** Playwright fixtures are HTML templates rendered dynamically by an in-process HTTP server; GitHub state lives in a private sandbox repo provisioned by a controller token the agent never sees.
 3. The agent runs in a **fresh tempdir** with `--strict-mcp-config`, a positive `--allowed-tools` list, an explicit deny list, and `--setting-sources project,local` (so the developer's `~/.claude` skills don't leak in).
-4. Always blocked across every arm: `WebFetch`, `WebSearch`, `Monitor`, `CronCreate`, `RemoteTrigger` — each is a fetch or out-of-band execution channel that agents will use to bypass blocked `Bash`.
+4. Always blocked across every arm — five Claude Code tools that would otherwise be available to `claude -p` by default, each a different escape an agent could reach for when `Bash` is constrained: `WebFetch` and `WebSearch` (network fetch), `Monitor` (background-process listener that streams stdout into the conversation), `CronCreate` (in-session scheduled prompts), and `RemoteTrigger` (Routines on claude.ai that run on Anthropic-managed infrastructure independently of the session).
 
 The result of each trial is one JSON file containing the measurements, plus the full stream-json transcript.
 
