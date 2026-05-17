@@ -149,9 +149,9 @@
   <p class="kicker">Experiment 2 of 2</p>
   <h1>GitHub: when "success" is the wrong unit of measurement</h1>
   <p class="lede">
-    Three Tier 1 tasks on private sandbox repos. The skill arm scored 15/15. The MCP arm scored 10/15. The validity classifier ignored both numbers and turned in a different verdict — and discovered a live escalation path along the way.
+    Three Tier 1 read-only tasks and two Tier 2 mutation tasks on private sandbox repos. The skill arm passes almost everything by raw success; the validity classifier disagrees, and where it disagrees is the interesting part.
   </p>
-  <p class="meta">N=5 · 3 tasks · model <code>claude-sonnet-4-6</code> · 240 s per-trial wall budget</p>
+  <p class="meta">N=5 · 3 Tier 1 + 2 Tier 2 tasks · model <code>claude-sonnet-4-6</code> · 240 s per-trial wall budget</p>
 
   <p>
     GitHub is the experiment where the bare success/failure column is the least interesting number on the page. Both tooling arms drove the same private sandbox repos with the same agent-level access. They reached the same answers on most tasks. But the <em>shape</em> of the work — what each tool surface invited the agent to do — produced behavior the success column doesn't capture.
@@ -440,13 +440,129 @@
     Both arms revealed real properties of their tool surfaces: the gh CLI shape pushes the agent toward shell escapes when high-level commands don't cover the task, and the MCP shape decomposes work into per-field tool calls that combine well on simple tasks and combinatorially worse on complex ones. Neither is "the answer." They're different tradeoffs.
   </p>
 
+  <h2>Tier 2 — mutation tasks (N=5)</h2>
+
+  <p>
+    Two write tasks selected via <code>--experiment github-rw</code>: <code>tier2_issue_workflow</code> (label + comment + close on a target issue, leave decoys alone) and <code>tier2_file_patch_pr</code> (create branch, replace TODO with a marker-named function, open PR). Per-trial-per-arm fresh repos. Same 240 s wall budget. The MCP server runs without <code>--read-only</code> (<code>.mcp.github.rw.json</code>) and the agent token's fine-grained PAT has Issues:write / Pull requests:write / Contents:write on the sandbox owner.
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Task</th>
+        <th class="num">baseline</th>
+        <th class="num">skill (raw)</th>
+        <th class="num">skill (valid)</th>
+        <th class="num">mcp</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>tier2_issue_workflow</code></td>
+        <td class="num"><span class="pill bad">0/5</span></td>
+        <td class="num"><span class="pill good">5/5</span></td>
+        <td class="num"><span class="pill good">5/5</span></td>
+        <td class="num"><span class="pill good">5/5</span></td>
+      </tr>
+      <tr>
+        <td><code>tier2_file_patch_pr</code></td>
+        <td class="num"><span class="pill bad">0/5</span></td>
+        <td class="num"><span class="pill good">5/5</span></td>
+        <td class="num"><span class="pill bad">0/5</span></td>
+        <td class="num"><span class="pill good">5/5</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>The headline finding: skill stays in surface only where <code>gh</code> has first-class commands</h3>
+
+  <p>
+    Both arms reach the same end state on both tasks. The split is on <em>how</em>:
+  </p>
+
+  <ul>
+    <li>
+      <code>issue_workflow</code> decomposes cleanly into <code>gh issue edit --add-label</code>, <code>gh issue comment</code>, <code>gh issue close</code> — three first-class subcommands, each one Bash call, no shell text manipulation needed. All 5 skill trials stayed in surface.
+    </li>
+    <li>
+      <code>file_patch_pr</code> requires three workflow primitives <code>gh</code> doesn't expose at the high level: create-branch-from-SHA, get-file-blob-SHA-on-branch, update-file-on-branch. The agent fell back to raw <code>gh api</code> for those — fine on its own — but constructing the new file content payload required a shell variable assignment <code>NEW_CONTENT='...'</code>, which the classifier rejects because it isn't a <code>gh</code> segment. <strong>All 5 trials escaped surface in the same way.</strong>
+    </li>
+  </ul>
+
+  <p>
+    This is the cleanest "API affordance shape decides agent behavior" finding in the project. The skill arm doesn't escape because it's poorly prompted or because the agent is undisciplined — it escapes because <code>gh</code>'s command surface doesn't cover the primitives a multi-file mutation workflow needs, and the agent reaches for shell text plumbing to bridge the gap.
+  </p>
+
+  <h3>Cost on the same workflows</h3>
+
+  <table>
+    <thead>
+      <tr><th>Task</th><th class="num">skill tok</th><th class="num">skill turns</th><th class="num">mcp tok</th><th class="num">mcp turns</th><th class="num">Skill/MCP</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>issue_workflow</code></td>
+        <td class="num">106,912</td>
+        <td class="num">10.6</td>
+        <td class="num">77,645</td>
+        <td class="num">12.4</td>
+        <td class="num"><strong>1.38×</strong></td>
+      </tr>
+      <tr>
+        <td><code>file_patch_pr</code></td>
+        <td class="num">143,875 (invalid)</td>
+        <td class="num">13.2</td>
+        <td class="num">90,436</td>
+        <td class="num">12.8</td>
+        <td class="num"><strong>1.59×</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    On <code>issue_workflow</code>, where skill stayed in surface, MCP is 1.38× cheaper at matched success — each <code>mcp__github__*</code> call carries less payload than the corresponding <code>gh</code> Bash invocation. On <code>file_patch_pr</code>, MCP is 1.59× cheaper <em>and</em> the only valid surface — <code>create_branch</code>, <code>create_or_update_file</code>, and <code>create_pull_request</code> are named primitives that map one-to-one to the workflow steps.
+  </p>
+
+  <h3>The two tool sequences, side by side</h3>
+
+  <p><strong>MCP <code>file_patch_pr</code></strong> (5/5 valid, ~13 turns, 29 s average):</p>
+
+<pre><code>1. ToolSearch
+2. mcp__github__get_file_contents
+3. mcp__github__create_branch
+4. mcp__github__create_or_update_file
+5. mcp__github__create_pull_request</code></pre>
+
+  <p><strong>Skill <code>file_patch_pr</code></strong> (5/5 INVALID, ~13 turns, 35 s average):</p>
+
+<pre><code>1. Skill                                          (load gh skill)
+2. Bash  gh api .../contents/src/widget.ts        (read existing file via raw REST)
+3. Bash  gh api .../git/refs/heads/main           (get main HEAD SHA)
+4. Bash  gh api .../git/refs -X POST              (create branch)
+5. Bash  NEW_CONTENT='// Widget module...'        ← INVALID
+6. Bash  gh api .../contents/... -X PUT           (write file on branch)
+7. Bash  gh pr create --title "Fix MARKER-..."    (open PR)</code></pre>
+
+  <p>
+    The shell-assignment step is structurally required: <code>gh api -X PUT</code> takes the new file content as a JSON body parameter, and the content has to be a multi-line TypeScript blob with the per-trial marker substituted in. There is no <code>gh</code> command that passes content from one <code>gh</code> invocation to another without going through the shell. All five trials converged on the same workaround. None recovered to a valid-surface path.
+  </p>
+
+  <h3>Validity vs success — the metric divergence shows up</h3>
+
+  <div class="callout">
+    <h3>Why this experiment measures both</h3>
+    <p>
+      <code>tier2_file_patch_pr</code> is the clearest example yet of why the success column alone is misleading. Skill's success column reads <strong>5/5</strong>; valid-surface reads <strong>0/5</strong>. A success-only benchmark would conclude "skill matches MCP on file-patch-PR workflows." The classifier disagrees: every trial got there by stepping outside the intended tool surface, and every trial converged on the same escape pattern — a deterministic, reproducible affordance gap, not random misbehavior.
+    </p>
+  </div>
+
   <h2>Caveats</h2>
 
   <ul>
     <li><strong>Same controller/agent identity.</strong> Both PATs in the n5 run authenticated as <code>chief-builder</code>, scoped to <code>chief-builder-lab</code>. Smoke had distinct identities. The same-identity setup may have <em>encouraged</em> the env-grep escape attempt — the agent knew the controller was the same user — but it also bounded the blast radius (the controller PAT couldn't reach repos outside the sandbox owner).</li>
     <li><strong>No pinned MCP server digest.</strong> <code>.mcp.github.*.json</code> uses <code>ghcr.io/github/github-mcp-server:latest</code>. A future upstream release can change tool names or schemas. Pinning by digest is the right next step.</li>
     <li><strong>240 s budget is unforgiving on <code>issue_triage</code>.</strong> A wider budget at higher N would let us measure MCP's actual pass-rate on the task. The current data says only "the failure mode exists and reproduces at five seeds."</li>
-    <li><strong>Tier 2 isn't implemented.</strong> The plan included mutation tasks (issue workflow, PR review, file-patch-PR). They haven't been built. The findings here are read-only-Tier 1 only.</li>
+    <li><strong><code>tier2_pr_review</code> deferred.</strong> GitHub forbids <code>APPROVE</code> and <code>REQUEST_CHANGES</code> reviews from the PR author. With same-identity tokens, only <code>COMMENT</code> reviews work — less interesting task. Picking this up requires a distinct PR-author identity (second sandbox PAT or a controller-as-app pattern).</li>
   </ul>
 
   <hr style="border: 0; border-top: 1px solid var(--rule); margin: 48px 0 28px;">

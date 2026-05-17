@@ -1,0 +1,105 @@
+{
+  "experiment": "github",
+  "runName": "tier2-n5",
+  "arm": "skill",
+  "taskId": "tier2_file_patch_pr",
+  "tier": 2,
+  "trialN": 5,
+  "timestamp": "2026-05-17T16:03:14.169Z",
+  "seed": "07565323bbc5d717",
+  "metrics": {
+    "inputTokens": 638,
+    "outputTokens": 1337,
+    "cachedInputTokens": 120843,
+    "cacheCreationInputTokens": 8605,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-07565323/contents/src/widget.ts --jq '.content' | base64 -d"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 8,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-07565323/contents/src/widget.ts --jq '.sha'"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-07565323/git/refs/heads/main --jq '.object.sha'"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-07565323/git/refs \\\n  -f ref=\"refs/heads/fix-marker-F976E589\" \\\n  -f sha=\"b851d71d2795f9ba069681a15eeb0b0bb35bee74\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 11,
+        "command": "NEW_CONTENT=$(printf '// Widget module.\\n\\nexport function describe(): string {\\n  return '\\''widget'\\'';\\n}\\n\\nexport function solve_F976E589(): string {\\n  return '\\''done-F976E589'\\'';\\n}\\n' | base64)\ngh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-07565323/contents/src/widget.ts \\\n  -X PUT \\\n  -f message=\"Fix MARKER-F976E589\" \\\n  -f content=\"$NEW_CONTENT\" \\\n  -f sha=\"d42babcbd4e0cd6dd3f6d3da7dfefc3b86d42c31\" \\\n  -f branch=\"fix-marker-F976E589\" \\\n  --jq '.commit.sha'"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 12,
+        "command": "gh pr create \\\n  --repo chief-builder-lab/clivsmcp-tier2-file-patch-pr-07565323 \\\n  --title \"Fix MARKER-F976E589\" \\\n  --body \"addresses-F976E589\" \\\n  --base main \\\n  --head fix-marker-F976E589"
+      }
+    ],
+    "toolCallCount": 7,
+    "turns": 13,
+    "numTurns": 9,
+    "wallClockMs": 34410,
+    "contextWindowPeak": 19569,
+    "totalCostUsd": 0.08902465000000001,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": false,
+    "escapeToolUsed": true,
+    "escapeToolCalls": [
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-07565323/contents/src/widget.ts --jq '.content' | base64 -d",
+        "reason": "non-gh Bash segment: base64 -d"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 11,
+        "command": "NEW_CONTENT=$(printf '// Widget module.\\n\\nexport function describe(): string {\\n  return '\\''widget'\\'';\\n}\\n\\nexport function solve_F976E589(): string {\\n  return '\\''done-F976E589'\\'';\\n}\\n' | base64)\ngh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-07565323/contents/src/widget.ts \\\n  -X PUT \\\n  -f message=\"Fix MARKER-F976E589\" \\\n  -f content=\"$NEW_CONTENT\" \\\n  -f sha=\"d42babcbd4e0cd6dd3f6d3da7dfefc3b86d42c31\" \\\n  -f branch=\"fix-marker-F976E589\" \\\n  --jq '.commit.sha'",
+        "reason": "non-gh Bash segment: NEW_CONTENT=$(printf '// Widget module.\\n\\nexport function describe(): string {\\n  return '\\''widget'\\'';\\n}\\n\\nexport f"
+      }
+    ],
+    "singleCliCommandPerToolCall": false,
+    "cliCommandGranularityViolations": [
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-07565323/contents/src/widget.ts --jq '.content' | base64 -d",
+        "reason": "non-gh Bash segment: base64 -d"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 11,
+        "command": "NEW_CONTENT=$(printf '// Widget module.\\n\\nexport function describe(): string {\\n  return '\\''widget'\\'';\\n}\\n\\nexport function solve_F976E589(): string {\\n  return '\\''done-F976E589'\\'';\\n}\\n' | base64)\ngh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-07565323/contents/src/widget.ts \\\n  -X PUT \\\n  -f message=\"Fix MARKER-F976E589\" \\\n  -f content=\"$NEW_CONTENT\" \\\n  -f sha=\"d42babcbd4e0cd6dd3f6d3da7dfefc3b86d42c31\" \\\n  -f branch=\"fix-marker-F976E589\" \\\n  --jq '.commit.sha'",
+        "reason": "non-gh Bash segment: NEW_CONTENT=$(printf '// Widget module.\\n\\nexport function describe(): string {\\n  return '\\''widget'\\'';\\n}\\n\\nexport f"
+      }
+    ]
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "PR + branch file content + scope all match",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-file-patch-pr-07565323",
+      "prNumber": 1,
+      "expectedFunctionName": "solve_F976E589",
+      "expectedPrTitle": "Fix MARKER-F976E589"
+    }
+  }
+}

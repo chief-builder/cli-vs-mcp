@@ -1,0 +1,167 @@
+{
+  "experiment": "github",
+  "runName": "tier2-n5",
+  "arm": "baseline",
+  "taskId": "tier2_issue_workflow",
+  "tier": 2,
+  "trialN": 3,
+  "timestamp": "2026-05-17T15:27:13.226Z",
+  "seed": "a300d582bb461fb1",
+  "metrics": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedInputTokens": 0,
+    "cacheCreationInputTokens": 0,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 5
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 7
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 9
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 11
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 13
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 16
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 17
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 20
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 23
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 25
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 26
+      },
+      {
+        "name": "Read",
+        "turnIndex": 29
+      },
+      {
+        "name": "Read",
+        "turnIndex": 30
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 32
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 35
+      },
+      {
+        "name": "Read",
+        "turnIndex": 36
+      },
+      {
+        "name": "Read",
+        "turnIndex": 37
+      },
+      {
+        "name": "Read",
+        "turnIndex": 40
+      },
+      {
+        "name": "Read",
+        "turnIndex": 43
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 44
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 45
+      },
+      {
+        "name": "Read",
+        "turnIndex": 48
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 51
+      },
+      {
+        "name": "Read",
+        "turnIndex": 52
+      },
+      {
+        "name": "Read",
+        "turnIndex": 53
+      },
+      {
+        "name": "Read",
+        "turnIndex": 55
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 58
+      },
+      {
+        "name": "Read",
+        "turnIndex": 59
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 62
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 65
+      }
+    ],
+    "toolCallCount": 31,
+    "turns": 65,
+    "numTurns": 0,
+    "wallClockMs": 0,
+    "contextWindowPeak": 51061,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "label=false closed=false comment=false decoys-untouched=true (target untouched — decoy check not credited)",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-issue-workflow-a300d582",
+      "targetIssueNumber": 2,
+      "expectedLabel": "priority-high",
+      "expectedCommentPhrase": "triaged-92B10C2C"
+    }
+  },
+  "error": "claude timed out after 240000ms"
+}

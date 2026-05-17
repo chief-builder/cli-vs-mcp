@@ -1,0 +1,69 @@
+{
+  "experiment": "github",
+  "runName": "tier2-n5",
+  "arm": "skill",
+  "taskId": "tier2_issue_workflow",
+  "tier": 2,
+  "trialN": 1,
+  "timestamp": "2026-05-17T15:58:13.521Z",
+  "seed": "120abe7c7e431455",
+  "metrics": {
+    "inputTokens": 607,
+    "outputTokens": 825,
+    "cachedInputTokens": 101217,
+    "cacheCreationInputTokens": 7903,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "gh issue list --repo chief-builder-lab/clivsmcp-tier2-issue-workflow-120abe7c --state open --json number,title"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 7,
+        "command": "gh issue edit 2 --repo chief-builder-lab/clivsmcp-tier2-issue-workflow-120abe7c --add-label \"priority-high\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 8,
+        "command": "gh issue comment 2 --repo chief-builder-lab/clivsmcp-tier2-issue-workflow-120abe7c --body \"triaged-13E3CCFC\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "gh issue close 2 --repo chief-builder-lab/clivsmcp-tier2-issue-workflow-120abe7c"
+      }
+    ],
+    "toolCallCount": 5,
+    "turns": 10,
+    "numTurns": 7,
+    "wallClockMs": 20803,
+    "contextWindowPeak": 18867,
+    "totalCostUsd": 0.07278335,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "all workflow steps applied to target only",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-issue-workflow-120abe7c",
+      "targetIssueNumber": 2,
+      "expectedLabel": "priority-high",
+      "expectedCommentPhrase": "triaged-13E3CCFC"
+    }
+  }
+}

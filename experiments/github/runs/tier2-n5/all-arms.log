@@ -1,0 +1,76 @@
+=== github-rw baseline tier 2 ===
+$ node --import tsx harness/src/cli.ts run --experiment github-rw --run tier2-n5 --arm baseline --tier 2 --trials 5
+→ github/tier2-n5  tier2_issue_workflow  arm=baseline  trial=1/5
+  ✗ score=0.00  valid  tokens_in=0  turns=79  time=0.0s
+  error: claude timed out after 240000ms
+→ github/tier2-n5  tier2_issue_workflow  arm=baseline  trial=2/5
+  ✗ score=0.00  INVALID  tokens_in=0  turns=83  time=0.0s
+  error: claude timed out after 240000ms
+→ github/tier2-n5  tier2_issue_workflow  arm=baseline  trial=3/5
+  ✗ score=0.00  valid  tokens_in=0  turns=65  time=0.0s
+  error: claude timed out after 240000ms
+→ github/tier2-n5  tier2_issue_workflow  arm=baseline  trial=4/5
+  ✗ score=0.00  valid  tokens_in=0  turns=59  time=0.0s
+  error: claude timed out after 240000ms
+→ github/tier2-n5  tier2_issue_workflow  arm=baseline  trial=5/5
+  ✗ score=0.00  valid  tokens_in=0  turns=52  time=0.0s
+  error: claude timed out after 240000ms
+→ github/tier2-n5  tier2_file_patch_pr  arm=baseline  trial=1/5
+  ✗ score=0.00  valid  tokens_in=0  turns=62  time=0.0s
+  error: claude timed out after 240000ms
+→ github/tier2-n5  tier2_file_patch_pr  arm=baseline  trial=2/5
+  ✗ score=0.00  valid  tokens_in=670  turns=31  time=140.0s
+→ github/tier2-n5  tier2_file_patch_pr  arm=baseline  trial=3/5
+  ✗ score=0.00  valid  tokens_in=0  turns=65  time=0.0s
+  error: claude timed out after 240000ms
+→ github/tier2-n5  tier2_file_patch_pr  arm=baseline  trial=4/5
+  ✗ score=0.00  valid  tokens_in=0  turns=63  time=0.0s
+  error: claude timed out after 240000ms
+→ github/tier2-n5  tier2_file_patch_pr  arm=baseline  trial=5/5
+  ✗ score=0.00  valid  tokens_in=0  turns=56  time=0.0s
+  error: claude timed out after 240000ms
+=== github-rw skill tier 2 ===
+$ node --import tsx harness/src/cli.ts run --experiment github-rw --run tier2-n5 --arm skill --tier 2 --trials 5
+→ github/tier2-n5  tier2_issue_workflow  arm=skill  trial=1/5
+  ✓ score=1.00  valid  tokens_in=607  turns=10  time=20.8s
+→ github/tier2-n5  tier2_issue_workflow  arm=skill  trial=2/5
+  ✓ score=1.00  valid  tokens_in=607  turns=11  time=23.7s
+→ github/tier2-n5  tier2_issue_workflow  arm=skill  trial=3/5
+  ✓ score=1.00  valid  tokens_in=606  turns=10  time=20.9s
+→ github/tier2-n5  tier2_issue_workflow  arm=skill  trial=4/5
+  ✓ score=1.00  valid  tokens_in=608  turns=11  time=20.0s
+→ github/tier2-n5  tier2_issue_workflow  arm=skill  trial=5/5
+  ✓ score=1.00  valid  tokens_in=600  turns=11  time=20.0s
+→ github/tier2-n5  tier2_file_patch_pr  arm=skill  trial=1/5
+  ✓ score=1.00  INVALID  tokens_in=646  turns=17  time=37.6s
+→ github/tier2-n5  tier2_file_patch_pr  arm=skill  trial=2/5
+  ✓ score=1.00  INVALID  tokens_in=650  turns=12  time=30.7s
+→ github/tier2-n5  tier2_file_patch_pr  arm=skill  trial=3/5
+  ✓ score=1.00  INVALID  tokens_in=653  turns=12  time=45.3s
+→ github/tier2-n5  tier2_file_patch_pr  arm=skill  trial=4/5
+  ✓ score=1.00  INVALID  tokens_in=654  turns=12  time=29.0s
+→ github/tier2-n5  tier2_file_patch_pr  arm=skill  trial=5/5
+  ✓ score=1.00  INVALID  tokens_in=638  turns=13  time=34.4s
+=== github-rw mcp tier 2 ===
+$ node --import tsx harness/src/cli.ts run --experiment github-rw --run tier2-n5 --arm mcp --tier 2 --trials 5
+→ github/tier2-n5  tier2_issue_workflow  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=606  turns=12  time=19.5s
+→ github/tier2-n5  tier2_issue_workflow  arm=mcp  trial=2/5
+  ✓ score=1.00  valid  tokens_in=606  turns=12  time=22.4s
+→ github/tier2-n5  tier2_issue_workflow  arm=mcp  trial=3/5
+  ✓ score=1.00  valid  tokens_in=605  turns=11  time=22.1s
+→ github/tier2-n5  tier2_issue_workflow  arm=mcp  trial=4/5
+  ✓ score=1.00  valid  tokens_in=612  turns=15  time=31.8s
+→ github/tier2-n5  tier2_issue_workflow  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=600  turns=12  time=21.0s
+→ github/tier2-n5  tier2_file_patch_pr  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=651  turns=14  time=37.0s
+→ github/tier2-n5  tier2_file_patch_pr  arm=mcp  trial=2/5
+  ✓ score=1.00  valid  tokens_in=650  turns=11  time=24.6s
+→ github/tier2-n5  tier2_file_patch_pr  arm=mcp  trial=3/5
+  ✓ score=1.00  valid  tokens_in=651  turns=12  time=24.9s
+→ github/tier2-n5  tier2_file_patch_pr  arm=mcp  trial=4/5
+  ✓ score=1.00  valid  tokens_in=653  turns=12  time=21.4s
+→ github/tier2-n5  tier2_file_patch_pr  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=786  turns=15  time=35.9s
+=== DONE ===

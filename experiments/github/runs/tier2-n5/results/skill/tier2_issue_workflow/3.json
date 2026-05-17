@@ -1,0 +1,69 @@
+{
+  "experiment": "github",
+  "runName": "tier2-n5",
+  "arm": "skill",
+  "taskId": "tier2_issue_workflow",
+  "tier": 2,
+  "trialN": 3,
+  "timestamp": "2026-05-17T15:59:11.376Z",
+  "seed": "a300d582bb461fb1",
+  "metrics": {
+    "inputTokens": 606,
+    "outputTokens": 792,
+    "cachedInputTokens": 101031,
+    "cacheCreationInputTokens": 7846,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "gh issue list --repo chief-builder-lab/clivsmcp-tier2-issue-workflow-a300d582 --state open --json number,title --jq '.[] | select(.title | contains(\"92B10C2C\")) | {number,title}'"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 7,
+        "command": "gh issue edit 2 --repo chief-builder-lab/clivsmcp-tier2-issue-workflow-a300d582 --add-label \"priority-high\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 8,
+        "command": "gh issue comment 2 --repo chief-builder-lab/clivsmcp-tier2-issue-workflow-a300d582 --body \"triaged-92B10C2C\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "gh issue close 2 --repo chief-builder-lab/clivsmcp-tier2-issue-workflow-a300d582"
+      }
+    ],
+    "toolCallCount": 5,
+    "turns": 10,
+    "numTurns": 7,
+    "wallClockMs": 20853,
+    "contextWindowPeak": 18810,
+    "totalCostUsd": 0.0720778,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "all workflow steps applied to target only",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-issue-workflow-a300d582",
+      "targetIssueNumber": 2,
+      "expectedLabel": "priority-high",
+      "expectedCommentPhrase": "triaged-92B10C2C"
+    }
+  }
+}

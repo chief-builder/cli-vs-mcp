@@ -1,0 +1,69 @@
+{
+  "experiment": "github",
+  "runName": "tier2-n5",
+  "arm": "mcp",
+  "taskId": "tier2_file_patch_pr",
+  "tier": 2,
+  "trialN": 5,
+  "timestamp": "2026-05-17T16:08:36.627Z",
+  "seed": "07565323bbc5d717",
+  "metrics": {
+    "inputTokens": 786,
+    "outputTokens": 1631,
+    "cachedInputTokens": 80464,
+    "cacheCreationInputTokens": 8891,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "mcp__github__get_file_contents",
+        "turnIndex": 6
+      },
+      {
+        "name": "mcp__github__get_me",
+        "turnIndex": 7
+      },
+      {
+        "name": "mcp__github__create_branch",
+        "turnIndex": 10
+      },
+      {
+        "name": "mcp__github__create_or_update_file",
+        "turnIndex": 12
+      },
+      {
+        "name": "mcp__github__create_pull_request",
+        "turnIndex": 14
+      }
+    ],
+    "toolCallCount": 6,
+    "turns": 15,
+    "numTurns": 7,
+    "wallClockMs": 35913,
+    "contextWindowPeak": 16386,
+    "totalCostUsd": 0.08283744999999999,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "PR + branch file content + scope all match",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-file-patch-pr-07565323",
+      "prNumber": 1,
+      "expectedFunctionName": "solve_F976E589",
+      "expectedPrTitle": "Fix MARKER-F976E589"
+    }
+  }
+}

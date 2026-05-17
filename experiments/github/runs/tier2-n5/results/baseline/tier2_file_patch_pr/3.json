@@ -1,0 +1,183 @@
+{
+  "experiment": "github",
+  "runName": "tier2-n5",
+  "arm": "baseline",
+  "taskId": "tier2_file_patch_pr",
+  "tier": 2,
+  "trialN": 3,
+  "timestamp": "2026-05-17T15:45:59.815Z",
+  "seed": "c1d2eab66da0dd27",
+  "metrics": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedInputTokens": 0,
+    "cacheCreationInputTokens": 0,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 4
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 7
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 10
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 12
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 14
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 16
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 19
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 22
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 24
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 25
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 27
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 28
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 30
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 32
+      },
+      {
+        "name": "Read",
+        "turnIndex": 35
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 37
+      },
+      {
+        "name": "Read",
+        "turnIndex": 38
+      },
+      {
+        "name": "Read",
+        "turnIndex": 40
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 42
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 43
+      },
+      {
+        "name": "Read",
+        "turnIndex": 45
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 47
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 49
+      },
+      {
+        "name": "Read",
+        "turnIndex": 50
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 52
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 53
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 54
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 56
+      },
+      {
+        "name": "Read",
+        "turnIndex": 58
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 59
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 61
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 62
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 64
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 65
+      }
+    ],
+    "toolCallCount": 35,
+    "turns": 65,
+    "numTurns": 0,
+    "wallClockMs": 0,
+    "contextWindowPeak": 57108,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "title=false body=false fn-present=false fn-returns-expected=false only-target-file=false",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-file-patch-pr-c1d2eab6",
+      "prNumber": null,
+      "expectedFunctionName": "solve_1785E5E9",
+      "expectedPrTitle": "Fix MARKER-1785E5E9"
+    }
+  },
+  "error": "claude timed out after 240000ms"
+}

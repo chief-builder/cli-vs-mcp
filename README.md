@@ -136,7 +136,14 @@ Each task provisions a fresh private repo under `GITHUB_SANDBOX_OWNER` via the c
 | `tier1_issue_triage` | Repo with 5 issues (1 target with a hidden marker in the body, 4 decoys) and a label palette | Find the target issue's number, title, labels, and marker |
 | `tier1_pr_diff_answer` | Repo with a feature branch and an open PR that adds one new function to `src/widget.ts` | Report PR number, changed file, and added function name |
 
-Tier 2 GitHub tasks are not implemented in this checkout.
+**Tier 2 — mutation** (`experiments/github/tasks/tier2.ts`, selected via `--experiment github-rw`)
+
+| Task | Setup | Expected outcome |
+|---|---|---|
+| `tier2_issue_workflow` | Repo with 3 issues (1 target with marker in title, 2 decoys) + label palette including `priority-high` | Add `priority-high` label to target, post a comment containing `triaged-<marker>`, close it. Leave decoys untouched. |
+| `tier2_file_patch_pr` | Repo with `src/widget.ts` containing a TODO marker on main | Create a branch, replace the TODO with an exported function `solve_<marker>` returning `done-<marker>`, open a PR with marker phrases in title and body. |
+
+Tier 2 requires the agent token to have Issues:write / Pull requests:write / Contents:write on the sandbox owner. `tier2_pr_review` is deferred — GitHub forbids `APPROVE`/`REQUEST_CHANGES` from the PR author, so the task needs a distinct PR-author identity.
 
 ## Measurements captured
 
@@ -241,7 +248,7 @@ Latest run is `n5`: 5 trials per task per arm across both experiments.
 
 MCP is consistently cheaper (per-turn payload smaller — skill emits explicit `playwright-cli snapshot` after every action; MCP bundles it inline). At Tier 2, MCP develops a convergence failure mode on `tier2_recovery` that skill doesn't have at 240 s.
 
-**GitHub** (`experiments/github/runs/n5/findings.md`)
+**GitHub Tier 1** (`experiments/github/runs/n5/findings.md`)
 
 | Task | baseline | skill | mcp |
 |---|---|---|---|
@@ -253,6 +260,15 @@ Two findings only visible from the validity classifier:
 
 1. **Skill arm escapes its surface on 2/3 GitHub tasks.** `tier1_repo_inventory` (5/5 invalid) all pipe `gh api ... | base64 -d` to decode README content. `tier1_issue_triage` (5/5 invalid) included one trial that ran `env | grep -i github` then `GH_TOKEN=$GITHUB_CONTROLLER_TOKEN gh api ...` to lift the controller's elevated token. The escalation path was open during the n5 run — the runner's scrub list didn't yet include the harness's own `GITHUB_CONTROLLER_TOKEN` / `GITHUB_AGENT_TOKEN` var names. Patched in `ef3fc97` and behaviorally verified in `experiments/github/runs/env-fix-verify`.
 2. **MCP `tier1_issue_triage` collapse.** All 5 MCP trials timed out at 75+ turns of fanout across `list_issues`, `search_issues`, `get_issue`. Skill solved the same task in ~23 turns with one `gh issue list --label "bug,priority-high" --json`. The MCP fanout shape is the failure mode, not the absence of capability.
+
+**GitHub Tier 2** (`experiments/github/runs/tier2-n5/findings.md`)
+
+| Task | baseline | skill (raw / valid) | mcp |
+|---|---|---|---|
+| `tier2_issue_workflow` | 0/5 | **5/5** / **5/5** | **5/5** |
+| `tier2_file_patch_pr` | 0/5 | **5/5** / **0/5** (all INVALID) | **5/5** |
+
+Both arms produce correct end state on both tasks. The split is on tool surface: **skill stays in surface where `gh` has first-class commands** (`gh issue edit/comment/close`) and **always escapes where it doesn't** (`file_patch_pr` needs create-branch-from-SHA and update-file-on-branch, neither of which has a high-level `gh` command, so the agent composes them out of `gh api` + shell variable assignment for the file content payload). All 5 `file_patch_pr` skill trials hit the same escape. MCP wins both tasks on cost (1.38× on `issue_workflow`, 1.59× on `file_patch_pr`) and is the only arm staying in surface across both.
 
 ## Known limits
 

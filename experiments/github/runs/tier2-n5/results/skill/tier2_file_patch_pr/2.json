@@ -1,0 +1,105 @@
+{
+  "experiment": "github",
+  "runName": "tier2-n5",
+  "arm": "skill",
+  "taskId": "tier2_file_patch_pr",
+  "tier": 2,
+  "trialN": 2,
+  "timestamp": "2026-05-17T16:01:13.648Z",
+  "seed": "f50f92a52f72125e",
+  "metrics": {
+    "inputTokens": 650,
+    "outputTokens": 1297,
+    "cachedInputTokens": 120748,
+    "cacheCreationInputTokens": 8578,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-f50f92a5/contents/src/widget.ts --jq '.content' | base64 -d"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 7,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-f50f92a5/contents/src/widget.ts --jq '.sha'"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 8,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-f50f92a5/git/ref/heads/main --jq '.object.sha'"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-f50f92a5/git/refs -f ref=\"refs/heads/fix-MARKER-C137FE5B\" -f sha=\"7b59b94dda32b723562561ba078fce3ecfc7bd60\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "NEW_CONTENT=\"// Widget module.\n\nexport function describe(): string {\n  return 'widget';\n}\n\nexport function solve_C137FE5B(): string {\n  return 'done-C137FE5B';\n}\n\"\nENCODED=$(printf '%s' \"$NEW_CONTENT\" | base64)\ngh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-f50f92a5/contents/src/widget.ts \\\n  -X PUT \\\n  -f message=\"Fix MARKER-C137FE5B\" \\\n  -f content=\"$ENCODED\" \\\n  -f sha=\"348d5ef0438f2b17e736c3ff29fcb53834127808\" \\\n  -f branch=\"fix-MARKER-C137FE5B\" \\\n  --jq '.commit.sha'"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 11,
+        "command": "gh pr create \\\n  --repo chief-builder-lab/clivsmcp-tier2-file-patch-pr-f50f92a5 \\\n  --title \"Fix MARKER-C137FE5B\" \\\n  --body \"addresses-C137FE5B\" \\\n  --base main \\\n  --head fix-MARKER-C137FE5B"
+      }
+    ],
+    "toolCallCount": 7,
+    "turns": 12,
+    "numTurns": 9,
+    "wallClockMs": 30664,
+    "contextWindowPeak": 19542,
+    "totalCostUsd": 0.08829690000000001,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": false,
+    "escapeToolUsed": true,
+    "escapeToolCalls": [
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-f50f92a5/contents/src/widget.ts --jq '.content' | base64 -d",
+        "reason": "non-gh Bash segment: base64 -d"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "NEW_CONTENT=\"// Widget module.\n\nexport function describe(): string {\n  return 'widget';\n}\n\nexport function solve_C137FE5B(): string {\n  return 'done-C137FE5B';\n}\n\"\nENCODED=$(printf '%s' \"$NEW_CONTENT\" | base64)\ngh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-f50f92a5/contents/src/widget.ts \\\n  -X PUT \\\n  -f message=\"Fix MARKER-C137FE5B\" \\\n  -f content=\"$ENCODED\" \\\n  -f sha=\"348d5ef0438f2b17e736c3ff29fcb53834127808\" \\\n  -f branch=\"fix-MARKER-C137FE5B\" \\\n  --jq '.commit.sha'",
+        "reason": "non-gh Bash segment: NEW_CONTENT=\"// Widget module.\n\nexport function describe(): string {\n  return 'widget';\n}\n\nexport function solve_C137FE5"
+      }
+    ],
+    "singleCliCommandPerToolCall": false,
+    "cliCommandGranularityViolations": [
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-f50f92a5/contents/src/widget.ts --jq '.content' | base64 -d",
+        "reason": "non-gh Bash segment: base64 -d"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "NEW_CONTENT=\"// Widget module.\n\nexport function describe(): string {\n  return 'widget';\n}\n\nexport function solve_C137FE5B(): string {\n  return 'done-C137FE5B';\n}\n\"\nENCODED=$(printf '%s' \"$NEW_CONTENT\" | base64)\ngh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-f50f92a5/contents/src/widget.ts \\\n  -X PUT \\\n  -f message=\"Fix MARKER-C137FE5B\" \\\n  -f content=\"$ENCODED\" \\\n  -f sha=\"348d5ef0438f2b17e736c3ff29fcb53834127808\" \\\n  -f branch=\"fix-MARKER-C137FE5B\" \\\n  --jq '.commit.sha'",
+        "reason": "non-gh Bash segment: NEW_CONTENT=\"// Widget module.\n\nexport function describe(): string {\n  return 'widget';\n}\n\nexport function solve_C137FE5"
+      }
+    ]
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "PR + branch file content + scope all match",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-file-patch-pr-f50f92a5",
+      "prNumber": 1,
+      "expectedFunctionName": "solve_C137FE5B",
+      "expectedPrTitle": "Fix MARKER-C137FE5B"
+    }
+  }
+}

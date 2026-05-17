@@ -148,9 +148,13 @@ program
     output?: string;
   }) => {
     const rootDir = resolve(process.cwd());
+    // Experiments may register multiple specs sharing one storage name
+    // (e.g. github + github-rw both write under experiments/github/runs/).
+    // Resolve the spec so the report reads the right directory.
+    const reportExperiment = getExperiment(opts.experiment).name;
     const report = await generateReport({
       rootDir,
-      experiment: opts.experiment,
+      experiment: reportExperiment,
       runName: opts.run,
       ...(opts.tier !== undefined ? { tier: opts.tier } : {}),
       allTiers: opts.allTiers,

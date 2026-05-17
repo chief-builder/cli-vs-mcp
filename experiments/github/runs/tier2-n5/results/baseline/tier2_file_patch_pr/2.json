@@ -1,0 +1,105 @@
+{
+  "experiment": "github",
+  "runName": "tier2-n5",
+  "arm": "baseline",
+  "taskId": "tier2_file_patch_pr",
+  "tier": 2,
+  "trialN": 2,
+  "timestamp": "2026-05-17T15:43:35.634Z",
+  "seed": "f50f92a52f72125e",
+  "metrics": {
+    "inputTokens": 670,
+    "outputTokens": 5645,
+    "cachedInputTokens": 282666,
+    "cacheCreationInputTokens": 19885,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 5
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 7
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 9
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 10
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 12
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 13
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 15
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 17
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 20
+      },
+      {
+        "name": "Read",
+        "turnIndex": 21
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 23
+      },
+      {
+        "name": "EnterPlanMode",
+        "turnIndex": 26
+      },
+      {
+        "name": "Write",
+        "turnIndex": 28
+      },
+      {
+        "name": "ExitPlanMode",
+        "turnIndex": 29
+      }
+    ],
+    "toolCallCount": 15,
+    "turns": 31,
+    "numTurns": 16,
+    "wallClockMs": 139971,
+    "contextWindowPeak": 27378,
+    "totalCostUsd": 0.24455355,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "title=false body=false fn-present=false fn-returns-expected=false only-target-file=false",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-file-patch-pr-f50f92a5",
+      "prNumber": null,
+      "expectedFunctionName": "solve_C137FE5B",
+      "expectedPrTitle": "Fix MARKER-C137FE5B"
+    }
+  }
+}

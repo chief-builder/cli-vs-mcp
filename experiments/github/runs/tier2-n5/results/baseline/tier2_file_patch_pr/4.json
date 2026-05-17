@@ -1,0 +1,183 @@
+{
+  "experiment": "github",
+  "runName": "tier2-n5",
+  "arm": "baseline",
+  "taskId": "tier2_file_patch_pr",
+  "tier": 2,
+  "trialN": 4,
+  "timestamp": "2026-05-17T15:50:03.691Z",
+  "seed": "b332cc70cef5652d",
+  "metrics": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedInputTokens": 0,
+    "cacheCreationInputTokens": 0,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 5
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 7
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 10
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 12
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 15
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 17
+      },
+      {
+        "name": "Read",
+        "turnIndex": 18
+      },
+      {
+        "name": "Read",
+        "turnIndex": 20
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 23
+      },
+      {
+        "name": "Read",
+        "turnIndex": 24
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 26
+      },
+      {
+        "name": "Read",
+        "turnIndex": 27
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 30
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 31
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 32
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 34
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 35
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 37
+      },
+      {
+        "name": "Read",
+        "turnIndex": 38
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 40
+      },
+      {
+        "name": "Read",
+        "turnIndex": 43
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 44
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 47
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 49
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 50
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 51
+      },
+      {
+        "name": "Read",
+        "turnIndex": 52
+      },
+      {
+        "name": "Read",
+        "turnIndex": 54
+      },
+      {
+        "name": "Read",
+        "turnIndex": 56
+      },
+      {
+        "name": "Read",
+        "turnIndex": 57
+      },
+      {
+        "name": "Read",
+        "turnIndex": 58
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 60
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 61
+      },
+      {
+        "name": "Read",
+        "turnIndex": 63
+      }
+    ],
+    "toolCallCount": 35,
+    "turns": 63,
+    "numTurns": 0,
+    "wallClockMs": 0,
+    "contextWindowPeak": 47288,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "title=false body=false fn-present=false fn-returns-expected=false only-target-file=false",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-file-patch-pr-b332cc70",
+      "prNumber": null,
+      "expectedFunctionName": "solve_3FEA26D7",
+      "expectedPrTitle": "Fix MARKER-3FEA26D7"
+    }
+  },
+  "error": "claude timed out after 240000ms"
+}
