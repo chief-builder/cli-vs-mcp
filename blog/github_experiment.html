@@ -556,9 +556,165 @@
     </p>
   </div>
 
+  <h2>Where the apples-to-apples comparison actually lives</h2>
+
+  <p>
+    Five GitHub tasks ran across Tier 1 and Tier 2. Three of them produced cost numbers that aren't directly comparable across arms: skill escaped surface on <code>tier1_repo_inventory</code> and <code>tier2_file_patch_pr</code> (so the cheap skill numbers are partly off-surface work), and MCP couldn't complete <code>tier1_issue_triage</code> at all. That leaves <strong>two tasks where both arms succeeded 5/5, both stayed in surface 5/5, and the cost columns mean the same thing on both sides</strong>:
+  </p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Task</th>
+        <th class="num">skill turns</th>
+        <th class="num">skill total tok</th>
+        <th class="num">mcp turns</th>
+        <th class="num">mcp total tok</th>
+        <th class="num">Skill / MCP</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>tier1_pr_diff_answer</code></td>
+        <td class="num">8.0</td>
+        <td class="num">73,146</td>
+        <td class="num">8.2</td>
+        <td class="num">55,534</td>
+        <td class="num"><strong>1.32×</strong></td>
+      </tr>
+      <tr>
+        <td><code>tier2_issue_workflow</code></td>
+        <td class="num">10.6</td>
+        <td class="num">106,912</td>
+        <td class="num">12.4</td>
+        <td class="num">77,645</td>
+        <td class="num"><strong>1.38×</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Direction is consistent: <strong>MCP is ~1.3–1.4× cheaper</strong> when both arms can complete the task cleanly. Turn counts are within two of each other; the cost gap is per-turn payload, not extra steps. The same pattern shows up across every clean Playwright task as well (1.29–1.42× on five of six tasks, 2.51× on the form-fill task with many action↔check cycles).
+  </p>
+
+  <p>
+    The other three GitHub tasks are still worth keeping in the run — they're informative about where each surface <em>breaks</em>. But they're not cost data:
+  </p>
+
+  <ul>
+    <li><code>tier1_repo_inventory</code>: skill's 86k tokens include the <code>gh api | base64 -d</code> step that the classifier rejects. The in-surface skill path doesn't exist in <code>gh</code>.</li>
+    <li><code>tier1_issue_triage</code>: MCP never completed a trial inside 240 s; there's no comparable number to put in the column.</li>
+    <li><code>tier2_file_patch_pr</code>: skill's 144k tokens include shell-variable-assignment escapes. The in-surface skill path exists (see the next section) but costs ~3× more <em>and</em> doesn't reliably stay in surface.</li>
+  </ul>
+
+  <p>
+    Two clean tasks is anecdotal, not a benchmark. The direction is consistent enough to call directional. A more honest claim would require ~5 clean tasks at this N; designing tasks with first-class affordances on both sides (label CRUD, release creation, workflow status) is the obvious next step.
+  </p>
+
+  <h2>What happens when you try to fix the affordance gap with a prompt</h2>
+
+  <p>
+    The <code>tier2_file_patch_pr</code> result — skill 5/5 raw, 0/5 valid surface — looks at first like a prompt knowledge gap. The agent fell back to <code>base64 -d</code> and shell variable assignment because it didn't know the in-surface workaround for passing multi-line content to <code>gh api</code> (write to a local file, then point <code>gh api --input</code> at it). So we tried it: a directed variant of the task whose prompt explicitly names that workaround.
+  </p>
+
+<pre><code>Tooling notes — important:
+- The ONLY allowed Bash command is `gh ...`. Shell helpers, pipes,
+  redirections, variable assignments, and command substitution are
+  NOT allowed and will be flagged as off-surface.
+- When you need to pass file content or a JSON body to `gh api`,
+  write the content to a local file using the `Write` tool, then
+  point `gh` at it:
+    - `gh api ENDPOINT -F field=@local-file`
+    - `gh api ENDPOINT --input request.json`
+- Do not use shell variable assignment to stage content.</code></pre>
+
+  <p>Same setup, same successCheck, same agent, same model. 5 trials, skill arm only.</p>
+
+  <h3>Result</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th class="num">Original prompt</th>
+        <th class="num">Directed prompt</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Pass success</td>
+        <td class="num">5/5</td>
+        <td class="num">3/5 <span class="pill warn">↓</span></td>
+      </tr>
+      <tr>
+        <td>Valid surface</td>
+        <td class="num">0/5</td>
+        <td class="num">2/5 <span class="pill warn">↑ partial</span></td>
+      </tr>
+      <tr>
+        <td>Avg turns (passing trials)</td>
+        <td class="num">~13</td>
+        <td class="num">~30 (2.3×)</td>
+      </tr>
+      <tr>
+        <td>Avg time (passing trials)</td>
+        <td class="num">~35 s</td>
+        <td class="num">~108 s (3.1×)</td>
+      </tr>
+      <tr>
+        <td>Avg tokens (passing trials)</td>
+        <td class="num">~144 k</td>
+        <td class="num">~374 k (2.6×)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>The failure mode has two halves</h3>
+
+  <p>
+    Both of the <strong>INVALID</strong> directed trials adopted the new pattern on the <em>write</em> side (creating refs, blobs, trees, commits, and the PR through <code>--input</code> files staged by <code>Write</code>) but reverted to <code>base64 -d</code> on the <em>read</em> side for decoding the existing <code>widget.ts</code> content. The directed prompt taught how to pass content <em>to</em> <code>gh api</code>; it didn't name the equivalent for reading raw content (<code>gh api ENDPOINT -H "Accept: application/vnd.github.raw+json"</code>). The agent picked up the specific guidance it was given and didn't generalize across the read/write boundary.
+  </p>
+
+  <h3>The cost of compliance is structural</h3>
+
+  <p>
+    When the agent does follow the directed path end-to-end, it abandons the high-level <code>/repos/&#123;owner&#125;/&#123;repo&#125;/contents/&#123;path&#125;</code> PUT shortcut (which handles all the tree/commit work internally) and walks the low-level Git data API:
+  </p>
+
+<pre><code>1. gh api .../contents/src/widget.ts                  (read)
+2. gh api .../git/ref/heads/main                      (HEAD SHA)
+3. Write                                              (stage refs body)
+4. gh api .../git/refs --input ...                    (create branch)
+5. Write
+6. gh api .../git/blobs --input ...                   (create blob)
+7. gh api .../git/commits/&lt;sha&gt;                       (read base commit)
+8. Write
+9. gh api .../git/trees --input ...                   (create tree)
+10. Write
+11. gh api .../git/commits --input ...                (create commit)
+12. Write
+13. gh api .../git/refs/heads/&lt;branch&gt; -X PATCH       (update branch)
+14. Write
+15. gh api .../pulls --input ...                      (open PR)</code></pre>
+
+  <p>
+    Seven <code>Write</code> calls, fifteen tool calls total, ~30 turns. The directed prompt pushed the agent off the shortcut and into the primitives — and the primitives are structurally more expensive. Two of the five trials hit the 240-second wall before finishing.
+  </p>
+
+  <div class="callout">
+    <h3>What this is evidence for</h3>
+    <p>
+      The skill arm's escape on <code>file_patch_pr</code> isn't just a prompt knowledge gap that explicit guidance could close. Even with an in-surface workaround named in the prompt, <strong>3 of 5 trials still escaped</strong>. The ones that didn't paid a 2–3× cost penalty. The affordance gap — <code>gh</code> not exposing the workflow primitives a multi-file mutation needs at the high level — is real, doesn't disappear under prompt rewrite, and costs measurable tokens and turns to bridge.
+    </p>
+    <p>
+      The MCP arm achieved 5/5 valid at ~13 turns / ~90 k tokens with <em>no</em> prompt-side guidance about how to do file mutations. The surface design encoded the workflow primitives as named tools (<code>create_branch</code>, <code>create_or_update_file</code>, <code>create_pull_request</code>), and the agent used them in order. That's the cleanest "surface shape decides behavior" data point in the project.
+    </p>
+  </div>
+
   <h2>Caveats</h2>
 
   <ul>
+    <li><strong>Only two clean apples-to-apples GitHub tasks.</strong> The cost direction (MCP ~1.3–1.4× cheaper) is consistent across both, and consistent with the Playwright tasks (1.3×–2.5×), but five clean tasks would let us call this a result rather than a direction. Likely next additions: <code>tier2_label_management</code> (label CRUD), <code>tier2_release_create</code>, <code>tier1_workflow_status</code> — all chosen for first-class affordances on both sides.</li>
     <li><strong>Same controller/agent identity.</strong> Both PATs in the n5 run authenticated as <code>chief-builder</code>, scoped to <code>chief-builder-lab</code>. Smoke had distinct identities. The same-identity setup may have <em>encouraged</em> the env-grep escape attempt — the agent knew the controller was the same user — but it also bounded the blast radius (the controller PAT couldn't reach repos outside the sandbox owner).</li>
     <li><strong>No pinned MCP server digest.</strong> <code>.mcp.github.*.json</code> uses <code>ghcr.io/github/github-mcp-server:latest</code>. A future upstream release can change tool names or schemas. Pinning by digest is the right next step.</li>
     <li><strong>240 s budget is unforgiving on <code>issue_triage</code>.</strong> A wider budget at higher N would let us measure MCP's actual pass-rate on the task. The current data says only "the failure mode exists and reproduces at five seeds."</li>
