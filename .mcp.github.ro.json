@@ -13,7 +13,7 @@
         "GITHUB_TOOLSETS",
         "-e",
         "GITHUB_HOST",
-        "ghcr.io/github/github-mcp-server:latest",
+        "ghcr.io/github/github-mcp-server@sha256:e3816a476a977cfb836e7d221510011436c654d11861db66ecfd826601aba6a4",
         "stdio",
         "--read-only"
       ],

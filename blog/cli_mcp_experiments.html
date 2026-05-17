@@ -293,7 +293,7 @@
       <p>A separate <strong>MCP server</strong> process exposes structured tools to the agent over stdio. Each tool has its own typed schema and named parameters. No <code>Bash</code>, no <code>Skill</code> — only the enumerated MCP tool set.</p>
       <div class="arm-detail">
         <div><strong>Playwright:</strong> <code>@playwright/mcp@0.0.75</code> via <code>npx</code> stdio. 23 enumerated tools: <code>browser_navigate</code>, <code>browser_click</code>, <code>browser_snapshot</code>, <code>browser_fill_form</code>, etc.</div>
-        <div><strong>GitHub:</strong> <code>ghcr.io/github/github-mcp-server:latest</code> via Docker stdio. 39–79 tools depending on <code>GITHUB_TOOLSETS</code>: <code>issue_write</code>, <code>create_pull_request</code>, <code>actions_list</code>, <code>get_file_contents</code>, etc.</div>
+        <div><strong>GitHub:</strong> <code>ghcr.io/github/github-mcp-server</code> pinned by digest (<code>sha256:e3816a47…</code>) via Docker stdio. 39–79 tools depending on <code>GITHUB_TOOLSETS</code>: <code>issue_write</code>, <code>create_pull_request</code>, <code>actions_list</code>, <code>get_file_contents</code>, etc.</div>
       </div>
     </div>
   </div>
@@ -796,9 +796,6 @@ playwright-cli click "#submit"         → starts with "playwright-cli" ✓</cod
     </li>
     <li>
       <strong>Server tool names drift from common assumptions.</strong> The github-mcp-server uses combined <code>actions_list</code> / <code>actions_get</code> / <code>issue_write</code> tools, not the verb-noun <code>list_workflow_runs</code> / <code>create_issue</code> pattern the agent's training set tends to expect. Our hand-curated allow-list had guessed several wrong names; <code>verify-arms</code> output reflected those guesses rather than reality. Probe the server directly before claiming an allow-list documents the surface.
-    </li>
-    <li>
-      <strong>Pin the MCP server by digest, not <code>:latest</code>.</strong> The harness currently uses <code>ghcr.io/github/github-mcp-server:latest</code>. A future release can change tool names or schemas without notice. Repeatable comparisons require digest pinning.
     </li>
   </ul>
 

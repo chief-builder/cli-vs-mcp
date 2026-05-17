@@ -11,7 +11,7 @@ Two experiments are wired up:
 | Experiment | Skill arm | MCP arm |
 |---|---|---|
 | `playwright` | `playwright-cli` skill + `Bash(playwright-cli:*)` | `@playwright/mcp@0.0.75` via stdio |
-| `github`     | `github-cli` skill + `Bash(gh:*)`                   | `ghcr.io/github/github-mcp-server:latest` via docker stdio |
+| `github`     | `github-cli` skill + `Bash(gh:*)`                   | `ghcr.io/github/github-mcp-server` (digest-pinned) via docker stdio |
 
 Same prompts run through every arm, in fresh per-trial tempdirs, with tightly curated allow/deny lists. We record tokens, turns, wall-clock time, success score, and tool-surface validity.
 
@@ -202,7 +202,7 @@ GITHUB_SANDBOX_OWNER=<org-or-user-slug>     # e.g. cli-vs-mcp-lab
 GITHUB_CONTROLLER_TOKEN=<fine-grained PAT>  # held by harness; needs Administration:write, Contents:write, Issues:write, Pull requests:write on the sandbox owner
 GITHUB_AGENT_TOKEN=<fine-grained PAT>       # what the agent process sees; read-only on the sandbox owner for Tier 1
 
-docker pull ghcr.io/github/github-mcp-server:latest
+docker pull ghcr.io/github/github-mcp-server@sha256:e3816a476a977cfb836e7d221510011436c654d11861db66ecfd826601aba6a4
 ```
 
 ### Commands
@@ -280,7 +280,6 @@ Both arms produce correct end state on `issue_workflow` and `issue_create`. The 
 
 ## Known limits
 
-- **No pinned MCP server digest.** `.mcp.github.*.json` uses `ghcr.io/github/github-mcp-server:latest`. Floating tag — re-running after an upstream release can change tool names or schemas.
 - **Same controller/agent identity in the n5 run.** Both `GITHUB_CONTROLLER_TOKEN` and `GITHUB_AGENT_TOKEN` resolved to user `chief-builder`. The plan was distinct identities; the n5 measurements still reflect the right tool surface but the env-grep escalation finding has to be read knowing the agent's PAT was the same identity as the controller's PAT.
 - **240 s wall budget hits MCP `tier1_issue_triage` hard.** A wider budget at higher N would distinguish "MCP cannot do this" from "MCP needs more time and turns". The current data says only that the failure mode exists and reproduces at N=5.
 - **Tempdir filesystem reach.** The trial tempdir is in the same user account as the runner. With `Read`/`Glob` allowed in the baseline arm, an agent could in principle walk `/Users/...`. Per-trial dynamic fixtures + sandbox repos keep answers off the local filesystem so this practical risk is minimal, but the v1 design accepts it.
