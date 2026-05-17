@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CLI vs MCP — How tool surface shapes Claude Code's behavior</title>
+<style>
+  :root {
+    --bg: #faf8f5;
+    --paper: #ffffff;
+    --ink: #1c1b1a;
+    --ink-2: #44423f;
+    --ink-3: #6b6864;
+    --rule: #e6e1d8;
+    --rule-2: #f0ebe1;
+    --accent: #b04a14;
+    --accent-soft: #f2e0d2;
+    --code-bg: #f4ecdf;
+    --green: #2f6f37;
+    --red: #a23a2a;
+  }
+  *,*::before,*::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 64px 24px 96px;
+  }
+  .wrap.wide { max-width: 920px; }
+  header.site {
+    border-bottom: 1px solid var(--rule);
+    padding: 18px 24px;
+    background: var(--paper);
+  }
+  header.site .inner {
+    max-width: 920px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+  }
+  header.site a.brand {
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+    letter-spacing: -0.01em;
+  }
+  header.site nav a {
+    color: var(--ink-2);
+    text-decoration: none;
+    margin-left: 20px;
+    font-size: 14px;
+  }
+  header.site nav a:hover { color: var(--accent); }
+  .kicker {
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 16px;
+    font-weight: 600;
+  }
+  h1 {
+    font-size: 40px;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin: 0 0 16px;
+    font-weight: 700;
+  }
+  h2 {
+    font-size: 24px;
+    line-height: 1.25;
+    margin: 48px 0 14px;
+    letter-spacing: -0.01em;
+    font-weight: 700;
+  }
+  h3 {
+    font-size: 18px;
+    margin: 32px 0 8px;
+    font-weight: 600;
+  }
+  .lede {
+    font-size: 20px;
+    color: var(--ink-2);
+    margin: 0 0 28px;
+    line-height: 1.5;
+  }
+  .meta {
+    font-size: 14px;
+    color: var(--ink-3);
+    margin-bottom: 36px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--rule);
+  }
+  p, ul, ol { margin: 0 0 16px; }
+  ul, ol { padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  a { color: var(--accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:hover { text-decoration-thickness: 2px; }
+  code, pre, .mono {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  code {
+    background: var(--code-bg);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 0.9em;
+  }
+  pre {
+    background: var(--code-bg);
+    border-radius: 6px;
+    padding: 14px 18px;
+    overflow-x: auto;
+    font-size: 13.5px;
+    line-height: 1.55;
+    margin: 0 0 20px;
+  }
+  pre code { background: none; padding: 0; }
+  blockquote {
+    border-left: 3px solid var(--accent);
+    padding: 4px 0 4px 18px;
+    margin: 24px 0;
+    color: var(--ink-2);
+    font-style: italic;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0 24px;
+    font-size: 14.5px;
+  }
+  th, td {
+    text-align: left;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  th {
+    font-weight: 600;
+    border-bottom: 2px solid var(--rule);
+    background: var(--rule-2);
+  }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .arms {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin: 20px 0 28px;
+  }
+  @media (min-width: 720px) {
+    .arms { grid-template-columns: repeat(3, 1fr); }
+  }
+  .arm {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 18px;
+  }
+  .arm h4 {
+    margin: 0 0 6px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+  }
+  .arm .name {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .arm p { font-size: 14.5px; color: var(--ink-2); margin: 0; }
+  .pill {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 600;
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+  .pill.good { background: #dceede; color: var(--green); }
+  .pill.bad  { background: #f5dad4; color: var(--red); }
+  footer.site {
+    border-top: 1px solid var(--rule);
+    padding: 28px 24px;
+    color: var(--ink-3);
+    font-size: 14px;
+  }
+  footer.site .inner {
+    max-width: 920px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .next {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin: 28px 0;
+  }
+  @media (min-width: 720px) {
+    .next { grid-template-columns: 1fr 1fr; }
+  }
+  .next a.card {
+    display: block;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 22px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: border-color 0.15s, transform 0.15s;
+  }
+  .next a.card:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+  .next .kicker { margin-bottom: 8px; font-size: 11.5px; }
+  .next h3 { margin: 0 0 6px; }
+  .next p { margin: 0; font-size: 14.5px; color: var(--ink-2); }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="inner">
+    <a class="brand" href="cli_mcp_experiments.html">cli-vs-mcp</a>
+    <nav>
+      <a href="cli_mcp_experiments.html">Overview</a>
+      <a href="playwright_experiment.html">Playwright</a>
+      <a href="github_experiment.html">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <p class="kicker">Tooling study · 2026</p>
+  <h1>How tool surface shapes Claude Code's behavior</h1>
+  <p class="lede">
+    Three ways to give an agent the same capability — a Skill that wraps a CLI, an MCP server with structured tools, or nothing at all — produce three different outcomes on the same task. This is the harness that measures it, and the two experiments we've run end-to-end.
+  </p>
+  <p class="meta">A working note on tool-surface economics. Code and run artifacts live in the repo.</p>
+
+  <p>
+    "Equip the agent with the right tools" is good advice and bad engineering: <em>which</em> tools, at <em>what</em> grain, with <em>what</em> output shape — these are choices that move token cost, success rate, and surface containment by factors, not percentages. This project is a small, deliberately boring harness that pins those choices down on a per-task basis so the differences between tooling approaches become measurable rather than narrative.
+  </p>
+
+  <h2>The three arms</h2>
+
+  <p>Every trial runs the same prompt through three configurations of Claude Code that differ only in the tool surface available to the agent:</p>
+
+  <div class="arms">
+    <div class="arm">
+      <h4>Arm</h4>
+      <div class="name">baseline</div>
+      <p>No execution channel — only <code>Read</code>, <code>Write</code>, <code>Glob</code>, <code>Grep</code>. The pure reasoning floor. Should be 0/N on any task whose answer isn't on the local filesystem.</p>
+    </div>
+    <div class="arm">
+      <h4>Arm</h4>
+      <div class="name">skill</div>
+      <p>A Claude Code Skill (project-level <code>SKILL.md</code>) that teaches the agent how to use a CLI binary, plus a tightly scoped <code>Bash</code> allow such as <code>Bash(playwright-cli:*)</code> or <code>Bash(gh:*)</code>.</p>
+    </div>
+    <div class="arm">
+      <h4>Arm</h4>
+      <div class="name">mcp</div>
+      <p>An MCP server exposes structured tools (<code>mcp__playwright__browser_navigate</code>, <code>mcp__github__list_issues</code>, …). No <code>Bash</code>, no <code>Skill</code> — only the enumerated MCP set.</p>
+    </div>
+  </div>
+
+  <h2>The approach</h2>
+
+  <p>Each trial isolates one variable — the tool surface — and holds everything else constant:</p>
+
+  <ol>
+    <li>A <strong>paired seed</strong> <code>hash(experiment, runName, taskId, trialN)</code> drives all per-trial state, so all three arms attempting <code>tier1_scrape</code> trial 3 see the same randomized table.</li>
+    <li><strong>Per-trial answers stay off disk.</strong> Playwright fixtures are HTML templates rendered dynamically by an in-process HTTP server; GitHub state lives in a private sandbox repo provisioned by a controller token the agent never sees.</li>
+    <li>The agent runs in a <strong>fresh tempdir</strong> with <code>--strict-mcp-config</code>, a positive <code>--allowed-tools</code> list, an explicit deny list, and <code>--setting-sources project,local</code> so the developer's <code>~/.claude</code> skills don't leak in.</li>
+    <li>Always blocked across every arm: <code>WebFetch</code>, <code>WebSearch</code>, <code>Monitor</code>, <code>CronCreate</code>, <code>RemoteTrigger</code> — each is a fetch or out-of-band execution channel that agents will reach for when <code>Bash</code> is constrained.</li>
+  </ol>
+
+  <p>The result of each trial is one JSON file containing the measurements, plus the full stream-JSON transcript for replay or re-classification.</p>
+
+  <h2>What gets measured</h2>
+
+  <p>The harness writes a per-trial result JSON to <code>runs/&lt;run&gt;/results/&lt;arm&gt;/&lt;task&gt;/&lt;n&gt;.json</code>:</p>
+
+<pre><code>experiment, runName, arm, taskId, tier, trialN, timestamp, seed
+metrics: {
+  inputTokens, outputTokens, cachedInputTokens, cacheCreationInputTokens
+  toolCalls[]              # [{ name, turnIndex, command?, reason? }, …]
+  toolCallCount, turns, numTurns
+  wallClockMs, contextWindowPeak, totalCostUsd, modelsUsed[]
+  usedIntendedTool         # at least one in-surface tool call
+  validToolSurface         # *every* tool call in-surface
+  escapeToolUsed, escapeToolCalls[]
+  singleCliCommandPerToolCall
+  cliCommandGranularityViolations[]
+}
+success: { pass, score, notes, extras? }
+error?                     # set on timeout or process failure
+</code></pre>
+
+  <p>
+    Tokens and wall-clock are the cost signals. <code>validToolSurface</code> is the trust signal: a passing trial with <code>validToolSurface=false</code> succeeded by escaping the intended path, and the per-tier summary in reports filters it out. This distinction turned out to matter — in the GitHub experiment, the skill arm scored 15/15 on raw success but the classifier rejected 10 of those 15 trials for off-surface behavior, including one that tried to lift the controller's elevated token out of the process environment.
+  </p>
+
+  <h2>The validity classifier</h2>
+
+  <p>For every <code>tool_use</code> event in the transcript, the experiment's classifier asks whether the call is in-surface for the active arm:</p>
+
+  <ul>
+    <li><strong>baseline:</strong> any execution or fetch tool is a violation.</li>
+    <li><strong>skill:</strong> <code>Skill</code> must match the experiment's <code>intendedSkillName</code>; <code>Bash</code> must satisfy <code>classifyShellCommand</code>.</li>
+    <li><strong>mcp:</strong> only <code>Write</code>, <code>TodoWrite</code>, <code>ToolSearch</code>, and the intended <code>mcp__&lt;prefix&gt;__*</code> set are valid.</li>
+  </ul>
+
+  <p>
+    <code>classifyShellCommand</code> parses the Bash command into top-level segments (respecting quotes, <code>;</code>, <code>&amp;&amp;</code>, <code>||</code>, <code>|</code>, and shell redirections). Each segment must start with the intended CLI binary. Segments may not contain backticks, <code>$(…)</code> command substitution, or shell helpers (<code>curl</code>, <code>cat</code>, <code>python</code>, <code>sed</code>, <code>awk</code>, <code>jq</code>, <code>base64</code>, …). Shell redirections (<code>&gt;</code>, <code>&gt;&gt;</code>, <code>2&gt;&amp;1</code>) invalidate the segment in every mode — file output must go through the <code>Write</code> tool, not shell plumbing.
+  </p>
+
+  <h3>Run modes</h3>
+
+  <ul>
+    <li><strong>practical</strong> (default): chained CLI segments in one Bash call are valid as long as every segment is the intended CLI.</li>
+    <li><strong>research-single</strong> (<code>--single-cli-command</code>): each Bash call must be exactly one intended-CLI invocation. No chaining, no pipes. Stored results contain both flags; the report flag chooses which view to surface.</li>
+  </ul>
+
+  <h2>How a trial actually runs</h2>
+
+  <p>For each <code>(experiment, arm, task, trial)</code>, <code>harness/src/runner.ts:runTrial</code> performs:</p>
+
+  <ol>
+    <li>Computes a paired seed via FNV-1a from <code>(experiment, runName, taskId, trialN)</code>.</li>
+    <li>Calls <code>task.setup(seed)</code> to materialize per-trial state in process memory.</li>
+    <li>For Playwright: starts an HTTP fixture server on <code>127.0.0.1:&lt;random&gt;</code> that renders the per-trial state into HTML on demand. For GitHub: calls the provisioner to create a private sandbox repo seeded with deterministic content.</li>
+    <li>Spawns <code>claude -p</code> in a fresh tempdir with <code>--strict-mcp-config</code>, per-arm allow/deny lists, <code>--setting-sources project,local</code>, <code>--permission-mode bypassPermissions</code>, <code>--model claude-sonnet-4-6</code>, <code>--output-format stream-json</code>.</li>
+    <li>Captures stream-JSON stdout to a transcript file.</li>
+    <li>Kills the child after <strong>240 seconds</strong> wall-clock if it hasn't returned.</li>
+    <li>Runs <code>task.successCheck(ctx)</code>, then <code>task.cleanup(state)</code>.</li>
+    <li>Writes the result JSON.</li>
+  </ol>
+
+  <p>
+    The runner also scrubs GitHub-related environment variables before injecting the per-arm credentials — this matters when the harness itself has a controller token that should never reach the agent. (More on that in the GitHub writeup; the n5 run found a real gap here.)
+  </p>
+
+  <h2>The two experiments</h2>
+
+  <p>Two domains are wired up in this repo. They were chosen because both have a mature CLI <em>and</em> a maintained MCP server, which keeps the comparison about <em>shape of the surface</em> rather than the maturity of either implementation.</p>
+
+  <div class="next">
+    <a class="card" href="playwright_experiment.html">
+      <p class="kicker">Experiment 1</p>
+      <h3>Playwright</h3>
+      <p>Browser automation across six tasks. MCP is consistently <strong>1.64×–2.01× cheaper</strong> than the skill arm at matched (or better) success rates — and the difference is per-turn payload, not extra steps.</p>
+    </a>
+    <a class="card" href="github_experiment.html">
+      <p class="kicker">Experiment 2</p>
+      <h3>GitHub</h3>
+      <p>Three Tier 1 tasks. The skill arm scored 15/15 raw — but <strong>10/15 escaped its surface</strong>, including one trial that tried to read the controller token out of <code>env</code>. MCP collapsed to 0/5 on issue search.</p>
+    </a>
+  </div>
+
+  <h2>Quick start</h2>
+
+  <p>The whole harness is one shared TypeScript codebase under <code>harness/src/</code>. Per-experiment task definitions live under <code>experiments/&lt;name&gt;/tasks/</code>.</p>
+
+<pre><code>pnpm install
+pnpm harness verify-arms --experiment playwright
+
+pnpm harness run --experiment playwright --run myrun --arm skill    --tier 1 --trials 5
+pnpm harness run --experiment playwright --run myrun --arm mcp      --tier 1 --trials 5
+pnpm harness run --experiment playwright --run myrun --arm baseline --tier 1 --trials 5
+
+pnpm harness report --experiment playwright --run myrun --all-tiers --crossover-analysis \
+  --output experiments/playwright/runs/myrun/findings.md
+</code></pre>
+
+  <p>The GitHub experiment additionally needs a sandbox owner and two PATs in a gitignored <code>.env</code>. Read the experiment writeup for the token model and the security trapdoor the n5 run surfaced.</p>
+
+  <h2>What this isn't</h2>
+
+  <p>It's not a benchmark. <strong>N=5 is too small</strong> to claim more than direction; the headlines below should be read as "the failure modes exist and are reproducible at five seeds," not "MCP wins" or "CLI wins." The data is interesting precisely because the two arms <em>flip</em> across domains (MCP cheaper in Playwright, CLI more terse in GitHub <code>repo_inventory</code>), and the failure modes are tooling-shaped rather than capability-shaped.</p>
+
+  <p>It's also not a security audit. The validity classifier exists so we can <em>see</em> when an agent steps off the intended path; it's not a sandbox. The n5 GitHub run shows what happens when the trust boundary is implemented mostly through env scrubbing, and the scrub list has a gap.</p>
+
+</div>
+
+<footer class="site">
+  <div class="inner">
+    <span>cli-vs-mcp · working note</span>
+    <span><a href="playwright_experiment.html">Playwright</a> · <a href="github_experiment.html">GitHub</a></span>
+  </div>
+</footer>
+
+</body>
+</html>

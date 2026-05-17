@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Playwright — CLI vs MCP</title>
+<style>
+  :root {
+    --bg: #faf8f5;
+    --paper: #ffffff;
+    --ink: #1c1b1a;
+    --ink-2: #44423f;
+    --ink-3: #6b6864;
+    --rule: #e6e1d8;
+    --rule-2: #f0ebe1;
+    --accent: #b04a14;
+    --accent-soft: #f2e0d2;
+    --code-bg: #f4ecdf;
+    --green: #2f6f37;
+    --red: #a23a2a;
+  }
+  *,*::before,*::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 64px 24px 96px; }
+  .narrow { max-width: 720px; margin: 0 auto; }
+  header.site {
+    border-bottom: 1px solid var(--rule);
+    padding: 18px 24px;
+    background: var(--paper);
+  }
+  header.site .inner {
+    max-width: 920px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
+  }
+  header.site a.brand { font-weight: 600; color: var(--ink); text-decoration: none; letter-spacing: -0.01em; }
+  header.site nav a { color: var(--ink-2); text-decoration: none; margin-left: 20px; font-size: 14px; }
+  header.site nav a:hover { color: var(--accent); }
+  header.site nav a.active { color: var(--accent); font-weight: 600; }
+  .kicker {
+    font-size: 13px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 16px; font-weight: 600;
+  }
+  h1 { font-size: 40px; line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 16px; font-weight: 700; }
+  h2 { font-size: 24px; line-height: 1.25; margin: 48px 0 14px; letter-spacing: -0.01em; font-weight: 700; }
+  h3 { font-size: 18px; margin: 32px 0 8px; font-weight: 600; }
+  .lede { font-size: 20px; color: var(--ink-2); margin: 0 0 28px; line-height: 1.5; }
+  .meta {
+    font-size: 14px; color: var(--ink-3);
+    margin-bottom: 36px; padding-bottom: 28px; border-bottom: 1px solid var(--rule);
+  }
+  p, ul, ol { margin: 0 0 16px; }
+  ul, ol { padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  a { color: var(--accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:hover { text-decoration-thickness: 2px; }
+  code, pre, .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  code { background: var(--code-bg); padding: 1px 5px; border-radius: 3px; font-size: 0.9em; }
+  pre {
+    background: var(--code-bg); border-radius: 6px;
+    padding: 14px 18px; overflow-x: auto;
+    font-size: 13.5px; line-height: 1.55; margin: 0 0 20px;
+  }
+  pre code { background: none; padding: 0; }
+  table {
+    width: 100%; border-collapse: collapse;
+    margin: 8px 0 24px; font-size: 14.5px;
+  }
+  th, td {
+    text-align: left; padding: 9px 12px;
+    border-bottom: 1px solid var(--rule); vertical-align: top;
+  }
+  th { font-weight: 600; border-bottom: 2px solid var(--rule); background: var(--rule-2); }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .small td, .small th { font-size: 13.5px; padding: 7px 10px; }
+  .pill {
+    display: inline-block; padding: 1px 8px; border-radius: 999px;
+    font-size: 12.5px; font-weight: 600;
+    background: var(--accent-soft); color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .pill.good { background: #dceede; color: var(--green); }
+  .pill.bad  { background: #f5dad4; color: var(--red); }
+  .pill.warn { background: #f4e4c5; color: #8a5a14; }
+  .bar {
+    display: inline-block;
+    height: 10px; background: var(--accent);
+    vertical-align: middle; border-radius: 2px;
+  }
+  .bar-skill { background: var(--accent); }
+  .bar-mcp { background: #4b6f8e; }
+  .bar-row {
+    display: grid;
+    grid-template-columns: 70px 1fr 90px;
+    gap: 10px; align-items: center;
+    margin: 6px 0;
+    font-size: 14.5px;
+  }
+  .bar-row .label { color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .bar-row .value { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .key {
+    display: flex; gap: 16px; font-size: 13.5px; color: var(--ink-2);
+    margin: 8px 0 18px;
+  }
+  .key .sw { display: inline-block; width: 12px; height: 12px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+  blockquote {
+    border-left: 3px solid var(--accent);
+    padding: 4px 0 4px 18px;
+    margin: 24px 0;
+    color: var(--ink-2);
+  }
+  footer.site {
+    border-top: 1px solid var(--rule);
+    padding: 28px 24px;
+    color: var(--ink-3);
+    font-size: 14px;
+  }
+  footer.site .inner {
+    max-width: 920px; margin: 0 auto;
+    display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  }
+  .breadcrumb {
+    font-size: 13px; color: var(--ink-3);
+    margin: 0 0 8px;
+  }
+  .breadcrumb a { color: var(--ink-3); }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="inner">
+    <a class="brand" href="cli_mcp_experiments.html">cli-vs-mcp</a>
+    <nav>
+      <a href="cli_mcp_experiments.html">Overview</a>
+      <a class="active" href="playwright_experiment.html">Playwright</a>
+      <a href="github_experiment.html">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+<div class="narrow">
+
+  <p class="breadcrumb"><a href="cli_mcp_experiments.html">Overview</a> &rsaquo; Playwright</p>
+  <p class="kicker">Experiment 1 of 2</p>
+  <h1>Playwright: where MCP wins on cost, but not for free</h1>
+  <p class="lede">
+    Six browser-automation tasks, three tool surfaces, five trials each. Both browser arms succeed on almost everything. The interesting numbers are the ones underneath success — how many tokens, how many turns, and where each arm starts to break.
+  </p>
+  <p class="meta">N=5 · 6 tasks across 2 tiers · model <code>claude-sonnet-4-6</code> · 240 s per-trial wall budget</p>
+
+  <p>
+    The Playwright comparison is the cleanest "same capability, different shape" case in the harness. Both arms can drive a real Chromium instance. The skill arm does it by shelling out to the <code>playwright-cli</code> binary; the MCP arm calls structured tools like <code>mcp__playwright__browser_navigate</code> on the <code>@playwright/mcp</code> server. Same browser, same fixtures, same model. The differences come from how the agent has to talk to each one.
+  </p>
+
+  <h2>The arms</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Arm</th>
+        <th>Allowed tools</th>
+        <th>How it talks to the browser</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>baseline</code></td>
+        <td><code>ToolSearch Read Glob Grep Write TodoWrite</code></td>
+        <td>It doesn't. The reasoning floor.</td>
+      </tr>
+      <tr>
+        <td><code>skill</code></td>
+        <td><code>ToolSearch Skill Bash(playwright-cli:*) Write TodoWrite</code></td>
+        <td>Spawns <code>playwright-cli</code> processes through a narrow Bash allow. The Skill bundled at <code>.claude/skills/playwright-cli/SKILL.md</code> teaches the syntax.</td>
+      </tr>
+      <tr>
+        <td><code>mcp</code></td>
+        <td><code>ToolSearch Write TodoWrite</code> + 23 enumerated <code>mcp__playwright__*</code> tools</td>
+        <td>Calls structured tools served over stdio by <code>@playwright/mcp@0.0.75</code>. No Bash.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    The MCP set is enumerated tool-by-tool in <code>harness/src/experiments/playwright.ts</code> rather than allowed as a glob, so the surface survives any future change in how Claude Code matches allow-list patterns. The deny list strips <code>WebFetch</code>, <code>WebSearch</code>, and the out-of-band execution channels (<code>Monitor</code>, <code>CronCreate</code>, <code>RemoteTrigger</code>) — known escape paths if <code>Bash</code> is constrained.
+  </p>
+
+  <h2>Fixture isolation</h2>
+
+  <p>
+    Playwright tasks are served by a per-trial HTTP server (<code>harness/src/fixtureServer.ts</code>) that binds to <code>127.0.0.1:&lt;random&gt;</code> and renders HTML on demand. Per-trial state — randomized city names, product titles, form nonces, recovery tokens — is generated from the paired seed and lives in process memory only. No static HTML with answers in it sits on disk, so an agent with <code>Read</code> on its tempdir can't bypass the browser by globbing the source.
+  </p>
+
+  <p>
+    The agent gets a URL in its prompt; the server returns a dynamically-rendered template for each request. The same seed produces the same page across all three arms, so a discrimination on the task is a discrimination on tool surface, not on randomness.
+  </p>
+
+  <h2>The task suite</h2>
+
+  <h3>Tier 1 — read-only</h3>
+
+  <table class="small">
+    <thead>
+      <tr>
+        <th>Task</th>
+        <th>Setup</th>
+        <th>Expected outcome</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>tier1_login</code></td>
+        <td>Login form with hardcoded user/password</td>
+        <td>Sign in, screenshot the dashboard, save a PNG ≥1 KB.</td>
+      </tr>
+      <tr>
+        <td><code>tier1_scrape</code></td>
+        <td>Page with a 5-row table; city and country names are seeded per trial as <code>City-XXXX</code> / <code>Country-XXXX</code>.</td>
+        <td>Extract the rows into JSON. Numeric fields must be numbers, not strings.</td>
+      </tr>
+      <tr>
+        <td><code>tier1_form</code></td>
+        <td>Form whose submit nonce is regenerated per trial. The success token is revealed only on a valid POST with the matching nonce.</td>
+        <td>Submit correctly, capture the token, save it to disk.</td>
+      </tr>
+      <tr>
+        <td><code>tier1_products</code></td>
+        <td>5 product pages with seeded titles and prices.</td>
+        <td>Visit each, write a JSON list of <code>{title, price}</code> in page order.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Tier 2 — multi-step</h3>
+
+  <table class="small">
+    <thead>
+      <tr><th>Task</th><th>Setup</th><th>Expected outcome</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>tier2_checkout</code></td>
+        <td>A storefront with multiple products; the target is identified by a substring marker that varies per trial.</td>
+        <td>Find the right product, add to cart, complete checkout — write the resulting confirmation payload.</td>
+      </tr>
+      <tr>
+        <td><code>tier2_recovery</code></td>
+        <td>Password-reset flow with an inline error code that must be read off the page after a deliberately failing first attempt.</td>
+        <td>Read the error code, resubmit with the corrected payload, capture the recovery token.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Results — N=5</h2>
+
+  <p>
+    Per-task numbers from <code>experiments/playwright/runs/n5/findings.md</code>. Token counts are total = input + cached + cache-creation + output, averaged across all five trials.
+  </p>
+
+  <h3>Tier 1 — per task</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Task</th>
+        <th class="num">skill pass</th>
+        <th class="num">mcp pass</th>
+        <th class="num">skill tok</th>
+        <th class="num">mcp tok</th>
+        <th class="num">skill turns</th>
+        <th class="num">mcp turns</th>
+        <th class="num">skill time</th>
+        <th class="num">mcp time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>tier1_login</code></td>
+        <td class="num"><span class="pill good">5/5</span></td>
+        <td class="num"><span class="pill good">5/5</span></td>
+        <td class="num">189,994</td>
+        <td class="num">134,207</td>
+        <td class="num">14.6</td>
+        <td class="num">17.4</td>
+        <td class="num">38.2 s</td>
+        <td class="num">30.2 s</td>
+      </tr>
+      <tr>
+        <td><code>tier1_scrape</code></td>
+        <td class="num"><span class="pill good">5/5</span></td>
+        <td class="num"><span class="pill good">5/5</span></td>
+        <td class="num">104,395</td>
+        <td class="num">78,613</td>
+        <td class="num">8.6</td>
+        <td class="num">11.0</td>
+        <td class="num">27.7 s</td>
+        <td class="num">18.1 s</td>
+      </tr>
+      <tr>
+        <td><code>tier1_form</code></td>
+        <td class="num"><span class="pill good">5/5</span></td>
+        <td class="num"><span class="pill good">5/5</span></td>
+        <td class="num">291,055</td>
+        <td class="num">115,955</td>
+        <td class="num">19.4</td>
+        <td class="num">13.8</td>
+        <td class="num">46.3 s</td>
+        <td class="num">23.3 s</td>
+      </tr>
+      <tr>
+        <td><code>tier1_products</code></td>
+        <td class="num"><span class="pill good">5/5</span></td>
+        <td class="num"><span class="pill good">5/5</span></td>
+        <td class="num">286,605</td>
+        <td class="num">203,209</td>
+        <td class="num">18.4</td>
+        <td class="num">21.2</td>
+        <td class="num">56.7 s</td>
+        <td class="num">35.6 s</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Tier 2 — per task</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Task</th>
+        <th class="num">skill pass</th>
+        <th class="num">mcp pass</th>
+        <th class="num">skill tok</th>
+        <th class="num">mcp tok</th>
+        <th class="num">skill turns</th>
+        <th class="num">mcp turns</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>tier2_checkout</code></td>
+        <td class="num"><span class="pill good">5/5</span></td>
+        <td class="num"><span class="pill good">5/5</span></td>
+        <td class="num">304,195</td>
+        <td class="num">236,548</td>
+        <td class="num">20.4</td>
+        <td class="num">27.0</td>
+      </tr>
+      <tr>
+        <td><code>tier2_recovery</code></td>
+        <td class="num"><span class="pill good">5/5</span></td>
+        <td class="num"><span class="pill warn">2/5</span></td>
+        <td class="num">300,059</td>
+        <td class="num">— (3 timeouts)</td>
+        <td class="num">22.4</td>
+        <td class="num">—</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Baseline was 0/20 on Tier 1 and 0/10 on Tier 2 as expected — no execution surface, every trial hits the wall.
+  </p>
+
+  <h3>Per-tier summary (valid trials only)</h3>
+
+  <table>
+    <thead>
+      <tr><th>Tier</th><th class="num">skill success</th><th class="num">mcp success</th><th class="num">skill avg tok</th><th class="num">mcp avg tok</th><th class="num">Skill / MCP</th><th class="num">skill turns</th><th class="num">mcp turns</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Tier 1</td>
+        <td class="num">100%</td>
+        <td class="num">100%</td>
+        <td class="num">218,012</td>
+        <td class="num">132,996</td>
+        <td class="num"><strong>1.64×</strong></td>
+        <td class="num">15.3</td>
+        <td class="num">15.8</td>
+      </tr>
+      <tr>
+        <td>Tier 2</td>
+        <td class="num">100%</td>
+        <td class="num">70%</td>
+        <td class="num">302,127</td>
+        <td class="num">150,630</td>
+        <td class="num"><strong>2.01×</strong></td>
+        <td class="num">21.4</td>
+        <td class="num">19.4</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Tier 1 token cost, visualized</h3>
+
+  <div class="key">
+    <span><span class="sw" style="background: var(--accent)"></span>skill</span>
+    <span><span class="sw" style="background: #4b6f8e"></span>mcp</span>
+  </div>
+
+  <div class="bar-row">
+    <span class="label">login</span>
+    <span>
+      <span class="bar bar-skill" style="width: 65%"></span><br>
+      <span class="bar bar-mcp" style="width: 46%"></span>
+    </span>
+    <span class="value">190k / 134k</span>
+  </div>
+  <div class="bar-row">
+    <span class="label">scrape</span>
+    <span>
+      <span class="bar bar-skill" style="width: 36%"></span><br>
+      <span class="bar bar-mcp" style="width: 27%"></span>
+    </span>
+    <span class="value">104k / 79k</span>
+  </div>
+  <div class="bar-row">
+    <span class="label">form</span>
+    <span>
+      <span class="bar bar-skill" style="width: 100%"></span><br>
+      <span class="bar bar-mcp" style="width: 40%"></span>
+    </span>
+    <span class="value">291k / 116k</span>
+  </div>
+  <div class="bar-row">
+    <span class="label">products</span>
+    <span>
+      <span class="bar bar-skill" style="width: 98%"></span><br>
+      <span class="bar bar-mcp" style="width: 70%"></span>
+    </span>
+    <span class="value">287k / 203k</span>
+  </div>
+
+  <h2>What's happening here</h2>
+
+  <h3>The Tier 1 cost gap is per-turn payload, not extra turns</h3>
+
+  <p>
+    Turn counts at Tier 1 are essentially identical (15.3 vs 15.8). The 1.64× token gap comes from <em>what flows in and out of each turn</em>, not from the agent doing more steps:
+  </p>
+
+  <ul>
+    <li>In the <strong>skill arm</strong>, every browser action is two tool calls — first the action (<code>playwright-cli click</code>), then an explicit <code>playwright-cli snapshot</code> to see what the page now looks like. Both calls round-trip through the shell, both return their own text payload.</li>
+    <li>In the <strong>mcp arm</strong>, <code>@playwright/mcp</code> bundles a post-action accessibility snapshot inline with most actions. The agent learns the result of its click in the same tool result that confirms the click happened. Half the round-trip cost.</li>
+  </ul>
+
+  <p>
+    This shows up most clearly on <code>tier1_form</code>: 291k tokens (skill) vs 116k (mcp), a 2.5× ratio despite both arms passing 5/5 at similar turn counts. Filling a form is repeated <em>action → check</em> cycles, exactly the shape that doubles when the snapshot isn't bundled. On <code>tier1_scrape</code>, which has fewer interactions and reads almost everything in one shot, the ratio compresses to 1.33×.
+  </p>
+
+  <h3>Tier 2 — the 240 s budget rescued skill, exposed an MCP weakness</h3>
+
+  <p>
+    Smoke (N=1, 180 s timeout) had killed both skill Tier 2 trials at the wall. At 240 s the skill arm finishes 10/10 cleanly, averaging 44–53 s per trial — well inside the new budget. So one finding from smoke ("skill can't do Tier 2") was an artifact of timeout, not a real ceiling.
+  </p>
+
+  <p>
+    But the relaxed budget surfaced a new MCP-specific failure mode: <code>tier2_recovery</code> at <strong>2/5</strong>. The three failures all timed out at the wall after the agent got through <code>browser_navigate → browser_snapshot → browser_fill_form</code> (3–4 tool calls) and then stalled — most likely a snapshot-driven element reference going stale across the multi-step recovery flow. Same task, same seeds family, and the two trials that did pass finished in 36 s and 34 s. So the failures aren't "MCP can't solve this" — they're "MCP's tool-result shape leaves the agent prone to wedging on stale refs, and ~60% of seeds hit it."
+  </p>
+
+  <h3>Validity surface stayed clean</h3>
+
+  <p>
+    Every Playwright trial that produced a transcript stayed in-surface. No <code>WebFetch</code>, no shell-helper smuggling, no MCP↔Skill cross-leaks. The "Single CLI Cmd" column for skill is 80% at Tier 1 and 50% at Tier 2 — the agent often chains multiple <code>playwright-cli</code> calls in one Bash invocation, which is valid in practical mode and would be flagged under <code>--single-cli-command</code> for finer-grained accounting.
+  </p>
+
+  <h2>How to read this</h2>
+
+  <p>
+    The honest version: at <strong>N=5 per task</strong>, the headlines should be read as direction, not benchmark. The 1.64× Tier 1 token ratio is consistent across all four tasks and showed up in smoke too (1.82× at N=1), so the directional claim is solid. The 70% MCP success on <code>tier2_recovery</code> could swing by 20 points at N=5 and is the most uncertain number on the page; "MCP develops a convergence failure mode on multi-step recovery flows that the CLI shape doesn't have at 240 s" is the conservative read.
+  </p>
+
+  <p>
+    The bigger picture: this is a case where <strong>output shape compresses cost without sacrificing success</strong>. Same browser, same task, same model. MCP wins on Tier 1 because bundled snapshots remove a round-trip, and loses some success at Tier 2 because the same bundling makes element-ref churn harder to recover from. Both directions are about the protocol, not the protocol's implementation.
+  </p>
+
+  <h2>Caveats</h2>
+
+  <ul>
+    <li><strong>Tier-2 skill is at the wall.</strong> 100% success doesn't mean "scales fine to multi-step" — over half the skill Tier 2 trials finished in 50–70 s. A higher-N rerun at 360 s would be the right way to see whether skill or MCP is closer to its real ceiling on multi-step flows.</li>
+    <li><strong>System prompt overhead is constant.</strong> Plugin-bundled skills can still appear in the agent's system prompt (the <code>--setting-sources project,local</code> flag drops user-level skills but not plugin ones). This adds a fixed per-trial token tax that's the same across arms, so cross-arm comparison is unaffected — just don't read absolute token numbers as a clean cost-per-task.</li>
+    <li><strong>Tempdir filesystem reach.</strong> The trial tempdir is in the runner's user account. With <code>Read</code>/<code>Glob</code> allowed in the baseline arm, an agent could in principle walk <code>/Users/...</code>. Dynamic fixtures keep answers off disk, so the practical risk is minimal, but the v1 design accepts it.</li>
+  </ul>
+
+  <hr style="border: 0; border-top: 1px solid var(--rule); margin: 48px 0 28px;">
+
+  <p style="font-size: 14.5px; color: var(--ink-3);">
+    Continue reading: <a href="github_experiment.html">the GitHub experiment</a>, where the skill arm scored 15/15 — and 10 of those trials were classifier-invalid.<br>
+    Back to <a href="cli_mcp_experiments.html">overview</a>.
+  </p>
+
+</div>
+</div>
+
+<footer class="site">
+  <div class="inner">
+    <span>cli-vs-mcp · Playwright writeup</span>
+    <span><a href="cli_mcp_experiments.html">Overview</a> · <a href="github_experiment.html">GitHub</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
