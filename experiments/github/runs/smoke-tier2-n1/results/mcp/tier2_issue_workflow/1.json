@@ -1,0 +1,69 @@
+{
+  "experiment": "github",
+  "runName": "smoke-tier2-n1",
+  "arm": "mcp",
+  "taskId": "tier2_issue_workflow",
+  "tier": 2,
+  "trialN": 1,
+  "timestamp": "2026-05-17T15:10:37.962Z",
+  "seed": "30b158673f2f1a59",
+  "metrics": {
+    "inputTokens": 603,
+    "outputTokens": 1092,
+    "cachedInputTokens": 80570,
+    "cacheCreationInputTokens": 8618,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "mcp__github__search_issues",
+        "turnIndex": 5
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 8
+      },
+      {
+        "name": "mcp__github__issue_write",
+        "turnIndex": 10
+      },
+      {
+        "name": "mcp__github__add_issue_comment",
+        "turnIndex": 11
+      },
+      {
+        "name": "mcp__github__issue_write",
+        "turnIndex": 13
+      }
+    ],
+    "toolCallCount": 6,
+    "turns": 14,
+    "numTurns": 7,
+    "wallClockMs": 23126,
+    "contextWindowPeak": 16111,
+    "totalCostUsd": 0.0733055,
+    "modelsUsed": [
+      "claude-sonnet-4-6",
+      "claude-haiku-4-5-20251001"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "all workflow steps applied to target only",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-issue-workflow-30b15867",
+      "targetIssueNumber": 2,
+      "expectedLabel": "priority-high",
+      "expectedCommentPhrase": "triaged-BC538F61"
+    }
+  }
+}

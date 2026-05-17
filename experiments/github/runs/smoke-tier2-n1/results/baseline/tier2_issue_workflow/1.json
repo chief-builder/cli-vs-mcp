@@ -1,0 +1,214 @@
+{
+  "experiment": "github",
+  "runName": "smoke-tier2-n1",
+  "arm": "baseline",
+  "taskId": "tier2_issue_workflow",
+  "tier": 2,
+  "trialN": 1,
+  "timestamp": "2026-05-17T15:01:25.554Z",
+  "seed": "30b158673f2f1a59",
+  "metrics": {
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "cachedInputTokens": 0,
+    "cacheCreationInputTokens": 0,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 5
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 7
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 9
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 11
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 13
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 14
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 17
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 20
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 22
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 25,
+        "command": "gh issue list --repo chief-builder-lab/clivsmcp-tier2-issue-workflow-30b15867 --json number,title --limit 10"
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 28
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 29
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 30
+      },
+      {
+        "name": "Read",
+        "turnIndex": 31
+      },
+      {
+        "name": "Read",
+        "turnIndex": 33
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 34
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 36
+      },
+      {
+        "name": "Read",
+        "turnIndex": 37
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 38
+      },
+      {
+        "name": "Read",
+        "turnIndex": 41
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 43
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 44
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 46
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 48
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 49
+      },
+      {
+        "name": "Read",
+        "turnIndex": 50
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 52
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 53
+      },
+      {
+        "name": "Read",
+        "turnIndex": 56
+      },
+      {
+        "name": "Read",
+        "turnIndex": 58
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 59
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 61
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 62
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 63
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 65
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 67
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 70
+      },
+      {
+        "name": "Read",
+        "turnIndex": 71
+      }
+    ],
+    "toolCallCount": 39,
+    "turns": 71,
+    "numTurns": 0,
+    "wallClockMs": 0,
+    "contextWindowPeak": 64012,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": false,
+    "validToolSurface": false,
+    "escapeToolUsed": true,
+    "escapeToolCalls": [
+      {
+        "name": "Bash",
+        "turnIndex": 25,
+        "command": "gh issue list --repo chief-builder-lab/clivsmcp-tier2-issue-workflow-30b15867 --json number,title --limit 10",
+        "reason": "Bash is not allowed in the baseline arm"
+      }
+    ],
+    "singleCliCommandPerToolCall": false,
+    "cliCommandGranularityViolations": [
+      {
+        "name": "Bash",
+        "turnIndex": 25,
+        "command": "gh issue list --repo chief-builder-lab/clivsmcp-tier2-issue-workflow-30b15867 --json number,title --limit 10",
+        "reason": "Bash is not allowed in the baseline arm"
+      }
+    ]
+  },
+  "success": {
+    "pass": false,
+    "score": 0.25,
+    "notes": "label=false closed=false comment=false decoys-untouched=true",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-issue-workflow-30b15867",
+      "targetIssueNumber": 2,
+      "expectedLabel": "priority-high",
+      "expectedCommentPhrase": "triaged-BC538F61"
+    }
+  },
+  "error": "claude timed out after 240000ms"
+}

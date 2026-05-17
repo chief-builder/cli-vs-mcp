@@ -148,12 +148,17 @@ Do not modify the other two issues. When all three steps are done you are finish
       }
     }
 
-    const checks = [labelOk, stateOk, commentOk, decoysUntouched];
+    // decoysUntouched only counts as positive signal when the agent at least
+    // touched the target — otherwise inaction would score 0.25 for free.
+    const touchedTarget = labelOk || stateOk || commentOk;
+    const decoyCheck = touchedTarget && decoysUntouched;
+
+    const checks = [labelOk, stateOk, commentOk, decoyCheck];
     const matched = checks.filter(Boolean).length;
     const score = matched / checks.length;
     const notes = matched === checks.length
       ? 'all workflow steps applied to target only'
-      : `label=${labelOk} closed=${stateOk} comment=${commentOk} decoys-untouched=${decoysUntouched}${decoyNotes.length ? ' (' + decoyNotes.join('; ') + ')' : ''}`;
+      : `label=${labelOk} closed=${stateOk} comment=${commentOk} decoys-untouched=${decoysUntouched}${decoyNotes.length ? ' (' + decoyNotes.join('; ') + ')' : ''}${!touchedTarget ? ' (target untouched — decoy check not credited)' : ''}`;
 
     return {
       pass: matched === checks.length,

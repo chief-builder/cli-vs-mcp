@@ -1,0 +1,105 @@
+{
+  "experiment": "github",
+  "runName": "smoke-tier2-n1",
+  "arm": "skill",
+  "taskId": "tier2_file_patch_pr",
+  "tier": 2,
+  "trialN": 1,
+  "timestamp": "2026-05-17T15:10:02.219Z",
+  "seed": "30dd392eb08db165",
+  "metrics": {
+    "inputTokens": 648,
+    "outputTokens": 1396,
+    "cachedInputTokens": 120907,
+    "cacheCreationInputTokens": 8735,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 3
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-30dd392e/contents/src/widget.ts --jq '.content' | base64 -d"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-30dd392e/contents/src/widget.ts --jq '.sha'"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-30dd392e/git/refs/heads/main --jq '.object.sha'"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 11,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-30dd392e/git/refs -X POST -f ref=\"refs/heads/fix-MARKER-EDCAA92A\" -f sha=\"c56b5c97d08799137f17f9bf8b31506294c4c947\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 12,
+        "command": "NEW_CONTENT='// Widget module.\n\nexport function describe(): string {\n  return '\"'\"'widget'\"'\"';\n}\n\nexport function solve_EDCAA92A(): string {\n  return \"done-EDCAA92A\";\n}'\n\nENCODED=$(echo -n \"$NEW_CONTENT\" | base64)\n\ngh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-30dd392e/contents/src/widget.ts \\\n  -X PUT \\\n  -f message=\"Fix MARKER-EDCAA92A\" \\\n  -f content=\"$ENCODED\" \\\n  -f sha=\"e49c07147d3449e5b019a8c71933fdbc4aa3a909\" \\\n  -f branch=\"fix-MARKER-EDCAA92A\" \\\n  --jq '.commit.sha'"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 13,
+        "command": "gh pr create --repo chief-builder-lab/clivsmcp-tier2-file-patch-pr-30dd392e \\\n  --title \"Fix MARKER-EDCAA92A\" \\\n  --body \"addresses-EDCAA92A\" \\\n  --base main \\\n  --head fix-MARKER-EDCAA92A"
+      }
+    ],
+    "toolCallCount": 7,
+    "turns": 14,
+    "numTurns": 9,
+    "wallClockMs": 28491,
+    "contextWindowPeak": 19699,
+    "totalCostUsd": 0.09039635,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": false,
+    "escapeToolUsed": true,
+    "escapeToolCalls": [
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-30dd392e/contents/src/widget.ts --jq '.content' | base64 -d",
+        "reason": "non-gh Bash segment: base64 -d"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 12,
+        "command": "NEW_CONTENT='// Widget module.\n\nexport function describe(): string {\n  return '\"'\"'widget'\"'\"';\n}\n\nexport function solve_EDCAA92A(): string {\n  return \"done-EDCAA92A\";\n}'\n\nENCODED=$(echo -n \"$NEW_CONTENT\" | base64)\n\ngh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-30dd392e/contents/src/widget.ts \\\n  -X PUT \\\n  -f message=\"Fix MARKER-EDCAA92A\" \\\n  -f content=\"$ENCODED\" \\\n  -f sha=\"e49c07147d3449e5b019a8c71933fdbc4aa3a909\" \\\n  -f branch=\"fix-MARKER-EDCAA92A\" \\\n  --jq '.commit.sha'",
+        "reason": "non-gh Bash segment: NEW_CONTENT='// Widget module.\n\nexport function describe(): string {\n  return '\"'\"'widget'\"'\"';\n}\n\nexport function solve"
+      }
+    ],
+    "singleCliCommandPerToolCall": false,
+    "cliCommandGranularityViolations": [
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-30dd392e/contents/src/widget.ts --jq '.content' | base64 -d",
+        "reason": "non-gh Bash segment: base64 -d"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 12,
+        "command": "NEW_CONTENT='// Widget module.\n\nexport function describe(): string {\n  return '\"'\"'widget'\"'\"';\n}\n\nexport function solve_EDCAA92A(): string {\n  return \"done-EDCAA92A\";\n}'\n\nENCODED=$(echo -n \"$NEW_CONTENT\" | base64)\n\ngh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-30dd392e/contents/src/widget.ts \\\n  -X PUT \\\n  -f message=\"Fix MARKER-EDCAA92A\" \\\n  -f content=\"$ENCODED\" \\\n  -f sha=\"e49c07147d3449e5b019a8c71933fdbc4aa3a909\" \\\n  -f branch=\"fix-MARKER-EDCAA92A\" \\\n  --jq '.commit.sha'",
+        "reason": "non-gh Bash segment: NEW_CONTENT='// Widget module.\n\nexport function describe(): string {\n  return '\"'\"'widget'\"'\"';\n}\n\nexport function solve"
+      }
+    ]
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "PR + branch file content + scope all match",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-file-patch-pr-30dd392e",
+      "prNumber": 1,
+      "expectedFunctionName": "solve_EDCAA92A",
+      "expectedPrTitle": "Fix MARKER-EDCAA92A"
+    }
+  }
+}

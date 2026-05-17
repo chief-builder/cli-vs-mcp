@@ -1,0 +1,21 @@
+=== github-rw baseline ===
+$ node --import tsx harness/src/cli.ts run --experiment github-rw --run smoke-tier2-n1 --arm baseline --tier 2 --trials 1
+→ github/smoke-tier2-n1  tier2_issue_workflow  arm=baseline  trial=1/1
+  ✗ score=0.25  INVALID  tokens_in=0  turns=71  time=0.0s
+  error: claude timed out after 240000ms
+→ github/smoke-tier2-n1  tier2_file_patch_pr  arm=baseline  trial=1/1
+  ✗ score=0.00  valid  tokens_in=0  turns=65  time=0.0s
+  error: claude timed out after 240000ms
+=== github-rw skill ===
+$ node --import tsx harness/src/cli.ts run --experiment github-rw --run smoke-tier2-n1 --arm skill --tier 2 --trials 1
+→ github/smoke-tier2-n1  tier2_issue_workflow  arm=skill  trial=1/1
+  ✓ score=1.00  valid  tokens_in=600  turns=10  time=20.5s
+→ github/smoke-tier2-n1  tier2_file_patch_pr  arm=skill  trial=1/1
+  ✓ score=1.00  INVALID  tokens_in=648  turns=14  time=28.5s
+=== github-rw mcp ===
+$ node --import tsx harness/src/cli.ts run --experiment github-rw --run smoke-tier2-n1 --arm mcp --tier 2 --trials 1
+→ github/smoke-tier2-n1  tier2_issue_workflow  arm=mcp  trial=1/1
+  ✓ score=1.00  valid  tokens_in=603  turns=14  time=23.1s
+→ github/smoke-tier2-n1  tier2_file_patch_pr  arm=mcp  trial=1/1
+  ✓ score=1.00  valid  tokens_in=647  turns=13  time=25.7s
+=== DONE ===
