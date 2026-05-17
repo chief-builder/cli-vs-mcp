@@ -438,6 +438,39 @@ error?                     # set on timeout or process failure
     </li>
   </ul>
 
+  <h3>The three budget signals</h3>
+
+  <p>
+    Three fields in the record above measure how expensive the trial was, each along a different axis. Reading them together tells you <em>why</em> a trial was expensive, not just <em>that</em> it was:
+  </p>
+
+  <table>
+    <thead>
+      <tr><th>Field</th><th>What it measures</th><th>Source</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>wallClockMs</code></td>
+        <td>End-to-end wall time of the <code>claude -p</code> invocation, in milliseconds (14,517 ms here = 14.5 s). Includes model inference, MCP stdio, tool execution time, and serialization. Excludes the harness's setup and success-check work. The 240 s <code>TRIAL_TIMEOUT_MS</code> cap fires against this clock.</td>
+        <td><code>result.duration_ms</code> from the stream-JSON transcript, recorded by Claude Code itself.</td>
+      </tr>
+      <tr>
+        <td><code>contextWindowPeak</code></td>
+        <td>The peak number of tokens the model was reading at any single turn during the trial (18,863 here). Computed as the running max of <code>input + cached + cache_creation</code> tokens across all assistant turns.</td>
+        <td>Computed by the harness from the per-turn <code>usage</code> blocks (<code>harness/src/metrics.ts</code>). Not a Claude Code field.</td>
+      </tr>
+      <tr>
+        <td><code>totalCostUsd</code></td>
+        <td>Dollar cost of the trial as Claude Code billed it (≈9.9¢ here). Computed from per-model token counts and current per-token prices, including any cache discount. Spans whatever models <code>modelsUsed</code> lists.</td>
+        <td><code>result.total_cost_usd</code> from the stream-JSON transcript.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Reading them together: a high <code>wallClockMs</code> with low cost usually means waiting on slow external APIs (the <code>tier1_workflow_status</code> trials wait ~10 s for GitHub Actions to finish before the agent even starts reading). A high cost with low peak window usually means many turns at small payload — chatty workflows. A high peak window with low cost is rare in this run; it would point at one huge prompt rather than a long conversation. The blog's headline cost numbers are reported in tokens because tokens are model-agnostic and reproducible across price changes; dollars drift, but the per-trial dollar figure is in every record if you want it (the report tool aggregates it behind <code>--include-cost</code>).
+  </p>
+
   <p>Every aggregate number in this write-up — the 1.32× cost ratios, the 0/5 valid-surface scores, the 75-turn timeouts — traces back to JSON files of this shape. The complete N=5 record set (90 Playwright trials + 50+ GitHub trials across multiple runs) is checked in under <code>experiments/&lt;name&gt;/runs/&lt;run&gt;/results/</code> for replay or independent re-analysis.</p>
 
   <h2>The validity classifier</h2>
