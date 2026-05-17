@@ -344,6 +344,102 @@ error?                     # set on timeout or process failure
     Tokens and wall-clock are the cost signals. <code>validToolSurface</code> is the trust signal: a passing trial with <code>validToolSurface=false</code> succeeded by escaping the intended path, and the per-tier summary in reports filters it out. This distinction turned out to matter — in the GitHub experiment, the skill arm scored 15/15 on raw success but the classifier rejected 10 of those 15 trials for off-surface behavior, including one that tried to lift the controller's elevated token out of the process environment.
   </p>
 
+  <h3>An actual trial record</h3>
+
+  <p>
+    Here's one real result file — the first GitHub <code>tier1_repo_inventory</code> trial of the n5 run (skill arm). The agent successfully reported the repo's facts and the success check passed, but the classifier flagged one of the two <code>Bash</code> calls as off-surface. Both signals coexist in the same record:
+  </p>
+
+<pre><code>{
+  "experiment": "github",
+  "runName": "n5",
+  "arm": "skill",
+  "taskId": "tier1_repo_inventory",
+  "tier": 1,
+  "trialN": 1,
+  "timestamp": "2026-05-16T21:16:26.419Z",
+  "seed": "40686185ecfeb352",
+  "metrics": {
+    "inputTokens": 644,
+    "outputTokens": 775,
+    "cachedInputTokens": 53308,
+    "cacheCreationInputTokens": 18862,
+    "toolCalls": [
+      { "name": "Skill", "turnIndex": 3 },
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "gh repo view chief-builder-lab/clivsmcp-tier1-repo-inventory-40686185 --json description,repositoryTopics,defaultBranchRef"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 7,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier1-repo-inventory-40686185/contents/README.md --jq '.content' | base64 -d"
+      },
+      { "name": "Write", "turnIndex": 9 }
+    ],
+    "toolCallCount": 4,
+    "turns": 10,
+    "numTurns": 6,
+    "wallClockMs": 14517,
+    "contextWindowPeak": 18863,
+    "totalCostUsd": 0.0988,
+    "modelsUsed": ["claude-haiku-4-5-20251001", "claude-sonnet-4-6"],
+    "usedIntendedTool": true,
+    "validToolSurface": false,
+    "escapeToolUsed": true,
+    "escapeToolCalls": [
+      {
+        "name": "Bash",
+        "turnIndex": 7,
+        "command": "gh api repos/.../contents/README.md --jq '.content' | base64 -d",
+        "reason": "non-gh Bash segment: base64 -d"
+      }
+    ],
+    "singleCliCommandPerToolCall": false,
+    "cliCommandGranularityViolations": [ /* same call, same reason */ ]
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "all repo facts match",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier1-repo-inventory-40686185",
+      "expectedDescription": "cli-vs-mcp sandbox repo (406861)",
+      "expectedTopics": ["topic-802d", "topic-8ca2", "cli-vs-mcp"]
+    }
+  }
+}
+</code></pre>
+
+  <p>What's worth noticing in this one record:</p>
+
+  <ul>
+    <li>
+      <strong>The trial passed</strong> (<code>success.pass: true</code>, <code>score: 1</code>) — the artifact the agent wrote matched all expected fields.
+    </li>
+    <li>
+      <strong>The classifier rejected it</strong> (<code>validToolSurface: false</code>) — the third tool call piped <code>gh api</code> output to <code>base64 -d</code>, and <code>base64</code> is not <code>gh</code>. The full command, turn index, and rejection reason are preserved under <code>escapeToolCalls</code> so the report tool can quote them.
+    </li>
+    <li>
+      <strong>The tool sequence is recorded with structure.</strong> Every <code>tool_use</code> in the transcript is summarised with name + turn index + the command string for <code>Bash</code> calls. This is what powers the per-task side-by-side sequences elsewhere in this write-up.
+    </li>
+    <li>
+      <strong>Tokens are split into four buckets</strong> (input / output / cached / cache-creation). Aggregations in the report sum all four — the "total tokens" columns on the comparison tables are that sum, averaged across the trial's seeds.
+    </li>
+    <li>
+      <strong><code>modelsUsed</code> records what actually ran</strong>. The Claude Code CLI can route internally between models inside a single trial; this trial used both Haiku and Sonnet. The harness records whichever models served the trial so the cost numbers are interpretable.
+    </li>
+    <li>
+      <strong><code>success.extras</code> is task-specific.</strong> The harness emits whatever the task's <code>successCheck</code> returns under <code>extras</code>; here the controller-side expected values are captured so a failing trial's diff is reproducible.
+    </li>
+    <li>
+      <strong>No <code>error</code> field.</strong> An <code>error</code> field only appears on timeout or process failure; its presence in a result is what distinguishes "trial completed and failed" from "trial never finished".
+    </li>
+  </ul>
+
+  <p>Every aggregate number in this write-up — the 1.32× cost ratios, the 0/5 valid-surface scores, the 75-turn timeouts — traces back to JSON files of this shape. The complete N=5 record set (90 Playwright trials + 50+ GitHub trials across multiple runs) is checked in under <code>experiments/&lt;name&gt;/runs/&lt;run&gt;/results/</code> for replay or independent re-analysis.</p>
+
   <h2>The validity classifier</h2>
 
   <p>For every <code>tool_use</code> event in the transcript, the experiment's classifier asks whether the call is in-surface for the active arm:</p>
