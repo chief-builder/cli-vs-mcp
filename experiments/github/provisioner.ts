@@ -182,7 +182,7 @@ export async function provisionRepo(
     name: repoName,
     fullName,
     htmlUrl: `https://github.com/${fullName}`,
-    cleanupHandle: () => archiveRepo(cfg, fullName),
+    cleanupHandle: () => deleteRepo(cfg, fullName),
   };
 }
 
@@ -209,12 +209,12 @@ async function waitForRepoReady(cfg: GhConfig, fullName: string): Promise<void> 
 }
 
 /**
- * Cleanup strategy: delete. Works when the controller PAT has Administration:
- * write on the sandbox owner. If your token lacks delete permission, swap
- * this for an archive (PATCH archived=true) but expect retried runs to fail
- * with "name already exists" because paired seeds produce deterministic names.
+ * Cleanup strategy: hard delete. Requires Administration:write on the sandbox
+ * owner. If your controller PAT only has archive scope, swap this for a PATCH
+ * archived=true — but expect retried runs to fail with "name already exists"
+ * since paired seeds produce deterministic repo names.
  */
-async function archiveRepo(cfg: GhConfig, fullName: string): Promise<void> {
+async function deleteRepo(cfg: GhConfig, fullName: string): Promise<void> {
   await ghRequest(cfg, {
     method: 'DELETE',
     path: `/repos/${fullName}`,

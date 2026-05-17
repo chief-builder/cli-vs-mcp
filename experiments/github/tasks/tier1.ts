@@ -321,12 +321,24 @@ const tier1_pr_diff_answer: Task = {
       sha: baseRef.object.sha,
     });
 
-    // Update file on branch
-    const currentFile = await fetchJson(
-      cfg.host,
-      cfg.controllerToken,
-      `/repos/${repo.fullName}/contents/${encodeURI(changedFile)}?ref=${branchName}`,
-    ) as { sha: string };
+    // Update file on branch. A freshly-created branch ref can 404 on
+    // /contents/...?ref= for a brief window even though the file exists on
+    // the source ref — retry on 404 with backoff before giving up.
+    let currentFile: { sha: string } | undefined;
+    for (let attempt = 0; attempt < 6; attempt++) {
+      try {
+        currentFile = await fetchJson(
+          cfg.host,
+          cfg.controllerToken,
+          `/repos/${repo.fullName}/contents/${encodeURI(changedFile)}?ref=${branchName}`,
+        ) as { sha: string };
+        break;
+      } catch (err) {
+        if (attempt === 5 || !/-> 404:/.test(String(err))) throw err;
+        await new Promise(r => setTimeout(r, 500));
+      }
+    }
+    if (!currentFile) throw new Error('unreachable: retry loop exited without value');
     await putJson(cfg.host, cfg.controllerToken, `/repos/${repo.fullName}/contents/${encodeURI(changedFile)}`, {
       message: `add ${answerFunctionName}`,
       content: Buffer.from(updatedContent, 'utf-8').toString('base64'),
