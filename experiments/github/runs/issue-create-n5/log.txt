@@ -1,0 +1,25 @@
+=== skill ===
+$ node --import tsx harness/src/cli.ts run --experiment github-rw --run issue-create-n5 --arm skill --task tier2_issue_create --trials 5
+→ github/issue-create-n5  tier2_issue_create  arm=skill  trial=1/5
+  ✓ score=1.00  valid  tokens_in=560  turns=5  time=9.7s
+→ github/issue-create-n5  tier2_issue_create  arm=skill  trial=2/5
+  ✓ score=1.00  valid  tokens_in=560  turns=5  time=10.4s
+→ github/issue-create-n5  tier2_issue_create  arm=skill  trial=3/5
+  ✓ score=1.00  valid  tokens_in=559  turns=5  time=18.3s
+→ github/issue-create-n5  tier2_issue_create  arm=skill  trial=4/5
+  ✓ score=1.00  valid  tokens_in=563  turns=6  time=11.4s
+→ github/issue-create-n5  tier2_issue_create  arm=skill  trial=5/5
+  ✓ score=1.00  valid  tokens_in=561  turns=5  time=15.1s
+=== mcp ===
+$ node --import tsx harness/src/cli.ts run --experiment github-rw --run issue-create-n5 --arm mcp --task tier2_issue_create --trials 5
+→ github/issue-create-n5  tier2_issue_create  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=560  turns=6  time=9.1s
+→ github/issue-create-n5  tier2_issue_create  arm=mcp  trial=2/5
+  ✓ score=1.00  valid  tokens_in=560  turns=6  time=13.6s
+→ github/issue-create-n5  tier2_issue_create  arm=mcp  trial=3/5
+  ✓ score=1.00  valid  tokens_in=559  turns=5  time=9.5s
+→ github/issue-create-n5  tier2_issue_create  arm=mcp  trial=4/5
+  ✓ score=1.00  valid  tokens_in=564  turns=6  time=9.8s
+→ github/issue-create-n5  tier2_issue_create  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=561  turns=6  time=11.0s
+=== DONE ===

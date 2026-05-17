@@ -353,6 +353,154 @@ Do not modify any file other than ${s.changedFile}. When the PR is open you are 
 };
 
 // ---------------------------------------------------------------------------
+// tier2_issue_create — single-primitive write: create one issue
+//
+// Picked as a clean apples-to-apples task because both sides have a single
+// matched primitive:
+//   skill: gh issue create --title "..." --body "..." --label bug --label priority-high
+//   mcp:   mcp__github__issue_write (create variant, already proven in
+//          tier2_issue_workflow n5)
+//
+// Note: tier2_release_create was attempted first but pulled — the
+// github-mcp-server (any toolset) exposes only read tools for releases.
+// gh release create works fine on the skill side; there's no MCP write
+// primitive to compare against, so it isn't a tool-surface comparison.
+// ---------------------------------------------------------------------------
+
+interface IssueCreateState {
+  repo: ProvisionedRepo;
+  marker: string;
+  expectedTitle: string;
+  expectedBodyPhrase: string;
+  expectedLabels: string[];
+}
+
+const tier2_issue_create: Task = {
+  id: 'tier2_issue_create',
+  tier: 2,
+
+  setup: async (seed) => {
+    const cfg = ghConfigFromEnv();
+    const marker = hexFromSeed(seed, 'issue-create', 8).toUpperCase();
+    const expectedLabels = ['bug', 'priority-high'];
+
+    const repo = await provisionRepo(
+      cfg,
+      repoNameFor('tier2_issue_create', seed),
+      {
+        description: 'tier2_issue_create sandbox',
+        files: [{ path: 'README.md', content: '# issue create sandbox\n' }],
+        labels: [
+          { name: 'bug', color: 'd73a4a' },
+          { name: 'enhancement', color: 'a2eeef' },
+          { name: 'priority-high', color: 'b60205' },
+          { name: 'priority-low', color: '0e8a16' },
+        ],
+      },
+    );
+
+    return {
+      repo,
+      marker,
+      expectedTitle: `Investigate ${marker}`,
+      expectedBodyPhrase: `report-${marker}`,
+      expectedLabels,
+    } satisfies IssueCreateState;
+  },
+
+  cleanup: async (state) => {
+    const s = state as IssueCreateState | null;
+    if (s) await s.repo.cleanupHandle();
+  },
+
+  prompt: (ctx: TaskContext) => {
+    const s = ctx.state as IssueCreateState;
+    return `
+You have access to a private GitHub repository at:
+  ${s.repo.htmlUrl}
+
+Create one new issue with:
+  - Title: ${s.expectedTitle}
+  - Body containing the exact phrase: ${s.expectedBodyPhrase}
+  - Labels: ${s.expectedLabels.join(', ')} (both labels already exist in the repo)
+
+When the issue has been created you are done — you do not need to write any local artifact.
+    `.trim();
+  },
+
+  successCheck: async (ctx) => {
+    const cfg = ghConfigFromEnv();
+    const expected = ctx.state as IssueCreateState;
+    const repo = expected.repo.fullName;
+
+    // List open issues; find one whose title exactly matches the expected.
+    // The /issues endpoint has noticeable eventual-consistency lag after a
+    // create — a freshly-POSTed issue can be 200 OK at GET /issues/{n} while
+    // returning 0 results from the list endpoint. Retry the list a few
+    // times with backoff before declaring "no issue found".
+    type IssueRow = {
+      number: number;
+      title: string;
+      body: string | null;
+      labels: Array<{ name: string }>;
+      pull_request?: unknown;
+    };
+    let candidates: IssueRow[] = [];
+    for (let attempt = 0; attempt < 6; attempt++) {
+      const issues = await fetchJson(cfg.host, cfg.controllerToken,
+        `/repos/${repo}/issues?state=open&per_page=20`) as IssueRow[];
+      candidates = issues.filter(i => !i.pull_request
+        && i.title.trim() === expected.expectedTitle.trim());
+      if (candidates.length > 0) break;
+      if (attempt < 5) await new Promise(r => setTimeout(r, 500));
+    }
+
+    if (candidates.length === 0) {
+      return {
+        pass: false,
+        score: 0,
+        notes: `no open issue found with title "${expected.expectedTitle}" after 6 attempts`,
+        extras: { repoFullName: repo, expectedTitle: expected.expectedTitle },
+      };
+    }
+    if (candidates.length > 1) {
+      return {
+        pass: false,
+        score: 0,
+        notes: `expected exactly one issue with the title; found ${candidates.length}`,
+        extras: { repoFullName: repo, expectedTitle: expected.expectedTitle },
+      };
+    }
+
+    const issue = candidates[0]!;
+    const titleOk = true;
+    const bodyOk = (issue.body ?? '').includes(expected.expectedBodyPhrase);
+    const labelNames = issue.labels.map(l => l.name);
+    const labelsOk = expected.expectedLabels.every(n => labelNames.includes(n))
+      && labelNames.length === expected.expectedLabels.length;
+
+    const checks = [titleOk, bodyOk, labelsOk];
+    const matched = checks.filter(Boolean).length;
+    const score = matched / checks.length;
+    const notes = matched === checks.length
+      ? 'issue created with all expected fields'
+      : `title=${titleOk} body=${bodyOk} labels=${labelsOk} (got=${labelNames.join('|')})`;
+
+    return {
+      pass: matched === checks.length,
+      score,
+      notes,
+      extras: {
+        repoFullName: repo,
+        issueNumber: issue.number,
+        expectedTitle: expected.expectedTitle,
+        expectedLabels: expected.expectedLabels,
+      },
+    };
+  },
+};
+
+// ---------------------------------------------------------------------------
 // HTTP helpers — mirror the inline pattern from tier1.ts so this file stays
 // self-contained and the controller token never leaves the harness process.
 // ---------------------------------------------------------------------------
@@ -388,4 +536,5 @@ export const tier2Tasks: Task[] = [
   tier2_issue_workflow,
   tier2_file_patch_pr,
   tier2_file_patch_pr_directed,
+  tier2_issue_create,
 ];

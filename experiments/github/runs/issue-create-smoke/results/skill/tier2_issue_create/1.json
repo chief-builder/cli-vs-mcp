@@ -1,0 +1,57 @@
+{
+  "experiment": "github",
+  "runName": "issue-create-smoke",
+  "arm": "skill",
+  "taskId": "tier2_issue_create",
+  "tier": 2,
+  "trialN": 1,
+  "timestamp": "2026-05-17T17:26:05.931Z",
+  "seed": "0a592f309c0f658f",
+  "metrics": {
+    "inputTokens": 557,
+    "outputTokens": 439,
+    "cachedInputTokens": 45515,
+    "cacheCreationInputTokens": 7299,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 4,
+        "command": "gh issue create --repo chief-builder-lab/clivsmcp-tier2-issue-create-0a592f30 --title \"Investigate CDD70625\" --body \"report-CDD70625\" --label \"bug\" --label \"priority-high\""
+      }
+    ],
+    "toolCallCount": 2,
+    "turns": 5,
+    "numTurns": 4,
+    "wallClockMs": 11077,
+    "contextWindowPeak": 18263,
+    "totalCostUsd": 0.04802175,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "issue created with all expected fields",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-issue-create-0a592f30",
+      "issueNumber": 1,
+      "expectedTitle": "Investigate CDD70625",
+      "expectedLabels": [
+        "bug",
+        "priority-high"
+      ]
+    }
+  }
+}

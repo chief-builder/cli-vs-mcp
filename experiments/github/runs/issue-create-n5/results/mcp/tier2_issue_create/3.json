@@ -1,0 +1,56 @@
+{
+  "experiment": "github",
+  "runName": "issue-create-n5",
+  "arm": "mcp",
+  "taskId": "tier2_issue_create",
+  "tier": 2,
+  "trialN": 3,
+  "timestamp": "2026-05-17T17:34:38.511Z",
+  "seed": "8b69fc0962b4ed1c",
+  "metrics": {
+    "inputTokens": 559,
+    "outputTokens": 420,
+    "cachedInputTokens": 33924,
+    "cacheCreationInputTokens": 6336,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 2
+      },
+      {
+        "name": "mcp__github__issue_write",
+        "turnIndex": 4
+      }
+    ],
+    "toolCallCount": 2,
+    "turns": 5,
+    "numTurns": 3,
+    "wallClockMs": 9497,
+    "contextWindowPeak": 13829,
+    "totalCostUsd": 0.0406302,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "issue created with all expected fields",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-issue-create-8b69fc09",
+      "issueNumber": 1,
+      "expectedTitle": "Investigate FC2C525E",
+      "expectedLabels": [
+        "bug",
+        "priority-high"
+      ]
+    }
+  }
+}

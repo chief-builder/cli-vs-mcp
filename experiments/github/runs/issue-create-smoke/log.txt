@@ -1,0 +1,9 @@
+=== skill ===
+$ node --import tsx harness/src/cli.ts run --experiment github-rw --run issue-create-smoke --arm skill --task tier2_issue_create --trials 1
+→ github/issue-create-smoke  tier2_issue_create  arm=skill  trial=1/1
+  ✓ score=1.00  valid  tokens_in=557  turns=5  time=11.1s
+=== mcp ===
+$ node --import tsx harness/src/cli.ts run --experiment github-rw --run issue-create-smoke --arm mcp --task tier2_issue_create --trials 1
+→ github/issue-create-smoke  tier2_issue_create  arm=mcp  trial=1/1
+  ✓ score=1.00  valid  tokens_in=557  turns=6  time=9.4s
+=== DONE ===

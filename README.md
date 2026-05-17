@@ -142,8 +142,10 @@ Each task provisions a fresh private repo under `GITHUB_SANDBOX_OWNER` via the c
 |---|---|---|
 | `tier2_issue_workflow` | Repo with 3 issues (1 target with marker in title, 2 decoys) + label palette including `priority-high` | Add `priority-high` label to target, post a comment containing `triaged-<marker>`, close it. Leave decoys untouched. |
 | `tier2_file_patch_pr` | Repo with `src/widget.ts` containing a TODO marker on main | Create a branch, replace the TODO with an exported function `solve_<marker>` returning `done-<marker>`, open a PR with marker phrases in title and body. |
+| `tier2_file_patch_pr_directed` | Same as `tier2_file_patch_pr` | Same expected outcome, but the prompt explicitly names the in-surface workaround (`gh api -F field=@file` / `--input file` + the `Write` tool). Designed to isolate prompt-knowledge gap from affordance gap. |
+| `tier2_issue_create` | Empty repo with seeded label palette | Create one issue with seeded title, body marker, and two labels. Single-primitive write — clean apples-to-apples. |
 
-Tier 2 requires the agent token to have Issues:write / Pull requests:write / Contents:write on the sandbox owner. `tier2_pr_review` is deferred — GitHub forbids `APPROVE`/`REQUEST_CHANGES` from the PR author, so the task needs a distinct PR-author identity.
+Tier 2 requires the agent token to have Issues:write / Pull requests:write / Contents:write on the sandbox owner. `tier2_pr_review` is deferred — GitHub forbids `APPROVE`/`REQUEST_CHANGES` from the PR author, so the task needs a distinct PR-author identity. `tier2_release_create` was attempted and pulled — the github-mcp-server has no release write tool under any toolset config, so it isn't an apples-to-apples comparison.
 
 ## Measurements captured
 
@@ -261,14 +263,18 @@ Two findings only visible from the validity classifier:
 1. **Skill arm escapes its surface on 2/3 GitHub tasks.** `tier1_repo_inventory` (5/5 invalid) all pipe `gh api ... | base64 -d` to decode README content. `tier1_issue_triage` (5/5 invalid) included one trial that ran `env | grep -i github` then `GH_TOKEN=$GITHUB_CONTROLLER_TOKEN gh api ...` to lift the controller's elevated token. The escalation path was open during the n5 run — the runner's scrub list didn't yet include the harness's own `GITHUB_CONTROLLER_TOKEN` / `GITHUB_AGENT_TOKEN` var names. Patched in `ef3fc97` and behaviorally verified in `experiments/github/runs/env-fix-verify`.
 2. **MCP `tier1_issue_triage` collapse.** All 5 MCP trials timed out at 75+ turns of fanout across `list_issues`, `search_issues`, `get_issue`. Skill solved the same task in ~23 turns with one `gh issue list --label "bug,priority-high" --json`. The MCP fanout shape is the failure mode, not the absence of capability.
 
-**GitHub Tier 2** (`experiments/github/runs/tier2-n5/findings.md`)
+**GitHub Tier 2** (`experiments/github/runs/tier2-n5/findings.md`, `experiments/github/runs/issue-create-n5/findings.md`, `experiments/github/runs/directed-n5/findings.md`)
 
 | Task | baseline | skill (raw / valid) | mcp |
 |---|---|---|---|
 | `tier2_issue_workflow` | 0/5 | **5/5** / **5/5** | **5/5** |
 | `tier2_file_patch_pr` | 0/5 | **5/5** / **0/5** (all INVALID) | **5/5** |
+| `tier2_issue_create` | not run | **5/5** / **5/5** | **5/5** |
+| `tier2_file_patch_pr_directed` | not run | 3/5 / 2/5 (prompt rewrite shifts but doesn't close the escape) | not applicable |
 
-Both arms produce correct end state on both tasks. The split is on tool surface: **skill stays in surface where `gh` has first-class commands** (`gh issue edit/comment/close`) and **always escapes where it doesn't** (`file_patch_pr` needs create-branch-from-SHA and update-file-on-branch, neither of which has a high-level `gh` command, so the agent composes them out of `gh api` + shell variable assignment for the file content payload). All 5 `file_patch_pr` skill trials hit the same escape. MCP wins both tasks on cost (1.38× on `issue_workflow`, 1.59× on `file_patch_pr`) and is the only arm staying in surface across both.
+Both arms produce correct end state on `issue_workflow` and `issue_create`. The split shows up on `file_patch_pr`: **skill stays in surface where `gh` has first-class commands** (`gh issue edit/comment/close`, `gh issue create`) and **always escapes where it doesn't** — `file_patch_pr` needs create-branch-from-SHA and update-file-on-branch, neither of which has a high-level `gh` command, so the agent composes them out of `gh api` + shell variable assignment for the file content payload. All 5 trials hit the same escape. A directed-prompt variant (`tier2_file_patch_pr_directed`) that explicitly names the in-surface workaround halves the escape rate (2/5 valid) but doesn't close it and triples the cost.
+
+**Clean apples-to-apples cost (Tier 2):** MCP is 1.31× cheaper on `tier2_issue_create`, 1.38× on `tier2_issue_workflow`, and 1.59× on `tier2_file_patch_pr` (where skill's number includes an off-surface escape). Direction matches the Tier 1 `tier1_pr_diff_answer` ratio of 1.32×.
 
 ## Known limits
 

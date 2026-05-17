@@ -1,0 +1,57 @@
+{
+  "experiment": "github",
+  "runName": "issue-create-n5",
+  "arm": "skill",
+  "taskId": "tier2_issue_create",
+  "tier": 2,
+  "trialN": 3,
+  "timestamp": "2026-05-17T17:33:03.178Z",
+  "seed": "8b69fc0962b4ed1c",
+  "metrics": {
+    "inputTokens": 559,
+    "outputTokens": 448,
+    "cachedInputTokens": 45526,
+    "cacheCreationInputTokens": 7308,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 4,
+        "command": "gh issue create --repo chief-builder-lab/clivsmcp-tier2-issue-create-8b69fc09 --title \"Investigate FC2C525E\" --body \"report-FC2C525E\" --label \"bug\" --label \"priority-high\""
+      }
+    ],
+    "toolCallCount": 2,
+    "turns": 5,
+    "numTurns": 4,
+    "wallClockMs": 18309,
+    "contextWindowPeak": 18272,
+    "totalCostUsd": 0.0481758,
+    "modelsUsed": [
+      "claude-haiku-4-5-20251001",
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": []
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "issue created with all expected fields",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-issue-create-8b69fc09",
+      "issueNumber": 1,
+      "expectedTitle": "Investigate FC2C525E",
+      "expectedLabels": [
+        "bug",
+        "priority-high"
+      ]
+    }
+  }
+}
