@@ -401,29 +401,7 @@
     The structural reason: <code>gh issue list --label "bug,priority-high" --json</code> is one tool call returning a filtered set. The equivalent on the MCP side is <em>several</em> tool calls — listing issues, requesting specific issues by number, separately consulting labels. Decomposed tools multiply the search space the agent has to navigate.
   </p>
 
-  <h2>Two bugs the run found (and fixed)</h2>
-
-  <h3>Provisioner branch-ref race</h3>
-
-  <p>
-    Two MCP trials on <code>pr_diff_answer</code> threw a 404 during setup, not during the agent's run. The provisioner had just created a feature branch from main's HEAD SHA and was reading <code>GET /repos/.../contents/src/widget.ts?ref=feature-...</code> to get the file's blob SHA — but for a brief window after a new ref is created, that GET returns 404 even though the file is reachable via the source ref. Classic eventual consistency.
-  </p>
-
-  <p>
-    Fixed with a 6×500 ms retry loop on 404 specifically, in <code>experiments/github/tasks/tier1.ts</code>. Re-running <code>tier1_pr_diff_answer</code> mcp after the fix produced 5/5 cleanly. The N=5 results above include the post-fix data; the pre-fix run is preserved in <code>pr-diff-retry.log</code>.
-  </p>
-
-  <h3>The env-scrub gap</h3>
-
-  <p>
-    Already described in Finding 1's callout. The structural pattern is worth noting separately: the runner had a hand-curated deny list for <code>GH_*</code> / <code>GITHUB_*</code> environment variables. It covered everything <code>gh</code> reads natively. It didn't cover the two variable names the <em>harness</em> uses to pull credentials from <code>.env</code>. So the agent inherited both.
-  </p>
-
-  <p>
-    Generic lesson: an allow-list on the agent's tool surface is necessary but not sufficient. Anything sitting in the agent's environment is part of the surface too, and an env scrub built around "tools the agent might use" misses "variables the agent might read."
-  </p>
-
-  <h2>How to read this</h2>
+  <h2>Tier 1 in summary</h2>
 
   <p>
     The headline numbers — 15/15 skill, 10/15 mcp — are misleading either way you read them. The honest version:
@@ -734,6 +712,32 @@
     </p>
   </div>
 
+  <h2>Two bugs the run found (and fixed)</h2>
+
+  <p>
+    Two methodology bugs surfaced during the run that don't fit the headline cost/success story but were load-bearing for getting the data clean.
+  </p>
+
+  <h3>Provisioner branch-ref race</h3>
+
+  <p>
+    Two MCP trials on <code>tier1_pr_diff_answer</code> threw a 404 during setup, not during the agent's run. The provisioner had just created a feature branch from main's HEAD SHA and was reading <code>GET /repos/.../contents/src/widget.ts?ref=feature-...</code> to get the file's blob SHA — but for a brief window after a new ref is created, that GET returns 404 even though the file is reachable via the source ref. Classic eventual consistency.
+  </p>
+
+  <p>
+    Fixed with a 6×500 ms retry loop on 404 specifically, in <code>experiments/github/tasks/tier1.ts</code>. Re-running <code>tier1_pr_diff_answer</code> mcp after the fix produced 5/5 cleanly. The Tier 1 results above include the post-fix data; the pre-fix run is preserved in <code>pr-diff-retry.log</code>.
+  </p>
+
+  <h3>The env-scrub gap</h3>
+
+  <p>
+    Already described in Finding 1's callout. The structural pattern is worth noting separately: the runner had a hand-curated deny list for <code>GH_*</code> / <code>GITHUB_*</code> environment variables. It covered everything <code>gh</code> reads natively. It didn't cover the two variable names the <em>harness</em> uses to pull credentials from <code>.env</code>. So the agent inherited both.
+  </p>
+
+  <p>
+    Generic lesson: an allow-list on the agent's tool surface is necessary but not sufficient. Anything sitting in the agent's environment is part of the surface too, and an env scrub built around "tools the agent might use" misses "variables the agent might read."
+  </p>
+
   <h2>Caveats</h2>
 
   <ul>
@@ -748,7 +752,7 @@
   <hr style="border: 0; border-top: 1px solid var(--rule); margin: 48px 0 28px;">
 
   <p style="font-size: 14.5px; color: var(--ink-3);">
-    Also see: <a href="playwright_experiment.html">the Playwright experiment</a>, where both arms succeed but MCP is 1.64×–2.01× cheaper.<br>
+    Also see: <a href="playwright_experiment.html">the Playwright experiment</a>, where both arms succeed at matched rates and MCP runs 1.29×–1.42× cheaper (with one chatty form-fill task stretching to 2.51×).<br>
     Back to <a href="cli_mcp_experiments.html">overview</a>.
   </p>
 
