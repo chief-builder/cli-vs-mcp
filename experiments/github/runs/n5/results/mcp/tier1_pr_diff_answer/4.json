@@ -5,13 +5,13 @@
   "taskId": "tier1_pr_diff_answer",
   "tier": 1,
   "trialN": 4,
-  "timestamp": "2026-05-17T04:07:24.946Z",
+  "timestamp": "2026-05-17T12:07:15.835Z",
   "seed": "20a6c6b242014eb7",
   "metrics": {
-    "inputTokens": 707,
-    "outputTokens": 537,
-    "cachedInputTokens": 47688,
-    "cacheCreationInputTokens": 6620,
+    "inputTokens": 706,
+    "outputTokens": 549,
+    "cachedInputTokens": 47668,
+    "cacheCreationInputTokens": 6625,
     "toolCalls": [
       {
         "name": "ToolSearch",
@@ -29,9 +29,9 @@
     "toolCallCount": 3,
     "turns": 8,
     "numTurns": 4,
-    "wallClockMs": 13679,
-    "contextWindowPeak": 14113,
-    "totalCostUsd": 0.0477394,
+    "wallClockMs": 15544,
+    "contextWindowPeak": 14118,
+    "totalCostUsd": 0.04793115,
     "modelsUsed": [
       "claude-haiku-4-5-20251001",
       "claude-sonnet-4-6"

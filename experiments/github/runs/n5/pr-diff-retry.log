@@ -1,0 +1,11 @@
+$ node --import tsx harness/src/cli.ts run --experiment github --run n5 --arm mcp --task tier1_pr_diff_answer --trials 5
+→ github/n5  tier1_pr_diff_answer  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=702  turns=9  time=13.1s
+→ github/n5  tier1_pr_diff_answer  arm=mcp  trial=2/5
+  ✓ score=1.00  valid  tokens_in=706  turns=8  time=14.8s
+→ github/n5  tier1_pr_diff_answer  arm=mcp  trial=3/5
+  ✓ score=1.00  valid  tokens_in=699  turns=8  time=12.7s
+→ github/n5  tier1_pr_diff_answer  arm=mcp  trial=4/5
+  ✓ score=1.00  valid  tokens_in=706  turns=8  time=15.5s
+→ github/n5  tier1_pr_diff_answer  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=704  turns=8  time=14.3s
