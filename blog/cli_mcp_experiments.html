@@ -821,7 +821,13 @@ playwright-cli click "#submit"         → starts with "playwright-cli" ✓</cod
   <h2>Honest caveats</h2>
 
   <p>
-    <strong>N=5 is too small to call this a benchmark.</strong> The headlines above should be read as "the failure modes exist and are reproducible at five seeds," not "MCP wins" or "CLI wins" in some universal sense. Direction is consistent across 9 clean tasks in two domains, which is enough to call directional; harder claims would need higher N and more domains.
+    <strong>N=5 is too small to call this a benchmark.</strong> Three specific claims from the findings above each carry their own confidence:
+    <ul style="margin-top: 8px;">
+      <li>The <strong>cost ratios</strong> (MCP 1.13×–1.42× cheaper across 8 of 9 clean comparisons) — directionally robust, but absolute numbers will shift by single-digit percentages at higher N.</li>
+      <li>The <strong>failure modes</strong> (skill escapes on tasks where <code>gh</code> lacks a primitive; MCP collapses on label-filtered issue search; the prompt-rewrite ceiling at 3-of-5 escapes) — the <em>existence</em> of each pattern is reproducible across all five seeds. Their <em>frequency</em> at higher N is not measured here.</li>
+      <li>The <strong>operational findings</strong> (env-scrub gap, three eventual-consistency races, server toolset configuration being load-bearing) — these are structural rather than statistical and don't depend on N.</li>
+    </ul>
+    Together they're enough to call directional; "MCP wins" or "CLI wins" in some universal sense would need higher N and more domains.
   </p>
 
   <p>
