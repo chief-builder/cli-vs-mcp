@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CLI vs MCP — How tool surface shapes Claude Code's behavior</title>
+<title>CLI skill or MCP server: when to pick each, when to build each</title>
 <style>
   :root {
     --bg: #faf8f5;
@@ -258,11 +258,11 @@
 <div class="wrap">
 
   <p class="kicker">Tooling study · 2026</p>
-  <h1>How tool surface shapes Claude Code's behavior</h1>
+  <h1>CLI skill or MCP server: when to pick each, when to build each</h1>
   <p class="lede">
     Three ways to give an agent the same capability — a Skill that wraps a CLI, an MCP server with structured tools, or nothing at all — produce three different outcomes on the same task. This is the harness that measures it, and the two experiments we've run end-to-end.
   </p>
-  <p class="meta">A working note on tool-surface economics. Code and run artifacts live in the repo.</p>
+  <p class="meta">A working note on agent-tool economics — when to pick between an existing CLI skill and MCP server, and what the data says about which one to build. Code and run artifacts live in the repo.</p>
 
   <p>
     "Equip the agent with the right tools" is good advice and bad engineering: <em>which</em> tools, at <em>what</em> grain, with <em>what</em> output shape — these are choices that move token cost, success rate, and surface containment by factors, not percentages. This project is a small, deliberately boring harness that pins those choices down on a per-task basis so the differences between tooling approaches become measurable rather than narrative.
@@ -817,6 +817,82 @@ playwright-cli click "#submit"         → starts with "playwright-cli" ✓</cod
       <strong>If you can't choose:</strong> measure both. The two failure modes are <em>different shapes</em>: CLI fails by escaping, MCP fails by burning budget. Which your system can absorb depends on what you're building.
     </li>
   </ul>
+
+  <h2>When to build each</h2>
+
+  <p>
+    The section above is the picker question: given two existing surfaces, which one fits this task. The build question is different — when you're shipping a capability for agents to consume, when is a CLI skill the right vehicle, and when should you build an MCP server? The experiment didn't directly measure "build vs not"; it measured pre-built tools against each other. But four of its findings translate into build-time guidance.
+  </p>
+
+  <h3>Build a CLI skill when</h3>
+
+  <p><strong>Your capability already decomposes into verb-noun subcommands.</strong> When the CLI shape and the task shape match, the skill arm stays in surface, and the cost gap to MCP is modest. Two tasks in the run land here:</p>
+
+  <ul>
+    <li>
+      <code>tier1_pr_diff_answer</code> — agent uses <code>gh pr diff --patch</code> + <code>gh api repos/.../pulls/N/files</code>, scores <strong>5/5 in-surface at 1.32× MCP cost</strong>. The PR-diff API has a clean read shape and <code>gh</code> exposes it as a single subcommand. <em>(<code>experiments/github/runs/n5/findings.md</code>; per-trial JSON under <code>results/skill/tier1_pr_diff_answer/</code>.)</em>
+    </li>
+    <li>
+      <code>tier2_issue_create</code> — agent uses one <code>gh issue create --title --body --label --label</code>, scores <strong>5/5 in-surface at 1.31× MCP cost</strong>. Single primitive, single call. <em>(<code>experiments/github/runs/issue-create-n5/findings.md</code>; per-trial JSON under <code>results/skill/tier2_issue_create/</code>.)</em>
+    </li>
+  </ul>
+
+  <p>
+    Building an MCP server over the top of a CLI in either of those shapes wouldn't have changed the agent's behavior meaningfully. <strong>Other signals that point to "CLI is enough":</strong>
+  </p>
+
+  <ul>
+    <li>You want one surface that serves humans and agents. A CLI is usable by both; an MCP server isn't usable by humans without a wrapper. <em>(Not measured by this experiment — flagging as soft guidance.)</em></li>
+    <li>Distribution is via <code>apt</code> / <code>brew</code> / a binary release. Agents pick up the binary through a Skill bundle; humans pick it up through the package manager. The <code>gh</code> CLI in this experiment was distributed this way. <em>(Soft guidance.)</em></li>
+    <li>Iteration speed matters more than tight specification. A CLI is faster to ship than a full MCP server. <em>(Soft guidance.)</em></li>
+  </ul>
+
+  <h3>Build an MCP server when</h3>
+
+  <p>
+    <strong>Your capability doesn't decompose into verb-noun subcommands.</strong> When the task needs workflow primitives that don't fit a "subcommand --flag" shape — create-branch-from-SHA, update-file-on-branch, things that compose multiple API calls into one logical step — a CLI agent will glue the primitives together with shell text. Every one of those glue attempts in our run was off-surface:
+  </p>
+
+  <ul>
+    <li>
+      <code>tier2_file_patch_pr</code> — skill arm scored <strong>5/5 invalid</strong> surface. The agent built create-branch-and-update-file out of 4 <code>gh api</code> calls plus a <code>NEW_CONTENT='...'</code> shell variable assignment, every trial. The MCP arm scored <strong>5/5 valid</strong> using <code>mcp__github__create_branch</code> + <code>create_or_update_file</code> + <code>create_pull_request</code> — three named primitives matching the workflow steps. <em>(<code>experiments/github/runs/tier2-n5/findings.md</code>; <code>results/skill/tier2_file_patch_pr/</code> and <code>results/mcp/tier2_file_patch_pr/</code>.)</em>
+    </li>
+    <li>
+      <code>tier1_repo_inventory</code> — skill arm scored <strong>5/5 invalid</strong> because the agent piped <code>gh api ... --jq '.content' | base64 -d</code> to decode README contents. MCP's <code>get_file_contents</code> returns decoded text natively (5/5 valid). The workflow primitive "fetch decoded file content" doesn't exist as a high-level <code>gh</code> command. <em>(<code>experiments/github/runs/n5/findings.md</code>; <code>results/skill/tier1_repo_inventory/</code>.)</em>
+    </li>
+  </ul>
+
+  <p>
+    If you're building a capability whose workflow primitives don't fit a CLI shape, the MCP form keeps the agent in surface; the CLI form forces it to glue with the shell. <strong>The trade is not solvable from the prompt side:</strong> the directed-prompt experiment that explicitly told the agent how to stay in surface still saw 3 of 5 trials escape, and the 2 that didn't paid a 2–3× cost penalty. <em>(<code>experiments/github/runs/directed-n5/findings.md</code>; <code>results/skill/tier2_file_patch_pr_directed/</code>.)</em>
+  </p>
+
+  <p><strong>Per-call cost matters and your agents are running at volume.</strong> Across the 9 clean comparisons in this experiment, MCP runs <strong>1.13×–1.42× cheaper</strong> than the CLI skill at matched success and matched turn count. The gap is per-turn payload — each MCP tool result carries less token weight than a shell-roundtripped CLI response. The ratio scales with how chatty the workflow is. <em>(Aggregated across <code>experiments/playwright/runs/n5/findings.md</code> and the four GitHub findings files: <code>n5/</code>, <code>tier2-n5/</code>, <code>issue-create-n5/</code>, <code>workflow-n5/</code>.)</em></p>
+
+  <p><strong>Containment matters and you can't trust shell access.</strong> The skill arm in the GitHub experiment scored <strong>15 of 35 trials off-surface</strong>. One of those trials ran <code>env | grep -i github</code>, observed the harness's elevated controller token in plaintext, and attempted <code>GH_TOKEN=$GITHUB_CONTROLLER_TOKEN gh api ...</code> to re-execute with that token. MCP servers run in a separate process with typed schemas — no shell, no <code>env</code>, no escape route by construction. <em>(<code>experiments/github/runs/n5/transcripts/skill/tier1_issue_triage/1.jsonl</code> for the specific env-grep trial; the env-scrub fix in commit <code>ef3fc97</code> closed the specific gap for this harness, but the structural property of "shell access vs typed schema" stands.)</em></p>
+
+  <p><strong>You're shipping the capability across multiple agent runtimes.</strong> An MCP server is a portable single artifact; multiple agent products can discover it with one <code>--mcp-config</code> entry. A CLI skill is per-product (Claude Code's <code>SKILL.md</code> format is Claude Code-specific). <em>(Not measured by this experiment — soft guidance.)</em></p>
+
+  <h3>Build both when you can — but know which one the agent will reach for first</h3>
+
+  <p>
+    The experiment used <code>gh</code> (CLI) and <code>github-mcp-server</code> (MCP) side by side, with the same capability behind both. They're not mutually exclusive; humans use <code>gh</code>, agents that need typed primitives use the MCP server. The maintenance cost is two surfaces over one capability set. What the data does say: <strong>if both exist, the agent will pick the one whose primitives match the task shape</strong>. On <code>tier1_pr_diff_answer</code> and <code>tier2_issue_create</code> the agent was happy with either; on <code>tier2_file_patch_pr</code> only the MCP form kept it in surface.
+  </p>
+
+  <h3>When you don't need either</h3>
+
+  <p>
+    The baseline arm — no execution surface at all — scored <strong>0 of 55 trials</strong> across both experiments because the answers live off-host (HTTP fixture for Playwright, GitHub state for the GitHub experiment). When the answer lives in the LLM's context already (a reasoning task, a refactoring suggestion, a code review on a diff that's in-prompt), neither surface is necessary. The build question only matters when the agent has to reach outside the conversation.
+  </p>
+
+  <h3>Two build-time gotchas worth knowing</h3>
+
+  <p>
+    <strong>Toolset configuration is part of the build.</strong> Exposing too many MCP tools makes the agent fan out and burn budget when the primitive it actually needs isn't immediately discoverable. <code>tier1_workflow_status</code> ran <strong>60 turns / 170 s</strong> under the default toolsets (no <code>actions</code>) — the agent probed via <code>ToolSearch</code> looking for primitives that weren't there, then reconstructed the answer from the <code>.yml</code> file and commits API. Adding <code>actions</code> to <code>GITHUB_TOOLSETS</code> dropped the same task to <strong>8 turns / 15 s</strong>. If you're building an MCP server, narrow the exposed primitives to what tasks actually need. <em>(Compare <code>experiments/github/runs/workflow-smoke/log.txt</code> against <code>experiments/github/runs/workflow-n5/log.txt</code>; toolset config at <code>harness/src/experiments/github.ts</code>.)</em>
+  </p>
+
+  <p>
+    <strong>Tool naming matters more than you'd expect.</strong> The github-mcp-server uses combined tools (<code>actions_list</code> / <code>actions_get</code>, <code>issue_write</code>) where common agent expectations would be verb-noun (<code>list_workflow_runs</code> / <code>get_workflow_run</code>, <code>create_issue</code>). When the agent's <code>ToolSearch</code> probes use the expected names and the server exposes different ones, the agent falls into the fan-out pattern above. <strong>Build-time advice:</strong> document the tool catalog including the naming convention so consumers don't have to guess. <em>(Observed by direct <code>tools/list</code> probe against the running container; reflected in the allow-list in <code>harness/src/experiments/github.ts</code>.)</em>
+  </p>
 
   <h2>Honest caveats</h2>
 
