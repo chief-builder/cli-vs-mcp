@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Playwright CLI vs MCP: visual experiment brief</title>
+<style>
+  :root {
+    --bg: #f8f6f0;
+    --paper: #ffffff;
+    --ink: #1e2022;
+    --ink-2: #45494d;
+    --ink-3: #6b7076;
+    --rule: #ded8ca;
+    --rule-2: #eee8dc;
+    --rust: #a8491b;
+    --rust-2: #efe0d7;
+    --blue: #315f7d;
+    --blue-2: #dbe8ef;
+    --green: #2f6a43;
+    --green-2: #dceadf;
+    --red: #9d352a;
+    --red-2: #f2d8d4;
+    --amber: #8a641f;
+    --amber-2: #f1e4c6;
+    --code-bg: #f2ecdf;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.58 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--rust); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:hover { text-decoration-thickness: 2px; }
+  code, .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  code { background: var(--code-bg); border-radius: 3px; padding: 1px 5px; font-size: 0.9em; }
+
+  header.site {
+    border-bottom: 1px solid var(--rule);
+    padding: 18px 24px;
+    background: var(--paper);
+  }
+  header.site .inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+  }
+  header.site a.brand { font-weight: 700; color: var(--ink); text-decoration: none; }
+  header.site nav a {
+    color: var(--ink-2);
+    text-decoration: none;
+    margin-left: 18px;
+    font-size: 14px;
+  }
+  header.site nav a.active { color: var(--rust); font-weight: 700; }
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 46px 24px 88px; }
+  .narrow { max-width: 760px; }
+  .kicker {
+    color: var(--rust);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    margin: 0 0 12px;
+    text-transform: uppercase;
+  }
+  h1 { max-width: 850px; font-size: 46px; line-height: 1.08; margin: 0 0 18px; font-weight: 800; }
+  h2 { font-size: 28px; line-height: 1.18; margin: 58px 0 14px; font-weight: 800; }
+  h3 { font-size: 18px; margin: 0 0 8px; font-weight: 800; }
+  p { margin: 0 0 15px; }
+  .lede { max-width: 780px; color: var(--ink-2); font-size: 21px; line-height: 1.45; margin-bottom: 24px; }
+  .meta { color: var(--ink-3); font-size: 14px; margin-bottom: 28px; }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(360px, 1.05fr);
+    gap: 32px;
+    align-items: center;
+    margin-bottom: 34px;
+  }
+  .hero-image,
+  .panel-image {
+    width: 100%;
+    display: block;
+    border-radius: 8px;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+  }
+  .metric-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 26px 0 0;
+  }
+  .metric {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 15px;
+    min-height: 122px;
+  }
+  .metric .value { font-size: 27px; line-height: 1.05; margin-bottom: 9px; font-weight: 800; }
+  .metric .label { color: var(--ink-2); font-size: 13.5px; line-height: 1.38; }
+
+  .panel {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 22px;
+    margin: 18px 0 28px;
+  }
+  .panel-grid {
+    display: grid;
+    grid-template-columns: minmax(270px, 0.92fr) minmax(0, 1.08fr);
+    gap: 24px;
+    align-items: center;
+  }
+  .caption { color: var(--ink-3); font-size: 13.5px; margin-top: 10px; }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    table-layout: fixed;
+  }
+  .table th,
+  .table td {
+    border-bottom: 1px solid var(--rule);
+    padding: 10px 8px;
+    text-align: left;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+  }
+  .table th {
+    color: var(--ink-3);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .table .num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  .pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+  .pill.good { background: var(--green-2); color: var(--green); }
+  .pill.bad { background: var(--red-2); color: var(--red); }
+  .pill.warn { background: var(--amber-2); color: var(--amber); }
+  .pill.info { background: var(--blue-2); color: var(--blue); }
+
+  .legend { display: flex; gap: 16px; color: var(--ink-3); font-size: 13px; margin: 0 0 16px; }
+  .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+  .chart { display: grid; gap: 12px; }
+  .bar-row { display: grid; grid-template-columns: 170px minmax(160px, 1fr) 82px; gap: 14px; align-items: center; }
+  .bar-label { color: var(--ink-2); font-size: 13.5px; }
+  .bars { display: grid; gap: 5px; }
+  .bar { height: 14px; border-radius: 999px; display: block; }
+  .bar.skill { background: var(--rust); }
+  .bar.mcp { background: var(--blue); }
+  .bar-value { color: var(--ink-2); font-size: 13px; font-variant-numeric: tabular-nums; text-align: right; }
+
+  .sequence-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    margin-top: 18px;
+  }
+  .sequence {
+    background: #fbfaf7;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .sequence ol { margin: 12px 0 0; padding-left: 22px; color: var(--ink-2); font-size: 14px; }
+  .sequence li { margin-bottom: 7px; }
+
+  .callout {
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--rust);
+    border-radius: 6px;
+    background: var(--paper);
+    padding: 18px 20px;
+    margin: 22px 0;
+  }
+  .callout p:last-child { margin-bottom: 0; }
+
+  footer.site {
+    border-top: 1px solid var(--rule);
+    padding: 28px 24px;
+    color: var(--ink-3);
+    font-size: 14px;
+  }
+  footer.site .inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 900px) {
+    h1 { font-size: 38px; }
+    .hero-grid,
+    .panel-grid,
+    .sequence-grid { grid-template-columns: 1fr; }
+    .metric-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 620px) {
+    header.site .inner { display: block; }
+    header.site nav { margin-top: 10px; }
+    header.site nav a { margin: 0 14px 0 0; }
+    .wrap { padding: 34px 18px 72px; }
+    h1 { font-size: 32px; }
+    h2 { font-size: 24px; margin-top: 46px; }
+    .lede { font-size: 18px; }
+    .metric-grid { grid-template-columns: 1fr; }
+    .bar-row { grid-template-columns: 1fr; gap: 7px; }
+    .bar-value { text-align: left; }
+    .panel { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="inner">
+    <a class="brand" href="cli_mcp_experiments_v2.html">cli-vs-mcp</a>
+    <nav>
+      <a href="cli_mcp_experiments_v2.html">Visual Guide</a>
+      <a class="active" href="playwright_experiment_v2.html">Playwright V2</a>
+      <a href="github_experiment_v2.html">GitHub V2</a>
+      <a href="playwright_experiment.html">Full Playwright</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero-grid">
+    <div>
+      <p class="kicker">Experiment 1 · Browser automation</p>
+      <h1>Playwright: MCP cuts token load — when the protocol shape fits.</h1>
+      <p class="lede">
+        Same browser, same fixtures, same model. The skill arm drives Chromium through <code>playwright-cli</code>; the MCP arm drives it through typed browser tools.
+      </p>
+      <p class="meta">N=5 · 6 tasks · 3 arms · 240 s wall budget · exact run data in <code>experiments/playwright/runs/n5</code></p>
+      <div class="metric-grid">
+        <div class="metric">
+          <div class="value">20/20</div>
+          <div class="label">Tier 1 success for both skill and MCP.</div>
+        </div>
+        <div class="metric">
+          <div class="value">1.64x</div>
+          <div class="label">Tier 1 token ratio: skill / MCP.</div>
+        </div>
+        <div class="metric">
+          <div class="value">10/10</div>
+          <div class="label">Tier 2 skill success at the 240 s budget.</div>
+        </div>
+        <div class="metric">
+          <div class="value">7/10</div>
+          <div class="label">Tier 2 MCP; recovery is the weak spot.</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <img class="hero-image" src="assets/playwright-hero.png" alt="Abstract browser automation diagram with CLI and MCP paths reaching the same browser">
+      <p class="caption">Both paths drive the same browser; the difference is how much page context each tool result carries.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="narrow">
+      <h2>The Task Suite</h2>
+      <p>
+        The fixture server renders per-trial state over HTTP, so the agent has to use the browser. The same seed produces the same page for every arm.
+      </p>
+    </div>
+    <div class="panel">
+      <table class="table">
+        <thead>
+          <tr><th>Task</th><th>What the agent must do</th><th class="num">Skill</th><th class="num">MCP</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>tier1_login</code></td><td>Sign in and save a dashboard screenshot.</td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill good">5/5</span></td></tr>
+          <tr><td><code>tier1_scrape</code></td><td>Extract a seeded table into JSON.</td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill good">5/5</span></td></tr>
+          <tr><td><code>tier1_form</code></td><td>Submit a form and capture the per-trial token.</td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill good">5/5</span></td></tr>
+          <tr><td><code>tier1_products</code></td><td>Visit five product pages and write title/price JSON.</td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill good">5/5</span></td></tr>
+          <tr><td><code>tier2_checkout</code></td><td>Find a marked product, add to cart, complete checkout.</td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill good">5/5</span></td></tr>
+          <tr><td><code>tier2_recovery</code></td><td>Trigger an error, read the code, resubmit correctly.</td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill warn">2/5</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="narrow">
+      <h2>The Cost Picture</h2>
+      <p>
+        On tasks where both browser surfaces complete cleanly, MCP usually needs fewer tokens. The form task is an outlier: lots of action/check cycles amplify per-cycle overhead.
+      </p>
+    </div>
+    <div class="panel">
+      <div class="legend">
+        <span><span class="swatch" style="background: var(--rust)"></span>skill tokens</span>
+        <span><span class="swatch" style="background: var(--blue)"></span>mcp tokens</span>
+      </div>
+      <div class="chart">
+        <div class="bar-row">
+          <div class="bar-label">login</div>
+          <div class="bars"><span class="bar skill" style="width: 62%"></span><span class="bar mcp" style="width: 44%"></span></div>
+          <div class="bar-value">1.42x</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">scrape</div>
+          <div class="bars"><span class="bar skill" style="width: 34%"></span><span class="bar mcp" style="width: 26%"></span></div>
+          <div class="bar-value">1.33x</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">form</div>
+          <div class="bars"><span class="bar skill" style="width: 96%"></span><span class="bar mcp" style="width: 38%"></span></div>
+          <div class="bar-value">2.51x</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">products</div>
+          <div class="bars"><span class="bar skill" style="width: 94%"></span><span class="bar mcp" style="width: 67%"></span></div>
+          <div class="bar-value">1.41x</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">checkout</div>
+          <div class="bars"><span class="bar skill" style="width: 100%"></span><span class="bar mcp" style="width: 78%"></span></div>
+          <div class="bar-value">1.29x</div>
+        </div>
+      </div>
+      <p class="caption">Widths are normalized to checkout skill tokens, the largest completed clean task at 304,195 total tokens.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="narrow">
+      <h2>Why MCP Is Cheaper Here</h2>
+      <p>
+        The difference is mostly payload shape, not step count. CLI skill workflows often need an explicit snapshot after each action. Playwright MCP often bundles the post-action accessibility snapshot into the action result.
+      </p>
+    </div>
+    <div class="panel-grid panel">
+      <div>
+        <img class="panel-image" src="assets/playwright-cycle-cost.png" alt="Abstract comparison of separate action/snapshot cycles versus bundled MCP feedback cycles">
+        <p class="caption">Mechanism: CLI often separates action and observation; MCP often returns page context with the action.</p>
+      </div>
+      <div class="sequence-grid">
+        <div class="sequence">
+          <h3>Skill loop</h3>
+          <ol>
+            <li><code>playwright-cli click</code></li>
+            <li><code>playwright-cli snapshot</code></li>
+            <li>Read text payload</li>
+            <li>Repeat for the next action</li>
+          </ol>
+        </div>
+        <div class="sequence">
+          <h3>MCP loop</h3>
+          <ol>
+            <li><code>browser_click</code></li>
+            <li>Action result includes page context</li>
+            <li>Move to the next action</li>
+            <li>Fewer separate round trips</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="narrow">
+      <h2>Where MCP Breaks</h2>
+      <p>
+        The same shape that lowers payload does not automatically improve convergence. On <code>tier2_recovery</code>, MCP passed 2/5 and the other three trials hit the 240 s wall.
+      </p>
+    </div>
+    <div class="callout">
+      <p>
+        Conservative read: MCP can solve the recovery flow, but the tool-result shape leaves the agent prone to wedging on stale page state during multi-step correction. Typically the agent loops on a stale snapshot rather than re-fetching. The skill arm passed 5/5 at the same wall budget.
+      </p>
+    </div>
+    <div class="panel">
+      <table class="table">
+        <thead>
+          <tr><th>Tier</th><th class="num">Skill success</th><th class="num">MCP success</th><th class="num">Skill avg tokens</th><th class="num">MCP avg tokens</th><th class="num">Skill/MCP</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Tier 1</td><td class="num">100%</td><td class="num">100%</td><td class="num">218,012</td><td class="num">132,996</td><td class="num">1.64x</td></tr>
+          <tr><td>Tier 2</td><td class="num">100%</td><td class="num">70%</td><td class="num">302,127</td><td class="num">150,630</td><td class="num">2.01x</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="narrow">
+    <h2>Takeaway</h2>
+    <p>
+      For browser automation, MCP has a strong cost advantage when the workflow remains stable: same success, similar turns, lower payload. The trade is that multi-step recovery can fail in a different way, so success and cost have to be read together.
+    </p>
+    <p>
+      Read the <a href="playwright_experiment.html">full Playwright writeup</a>, the <a href="github_experiment_v2.html">GitHub visual brief</a>, or the <a href="cli_mcp_experiments_v2.html">cross-experiment visual guide</a>.
+    </p>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="inner">
+    <span>cli-vs-mcp · Playwright visual brief</span>
+    <span><a href="playwright_experiment.html">Full Playwright</a> · <a href="github_experiment_v2.html">GitHub V2</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
