@@ -328,7 +328,7 @@
 metrics: {
   inputTokens, outputTokens, cachedInputTokens, cacheCreationInputTokens
   toolCalls[]              # [{ name, turnIndex, command?, reason? }, …]
-  toolCallCount, turns, numTurns
+  toolCallCount, turns
   wallClockMs, contextWindowPeak, totalCostUsd, modelsUsed[]
   usedIntendedTool         # at least one in-surface tool call
   validToolSurface         # *every* tool call in-surface
@@ -380,7 +380,6 @@ error?                     # set on timeout or process failure
     ],
     "toolCallCount": 4,
     "turns": 10,
-    "numTurns": 6,
     "wallClockMs": 14517,
     "contextWindowPeak": 18863,
     "totalCostUsd": 0.0988,
@@ -507,7 +506,7 @@ playwright-cli click "#submit"         → starts with "playwright-cli" ✓</cod
 
   <ul>
     <li><strong>Command substitution:</strong> any backtick or <code>$(…)</code> anywhere in the segment. <code>gh api -F "content=$(cat file)"</code> looks like a single <code>gh</code> command but actually shells out to <code>cat</code> inside the argument expansion.</li>
-    <li><strong>Helper word inside the rest of the segment:</strong> after stripping the leading <code>gh</code>/<code>playwright-cli</code>, the regex <code>\b(curl|wget|cat|ls|python|node|npm|npx|sh|bash|zsh|jq|sed|awk|grep|head|tail|base64)\b</code> must not match. The most common real hit is <code>base64</code> — five of the GitHub <code>tier1_repo_inventory</code> skill trials piped <code>gh api</code> output through <code>base64 -d</code>, which was flagged on this rule.</li>
+    <li><strong>Helper word inside the rest of the segment:</strong> after stripping the leading <code>gh</code>/<code>playwright-cli</code>, the segment must not contain a standalone shell helper. For the GitHub classifier the pattern is <code>(?:^|\s)(curl|wget|cat|ls|python|python3|node|npm|npx|sh|bash|zsh|jq|sed|awk|grep|head|tail|git)\b</code>; the Playwright version is similar (without <code>git</code>). The whitespace anchor stops helper names from matching inside flag values like <code>--jq</code> or paths. The classic <code>gh api ... | base64 -d</code> escape is <em>not</em> caught here — it's caught at phase 2, because the pipe splits the command into two segments and <code>base64 -d</code> doesn't start with <code>gh</code>. Phase 3 is what catches helpers smuggled <em>inside</em> a single <code>gh</code> segment, e.g. via command substitution.</li>
   </ul>
 
   <p><strong>Phase 4 — flag granularity in addition to validity.</strong> Two return values come out of the classifier:</p>
@@ -750,7 +749,7 @@ playwright-cli click "#submit"         → starts with "playwright-cli" ✓</cod
       <tr><td>Pass success</td><td class="num">5/5</td><td class="num">3/5 <span class="pill warn">↓</span></td></tr>
       <tr><td>Valid surface</td><td class="num">0/5</td><td class="num">2/5 <span class="pill warn">partial ↑</span></td></tr>
       <tr><td>Avg turns (passing)</td><td class="num">~13</td><td class="num">~30</td></tr>
-      <tr><td>Avg tokens (passing)</td><td class="num">~144 k</td><td class="num">~374 k (2.6×)</td></tr>
+      <tr><td>Avg tokens (passing)</td><td class="num">~144 k</td><td class="num">~353 k (2.5×)</td></tr>
       <tr><td>Avg wall (passing)</td><td class="num">~35 s</td><td class="num">~108 s</td></tr>
     </tbody>
   </table>
