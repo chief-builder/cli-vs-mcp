@@ -19,7 +19,6 @@ export interface Metrics {
   toolCalls: ToolCallRecord[];
   toolCallCount: number;
   turns: number;
-  numTurns: number;
   wallClockMs: number;
   contextWindowPeak: number;
   totalCostUsd: number;
@@ -175,7 +174,6 @@ export function parseTranscript(rawLines: string[], arm: Arm | undefined, classi
     toolCalls: [],
     toolCallCount: 0,
     turns: 0,
-    numTurns: 0,
     wallClockMs: 0,
     contextWindowPeak: 0,
     totalCostUsd: 0,
@@ -241,7 +239,6 @@ export function parseTranscript(rawLines: string[], arm: Arm | undefined, classi
     if (event.type === 'result') {
       const e = event as ResultEvent;
       metrics.wallClockMs = e.duration_ms ?? 0;
-      metrics.numTurns = e.num_turns ?? 0;
       metrics.totalCostUsd = e.total_cost_usd ?? 0;
 
       if (e.modelUsage && typeof e.modelUsage === 'object') {
