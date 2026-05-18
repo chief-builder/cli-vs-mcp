@@ -5,7 +5,7 @@ import { readdir, readFile, writeFile } from 'node:fs/promises';
 import { execa } from 'execa';
 import { ArmSchema } from './experiment.js';
 import type { Arm } from './experiment.js';
-import { runTrial, buildClaudeArgs } from './runner.js';
+import { runTrial, buildClaudeArgs, buildChildEnv } from './runner.js';
 import type { Task } from './tasks.js';
 import { generateReport } from './report.js';
 import { parseTranscript } from './metrics.js';
@@ -264,9 +264,11 @@ program
       console.log('='.repeat(60));
 
       const args = buildClaudeArgs(cfg, probe, opts.model, rootDir, 'text');
+      const agentEnv = experiment.buildAgentEnv ? experiment.buildAgentEnv(arm) : {};
+      const childEnv = buildChildEnv(cfg.extraEnv, agentEnv);
 
       try {
-        const result = await execa('claude', args, { cwd: rootDir, reject: false });
+        const result = await execa('claude', args, { cwd: rootDir, reject: false, env: childEnv });
         console.log(result.stdout || result.stderr || '(no output)');
       } catch (err) {
         console.error('Error running claude:', err);

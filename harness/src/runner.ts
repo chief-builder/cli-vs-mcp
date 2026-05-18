@@ -107,7 +107,7 @@ const GITHUB_ENV_TO_SCRUB = [
   'GITHUB_TOOLSETS',
 ];
 
-function buildChildEnv(armEnv: Record<string, string> | undefined, agentEnv: Record<string, string>): NodeJS.ProcessEnv {
+export function buildChildEnv(armEnv: Record<string, string> | undefined, agentEnv: Record<string, string>): NodeJS.ProcessEnv {
   const env: NodeJS.ProcessEnv = { ...process.env };
   for (const key of GITHUB_ENV_TO_SCRUB) {
     delete env[key];
