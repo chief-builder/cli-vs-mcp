@@ -3,7 +3,6 @@ import {
   splitTopLevelShellSegments,
   stripSimpleRedirections,
   hasShellAccountingSyntax,
-  hasShellRedirection,
 } from '../shell.js';
 
 const ALWAYS_BLOCKED = ['WebFetch', 'WebSearch', 'Monitor', 'CronCreate', 'RemoteTrigger'];
@@ -85,10 +84,6 @@ export function buildGitHubClassifier(opts: GitHubClassifierOptions): Experiment
       const segments = splitTopLevelShellSegments(command);
       if (segments.length === 0) {
         return { surfaceReason: 'empty Bash command', granularityReason: 'empty Bash command' };
-      }
-      if (hasShellRedirection(command)) {
-        const reason = `shell redirection: ${command.slice(0, 120)}`;
-        return { surfaceReason: reason, granularityReason: reason };
       }
       for (const seg of segments) {
         const r = isGhSegment(seg, opts.readOnly);
