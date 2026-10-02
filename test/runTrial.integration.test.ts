@@ -64,6 +64,8 @@ describe('runTrial end to end (fake claude)', () => {
     const runDir = join(rootDir, 'experiments', 'playwright', 'runs', 'it');
     const stored = JSON.parse(await readFile(join(runDir, 'results', 'baseline', 'tier1_scrape', '1.json'), 'utf-8'));
     expect(stored.success.pass).toBe(true);
+    const storedRaw = await readFile(join(runDir, 'results', 'baseline', 'tier1_scrape', '1.json'), 'utf-8');
+    expect(storedRaw).not.toContain(homedir() + '/');
 
     // The transcript on disk is redacted: no home path, no out-of-trial file content.
     const transcript = await readFile(join(runDir, 'transcripts', 'baseline', 'tier1_scrape', '1.jsonl'), 'utf-8');

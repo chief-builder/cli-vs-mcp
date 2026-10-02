@@ -266,6 +266,11 @@ export async function runTrial(opts: RunTrialOptions): Promise<TrialResult> {
     success,
     ...(cliError ? { error: cliError } : {}),
   };
-  await writeFile(join(resultsDir, `${trialN}.json`), JSON.stringify(trialResult, null, 2), 'utf-8');
+  // Success notes often quote output paths, which sit under the repo (and so the home dir).
+  await writeFile(
+    join(resultsDir, `${trialN}.json`),
+    redactHomePaths(JSON.stringify(trialResult, null, 2), homedir()),
+    'utf-8',
+  );
   return trialResult;
 }
