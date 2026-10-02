@@ -33,15 +33,17 @@ Ran 5 trials, skill arm only, model `claude-sonnet-4-6`, 240 s wall budget.
 | Valid surface | 0/5 | **2/5** |
 | Avg turns (passing) | ~13 | ~30 (2.3×) |
 | Avg time (passing) | ~35 s | ~108 s (3.1×) |
-| Avg tokens (passing) | ~144 k | ~374 k (2.6×) |
+| Avg tokens (passing) | ~144 k | ~353 k (2.45×) |
 
 ## Findings
 
-**1. The directed prompt halves the escape rate but doesn't eliminate it.** Validity went from 0/5 to 2/5. The agent does pick up the `Write` + `gh api --input` pattern when explicitly told — but not on every seed.
+> **Correction (2026-10-02).** Token multiple corrected from 2.6× to 2.45× (passing trials) against the stored results. Escape-rate wording, the count of invalid trials, and the compliant-trial walkthrough were corrected.
 
-**2. The failure mode has two halves.** Both INVALID trials (2, 4) adopted the directed pattern *on the write side* (creating refs, blobs, trees, commits, pulls via `--input` files) but **reverted to `base64 -d` on the read side** for decoding the existing `widget.ts` content. The directed prompt taught how to pass content *to* `gh api`, not how to read decoded content *from* it. The in-surface read pattern would have been `gh api ENDPOINT -H "Accept: application/vnd.github.raw+json"`, which the prompt did not name. The agent picks up the specific guidance it's given but doesn't generalize across the read/write boundary.
+**1. The directed prompt reduces the escape rate but doesn't eliminate it.** Escapes went from 5/5 to 3/5; validity went from 0/5 to 2/5, and only 1/5 trials both passed and stayed in surface. The agent does pick up the `Write` + `gh api --input` pattern when explicitly told — but not on every seed.
 
-**3. Compliance is expensive.** When the agent does follow the directed path, it walks the low-level Git data API end-to-end (refs → blobs → trees → commits → refs/heads → pulls), uses the `Write` tool 7 times to stage JSON request bodies, and burns ~30 turns / ~108 s — versus ~13 turns / ~35 s for the original out-of-surface path. The directed prompt pushed the agent away from the `/repos/{owner}/{repo}/contents/{path}` shortcut (which handles all the tree/commit work internally) toward the lower-level Git data primitives that fit cleanly into "one `gh api` call per Write-staged JSON body."
+**2. The failure mode has two halves.** All three INVALID trials (2, 3, 4) used `base64 -d`; the two that passed (2, 4) adopted the directed pattern *on the write side* (creating refs, blobs, trees, commits, pulls via `--input` files) but **reverted to `base64 -d` on the read side** for decoding the existing `widget.ts` content. The directed prompt taught how to pass content *to* `gh api`, not how to read decoded content *from* it. The in-surface read pattern would have been `gh api ENDPOINT -H "Accept: application/vnd.github.raw+json"`, which the prompt did not name (the prompt did list `base64` among forbidden helpers). The agent picks up the specific guidance it's given but doesn't generalize across the read/write boundary.
+
+**3. Compliance is expensive.** When the agent does follow the directed path, it walks the low-level Git data API end-to-end (refs → blobs → trees → commits → refs/heads → pulls), and burns ~30 turns / ~108 s on average across passing trials (the one pass-and-valid trial, #1: 32 turns, 120 s, 3 `Write` calls, PR opened with `gh pr create`) — versus ~13 turns / ~35 s for the original out-of-surface path. The directed prompt pushed the agent away from the `/repos/{owner}/{repo}/contents/{path}` shortcut (which handles all the tree/commit work internally) toward the lower-level Git data primitives that fit cleanly into "one `gh api` call per Write-staged JSON body."
 
 **4. Pass rate dropped.** 3/5 instead of 5/5. The two timeouts (trials 3, 5) both ran out of wall time partway through the longer directed workflow. At a 360 s budget the pass rate would likely recover, but the underlying cost (turns/tokens) is structural.
 
@@ -50,7 +52,7 @@ Ran 5 trials, skill arm only, model `claude-sonnet-4-6`, 240 s wall budget.
 The affordance gap in `file_patch_pr` for the gh CLI is **real and not closed by a single paragraph of prompt engineering**. Even with explicit naming of the in-surface workaround, the agent:
 
 - only adopts the pattern on the side of the workflow the prompt names (write), not symmetrically across read+write
-- pays a 2-3× cost penalty in tokens and turns when it does adopt the pattern
+- pays about a 2.2–2.5× token penalty when it passes (2.45× across the 3 passing trials; 2.22× for the single pass-and-valid trial)
 - has a smaller success rate inside a fixed wall budget
 
 A more aggressive prompt rewrite — naming the `-H "Accept: ..."` pattern for reads as well — might push the validity rate higher, but at the methodological cost of measuring prompt engineering rather than tool surface. The MCP arm achieved 5/5 valid at ~13 turns / 90 k tokens with no prompt-side guidance about how to do file mutations; the surface design encoded the workflow primitives natively.
