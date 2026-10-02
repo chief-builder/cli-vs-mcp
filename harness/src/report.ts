@@ -1,9 +1,8 @@
 import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { TrialResult } from './runner.js';
+import { ARMS } from './experiment.js';
 import type { Arm } from './experiment.js';
-
-const ARMS: Arm[] = ['baseline', 'skill', 'mcp'];
 
 async function loadResults(
   rootDir: string,
@@ -48,6 +47,8 @@ interface TaskSummary {
   tier: number;
   arm: Arm;
   trials: number;
+  /** Trials with no final `result` event (killed on timeout or crashed). */
+  incomplete: number;
   successRate: number;
   validToolSurfaceRate: number;
   singleCliCommandRate: number;
@@ -77,10 +78,10 @@ function isValidForMode(r: TrialResult, requireSingleCliCommand: boolean): boole
 
 function totalTokens(r: TrialResult): number {
   return (
-    r.metrics.inputTokens
-    + r.metrics.cachedInputTokens
-    + (r.metrics.cacheCreationInputTokens ?? 0)
-    + r.metrics.outputTokens
+    r.metrics.inputTokens +
+    r.metrics.cachedInputTokens +
+    (r.metrics.cacheCreationInputTokens ?? 0) +
+    r.metrics.outputTokens
   );
 }
 
@@ -97,31 +98,36 @@ function summarize(
     groups.set(key, g);
   }
 
-  return [...groups.values()].flatMap(group => {
-    const filtered = filter ? group.filter(filter) : group;
-    if (filtered.length === 0) return [];
-    const first = filtered[0]!;
-    return [{
-      taskId: first.taskId,
-      tier: first.tier,
-      arm: first.arm,
-      trials: filtered.length,
-      successRate: avg(filtered, r => (r.success.pass ? 1 : 0)),
-      validToolSurfaceRate: avg(filtered, r => (r.metrics.validToolSurface ?? true ? 1 : 0)),
-      singleCliCommandRate: avg(filtered, r => (r.metrics.singleCliCommandPerToolCall ?? true ? 1 : 0)),
-      effectiveValidSurfaceRate: avg(filtered, r => (isValidForMode(r, requireSingleCliCommand) ? 1 : 0)),
-      avgScore: avg(filtered, r => r.success.score),
-      avgInputTokens: avg(filtered, r => r.metrics.inputTokens),
-      avgCachedTokens: avg(filtered, r => r.metrics.cachedInputTokens),
-      avgCacheCreationTokens: avg(filtered, r => r.metrics.cacheCreationInputTokens ?? 0),
-      avgOutputTokens: avg(filtered, r => r.metrics.outputTokens),
-      avgTotalTokens: avg(filtered, totalTokens),
-      avgToolCalls: avg(filtered, r => r.metrics.toolCallCount),
-      avgTurns: avg(filtered, r => r.metrics.turns),
-      avgWallClockMs: avg(filtered, r => r.metrics.wallClockMs),
-      avgCostUsd: avg(filtered, r => r.metrics.totalCostUsd),
-    }];
-  }).sort((a, b) => a.tier - b.tier || a.taskId.localeCompare(b.taskId) || ARMS.indexOf(a.arm) - ARMS.indexOf(b.arm));
+  return [...groups.values()]
+    .flatMap(group => {
+      const filtered = filter ? group.filter(filter) : group;
+      if (filtered.length === 0) return [];
+      const first = filtered[0]!;
+      return [
+        {
+          taskId: first.taskId,
+          tier: first.tier,
+          arm: first.arm,
+          trials: filtered.length,
+          incomplete: filtered.filter(r => r.metrics.incomplete ?? Boolean(r.error)).length,
+          successRate: avg(filtered, r => (r.success.pass ? 1 : 0)),
+          validToolSurfaceRate: avg(filtered, r => ((r.metrics.validToolSurface ?? true) ? 1 : 0)),
+          singleCliCommandRate: avg(filtered, r => ((r.metrics.singleCliCommandPerToolCall ?? true) ? 1 : 0)),
+          effectiveValidSurfaceRate: avg(filtered, r => (isValidForMode(r, requireSingleCliCommand) ? 1 : 0)),
+          avgScore: avg(filtered, r => r.success.score),
+          avgInputTokens: avg(filtered, r => r.metrics.inputTokens),
+          avgCachedTokens: avg(filtered, r => r.metrics.cachedInputTokens),
+          avgCacheCreationTokens: avg(filtered, r => r.metrics.cacheCreationInputTokens ?? 0),
+          avgOutputTokens: avg(filtered, r => r.metrics.outputTokens),
+          avgTotalTokens: avg(filtered, totalTokens),
+          avgToolCalls: avg(filtered, r => r.metrics.toolCallCount),
+          avgTurns: avg(filtered, r => r.metrics.turns),
+          avgWallClockMs: avg(filtered, r => r.metrics.wallClockMs),
+          avgCostUsd: avg(filtered, r => r.metrics.totalCostUsd),
+        },
+      ];
+    })
+    .sort((a, b) => a.tier - b.tier || a.taskId.localeCompare(b.taskId) || ARMS.indexOf(a.arm) - ARMS.indexOf(b.arm));
 }
 
 const pct = (v: number) => `${(v * 100).toFixed(0)}%`;
@@ -133,15 +139,15 @@ function perTaskTable(summaries: TaskSummary[], requireSingleCliCommand: boolean
   const taskIds = [...new Set(summaries.map(s => s.taskId))];
   const validLabel = requireSingleCliCommand ? 'Valid Surface (single)' : 'Valid Surface';
   const rows = [
-    `| Task | Tier | Arm | Trials | Success | ${validLabel} | Single CLI Cmd | Score | Input Tok | Cached Tok | Cache Create Tok | Output Tok | Total Tok | Tool Calls | Turns | Time |`,
-    '|------|------|-----|--------|---------|---------------|----------------|-------|-----------|------------|------------------|------------|-----------|------------|-------|------|',
+    `| Task | Tier | Arm | Trials | Timeouts | Success | ${validLabel} | Single CLI Cmd | Score | Input Tok | Cached Tok | Cache Create Tok | Output Tok | Total Tok | Tool Calls | Turns | Time |`,
+    '|------|------|-----|--------|----------|---------|---------------|----------------|-------|-----------|------------|------------------|------------|-----------|------------|-------|------|',
   ];
   for (const taskId of taskIds) {
     for (const arm of ARMS) {
       const s = summaries.find(x => x.taskId === taskId && x.arm === arm);
       if (!s) continue;
       rows.push(
-        `| ${s.taskId} | ${s.tier} | ${s.arm} | ${s.trials} | ${pct(s.successRate)} | ${pct(s.effectiveValidSurfaceRate)} | ${pct(s.singleCliCommandRate)} | ${n1(s.avgScore)} | ${Math.round(s.avgInputTokens)} | ${Math.round(s.avgCachedTokens)} | ${Math.round(s.avgCacheCreationTokens)} | ${Math.round(s.avgOutputTokens)} | ${Math.round(s.avgTotalTokens)} | ${n1(s.avgToolCalls)} | ${n1(s.avgTurns)} | ${sec(s.avgWallClockMs)} |`,
+        `| ${s.taskId} | ${s.tier} | ${s.arm} | ${s.trials} | ${s.incomplete} | ${pct(s.successRate)} | ${pct(s.effectiveValidSurfaceRate)} | ${pct(s.singleCliCommandRate)} | ${n1(s.avgScore)} | ${Math.round(s.avgInputTokens)} | ${Math.round(s.avgCachedTokens)} | ${Math.round(s.avgCacheCreationTokens)} | ${Math.round(s.avgOutputTokens)} | ${Math.round(s.avgTotalTokens)} | ${n1(s.avgToolCalls)} | ${n1(s.avgTurns)} | ${sec(s.avgWallClockMs)} |`,
       );
     }
   }
@@ -160,14 +166,20 @@ function tierSummary(summaries: TaskSummary[], requireSingleCliCommand: boolean)
   for (const tier of tiers) {
     const tierData = summaries.filter(s => s.tier === tier);
     lines.push(`### Tier ${tier}`, '');
-    lines.push(`| Arm | Tasks | Trials (valid) | Avg Success | ${validLabel} | Avg Single CLI Cmd | Avg Input Tok | Avg Cached Tok | Avg Cache Create Tok | Avg Output Tok | Avg Total Tok | Avg Turns |`);
-    lines.push('|-----|-------|----------------|-------------|-------------------|--------------------|---------------|----------------|----------------------|----------------|---------------|-----------|');
+    lines.push(
+      `| Arm | Tasks | Trials (valid) | Avg Success | ${validLabel} | Avg Single CLI Cmd | Avg Input Tok | Avg Cached Tok | Avg Cache Create Tok | Avg Output Tok | Avg Total Tok | Avg Turns |`,
+    );
+    lines.push(
+      '|-----|-------|----------------|-------------|-------------------|--------------------|---------------|----------------|----------------------|----------------|---------------|-----------|',
+    );
     for (const arm of ARMS) {
       const armData = tierData.filter(s => s.arm === arm);
       if (armData.length === 0) continue;
       const a = (fn: (s: TaskSummary) => number) => armData.reduce((sum, s) => sum + fn(s), 0) / armData.length;
       const totalTrials = armData.reduce((sum, s) => sum + s.trials, 0);
-      lines.push(`| ${arm} | ${armData.length} | ${totalTrials} | ${pct(a(s => s.successRate))} | ${pct(a(s => s.effectiveValidSurfaceRate))} | ${pct(a(s => s.singleCliCommandRate))} | ${Math.round(a(s => s.avgInputTokens))} | ${Math.round(a(s => s.avgCachedTokens))} | ${Math.round(a(s => s.avgCacheCreationTokens))} | ${Math.round(a(s => s.avgOutputTokens))} | ${Math.round(a(s => s.avgTotalTokens))} | ${n1(a(s => s.avgTurns))} |`);
+      lines.push(
+        `| ${arm} | ${armData.length} | ${totalTrials} | ${pct(a(s => s.successRate))} | ${pct(a(s => s.effectiveValidSurfaceRate))} | ${pct(a(s => s.singleCliCommandRate))} | ${Math.round(a(s => s.avgInputTokens))} | ${Math.round(a(s => s.avgCachedTokens))} | ${Math.round(a(s => s.avgCacheCreationTokens))} | ${Math.round(a(s => s.avgOutputTokens))} | ${Math.round(a(s => s.avgTotalTokens))} | ${n1(a(s => s.avgTurns))} |`,
+      );
     }
     lines.push('');
   }
@@ -197,7 +209,9 @@ function crossoverAnalysis(summaries: TaskSummary[]): string {
     const ratio = mcpTok > 0 ? skillTok / mcpTok : 0;
     const mcpAhead = aMcp(s => s.successRate) >= aSkill(s => s.successRate) ? 'Yes' : 'No';
 
-    lines.push(`| ${tier} | ${n1(aSkill(s => s.avgTurns))} | ${n1(aMcp(s => s.avgTurns))} | ${Math.round(skillTok)} | ${Math.round(mcpTok)} | ${ratio.toFixed(2)}× | ${pct(aSkill(s => s.successRate))} | ${pct(aMcp(s => s.successRate))} | ${mcpAhead} |`);
+    lines.push(
+      `| ${tier} | ${n1(aSkill(s => s.avgTurns))} | ${n1(aMcp(s => s.avgTurns))} | ${Math.round(skillTok)} | ${Math.round(mcpTok)} | ${ratio.toFixed(2)}× | ${pct(aSkill(s => s.successRate))} | ${pct(aMcp(s => s.successRate))} | ${mcpAhead} |`,
+    );
   }
 
   return lines.join('\n');
@@ -252,12 +266,21 @@ export interface ReportOptions {
 }
 
 export async function generateReport(opts: ReportOptions): Promise<string> {
-  const { rootDir, experiment, runName, tier, allTiers, crossover, requireSingleCliCommand = false, includeCost = false } = opts;
+  const {
+    rootDir,
+    experiment,
+    runName,
+    tier,
+    allTiers,
+    crossover,
+    requireSingleCliCommand = false,
+    includeCost = false,
+  } = opts;
   const filterTier = allTiers ? undefined : tier;
 
   const all: TrialResult[] = [];
   for (const arm of ARMS) {
-    all.push(...await loadResults(rootDir, experiment, runName, arm, filterTier));
+    all.push(...(await loadResults(rootDir, experiment, runName, arm, filterTier)));
   }
 
   if (all.length === 0) {
@@ -265,9 +288,7 @@ export async function generateReport(opts: ReportOptions): Promise<string> {
   }
 
   const summariesAll = summarize(all, requireSingleCliCommand);
-  const summariesValid = summarize(all, requireSingleCliCommand, r =>
-    isValidForMode(r, requireSingleCliCommand),
-  );
+  const summariesValid = summarize(all, requireSingleCliCommand, r => isValidForMode(r, requireSingleCliCommand));
   const label = allTiers ? 'All Tiers' : tier !== undefined ? `Tier ${tier}` : 'All';
   const title = `${experiment} / ${runName}`;
   const validityMode = requireSingleCliCommand
@@ -282,6 +303,8 @@ export async function generateReport(opts: ReportOptions): Promise<string> {
     '## Per-Task Results',
     '',
     '_Per-task averages include all trials (invalid trials too) so the Valid Surface column tells you when escapes occurred. The tier summary and crossover below restrict to valid trials only._',
+    '',
+    '_Timed-out trials have no final usage totals. Their tokens are summed from per-message usage, which undercounts output and side-model calls, so averages that include them are lower bounds. Their time is the timeout that killed them._',
     '',
     perTaskTable(summariesAll, requireSingleCliCommand),
     '',

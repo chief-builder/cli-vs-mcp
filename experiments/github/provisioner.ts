@@ -1,4 +1,5 @@
 import { Buffer } from 'node:buffer';
+import { loadGithubConfig } from '../../harness/src/config.js';
 
 /**
  * Minimal GitHub REST client used by Tier 1 provisioners. Holds the controller
@@ -14,16 +15,9 @@ export interface GhConfig {
   host: string;
 }
 
-export function ghConfigFromEnv(): GhConfig {
-  const controllerToken = process.env.GITHUB_CONTROLLER_TOKEN;
-  const sandboxOwner = process.env.GITHUB_SANDBOX_OWNER;
-  if (!controllerToken) throw new Error('GITHUB_CONTROLLER_TOKEN not set');
-  if (!sandboxOwner) throw new Error('GITHUB_SANDBOX_OWNER not set');
-  return {
-    controllerToken,
-    sandboxOwner,
-    host: process.env.GITHUB_HOST ?? 'api.github.com',
-  };
+export function ghConfigFromEnv(env: NodeJS.ProcessEnv = process.env): GhConfig {
+  const cfg = loadGithubConfig(env);
+  return { controllerToken: cfg.controllerToken, sandboxOwner: cfg.sandboxOwner, host: cfg.apiHost };
 }
 
 interface GhRequest {
@@ -64,7 +58,7 @@ async function ghRequest<T = unknown>(cfg: GhConfig, req: GhRequest): Promise<T 
     throw new Error(`GitHub API ${req.method} ${req.path} -> ${res.status}: ${text.slice(0, 500)}`);
   }
   if (res.status === 204) return null;
-  return await res.json() as T;
+  return (await res.json()) as T;
 }
 
 export interface ProvisionedRepo {
@@ -101,16 +95,10 @@ export interface RepoSeed {
  * before returning. Caller is responsible for calling cleanupHandle() in
  * finally — typically by passing it to Task.cleanup.
  */
-export async function provisionRepo(
-  cfg: GhConfig,
-  repoName: string,
-  seed: RepoSeed,
-): Promise<ProvisionedRepo> {
+export async function provisionRepo(cfg: GhConfig, repoName: string, seed: RepoSeed): Promise<ProvisionedRepo> {
   const isOrg = await isOrganization(cfg, cfg.sandboxOwner);
 
-  const createPath = isOrg
-    ? `/orgs/${cfg.sandboxOwner}/repos`
-    : `/user/repos`;
+  const createPath = isOrg ? `/orgs/${cfg.sandboxOwner}/repos` : `/user/repos`;
   await ghRequest(cfg, {
     method: 'POST',
     path: createPath,

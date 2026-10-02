@@ -11,3 +11,4 @@ harness/dist/
 # Local secrets — never commit GitHub tokens
 .env
 .env.local
+coverage/

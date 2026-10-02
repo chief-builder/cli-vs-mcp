@@ -1,13 +1,15 @@
 import { execa } from 'execa';
 import { mkdir, mkdtemp, cp, rm, writeFile } from 'node:fs/promises';
 import { join, resolve, sep } from 'node:path';
-import { tmpdir } from 'node:os';
+import { homedir, tmpdir } from 'node:os';
 import type { Arm, ArmConfig, ExperimentSpec } from './experiment.js';
 import type { Task, SuccessResult, TaskContext } from './tasks.js';
 import { parseTranscript } from './metrics.js';
 import type { Metrics } from './metrics.js';
-import { startFixtureServer } from './fixtureServer.js';
+import { startFixtureServer, type FixtureServer } from './fixtureServer.js';
 import { mkPairedSeed } from './trialState.js';
+import { ALWAYS_BLOCKED_TOOLS, COMMON_CLAUDE_FLAGS, DEFAULT_MODEL, TRIAL_TIMEOUT_MS } from './config.js';
+import { redactTranscript, redactHomePaths } from './redact.js';
 
 export interface TrialResult {
   experiment: string;
@@ -32,11 +34,39 @@ export interface RunTrialOptions {
   rootDir: string;
   model?: string;
   requireSingleCliCommand?: boolean;
-  agentEnv?: Record<string, string>;
+  /** Executable to run instead of `claude`. Tests point this at a fake. */
+  claudeCommand?: string;
+  timeoutMs?: number;
 }
 
-function artifactRoot(rootDir: string, experiment: string, runName: string): string {
+export function artifactRoot(rootDir: string, experiment: string, runName: string): string {
   return join(rootDir, 'experiments', experiment, 'runs', runName);
+}
+
+/**
+ * Settings passed with `--settings`. File tools may not read or edit anything
+ * under the home directory or the repo, so an agent can't pull answers or
+ * personal files from outside its trial directory. Arms with `sandboxNetwork`
+ * also run Bash in Claude Code's OS sandbox, with no unsandboxed fallback.
+ */
+export function buildTrialSettings(armConfig: ArmConfig, rootDir: string): Record<string, unknown> {
+  const repo = `//${resolve(rootDir).replace(/^\/+/, '')}/**`;
+  const settings: Record<string, unknown> = {
+    permissions: {
+      deny: ['Read(~/**)', 'Edit(~/**)', `Read(${repo})`, `Edit(${repo})`],
+    },
+  };
+  if (armConfig.sandboxNetwork) {
+    settings.sandbox = {
+      enabled: true,
+      failIfUnavailable: true,
+      allowUnsandboxedCommands: false,
+      autoAllowBashIfSandboxed: true,
+      filesystem: { denyRead: ['~/'] },
+      network: { allowedDomains: [...armConfig.sandboxNetwork] },
+    };
+  }
+  return settings;
 }
 
 export function buildClaudeArgs(
@@ -46,88 +76,65 @@ export function buildClaudeArgs(
   rootDir: string,
   outputFormat: 'text' | 'stream-json' = 'stream-json',
 ): string[] {
-  const mcpConfig = armConfig.mcpConfig.startsWith('{')
-    ? armConfig.mcpConfig
-    : resolve(rootDir, armConfig.mcpConfig);
+  const mcpConfig = armConfig.mcpConfig.startsWith('{') ? armConfig.mcpConfig : resolve(rootDir, armConfig.mcpConfig);
 
   const args = [
-    '-p', prompt,
-    '--output-format', outputFormat,
-    '--model', model,
+    '-p',
+    prompt,
+    '--output-format',
+    outputFormat,
+    '--model',
+    model,
     '--strict-mcp-config',
-    '--mcp-config', mcpConfig,
+    '--mcp-config',
+    mcpConfig,
+    '--tools',
+    armConfig.tools.join(','),
+    '--disallowed-tools',
+    ALWAYS_BLOCKED_TOOLS.join(' '),
+    '--settings',
+    JSON.stringify(buildTrialSettings(armConfig, rootDir)),
+    ...COMMON_CLAUDE_FLAGS,
   ];
-
-  if (outputFormat === 'stream-json') {
-    args.push('--verbose');
-  }
-
-  if (armConfig.allowedTools && armConfig.allowedTools.length > 0) {
-    args.push('--allowed-tools', armConfig.allowedTools.join(' '));
-  }
-
-  if (armConfig.disallowedTools.length > 0) {
-    args.push('--disallowed-tools', armConfig.disallowedTools.join(' '));
-  }
-
-  args.push(...armConfig.extraFlags);
-
+  if (outputFormat === 'stream-json') args.push('--verbose');
   return args;
 }
 
 /**
- * Scrubs inherited GitHub credentials so the child process can't pick up the
- * developer's personal `gh` login or PATs. Kept in the harness because every
- * experiment runs under the same cleanroom assumption.
+ * Builds the child env. Every inherited GH_* / GITHUB_* variable is removed
+ * (the developer's PATs, the harness's own controller token, host overrides),
+ * then gh is pointed at an empty per-trial config dir so it can't fall back to
+ * the developer's saved login. The arm's own vars and the agent token go back
+ * in last.
  */
-const GITHUB_ENV_TO_SCRUB = [
-  // Harness-internal names — must not survive into the agent child.
-  // GITHUB_CONTROLLER_TOKEN is the elevated credential used to provision
-  // sandbox state; its presence in the child env would give the agent a
-  // path to escalation via `GH_TOKEN=$GITHUB_CONTROLLER_TOKEN gh api ...`.
-  // GITHUB_AGENT_TOKEN is the raw form; buildGithubAgentEnv injects the
-  // value under GH_TOKEN / GITHUB_TOKEN per arm, so the raw name has no
-  // legitimate use inside the child.
-  'GITHUB_CONTROLLER_TOKEN',
-  'GITHUB_AGENT_TOKEN',
-  'GH_TOKEN',
-  'GITHUB_TOKEN',
-  'GH_ENTERPRISE_TOKEN',
-  'GITHUB_ENTERPRISE_TOKEN',
-  'GITHUB_PERSONAL_ACCESS_TOKEN',
-  'GH_HOST',
-  'GITHUB_HOST',
-  'GH_REPO',
-  'GH_PAGER',
-  'GH_EDITOR',
-  'GH_BROWSER',
-  'GH_FORCE_TTY',
-  'GH_PROMPT_DISABLED',
-  'GH_CONFIG_DIR',
-  'GITHUB_TOOLSETS',
-];
-
-export function buildChildEnv(armEnv: Record<string, string> | undefined, agentEnv: Record<string, string>): NodeJS.ProcessEnv {
-  const env: NodeJS.ProcessEnv = { ...process.env };
-  for (const key of GITHUB_ENV_TO_SCRUB) {
-    delete env[key];
+export function buildChildEnv(
+  armEnv: Record<string, string> | undefined,
+  agentEnv: Record<string, string>,
+  ghConfigDir: string,
+  baseEnv: NodeJS.ProcessEnv = process.env,
+): NodeJS.ProcessEnv {
+  const env: NodeJS.ProcessEnv = {};
+  for (const [k, v] of Object.entries(baseEnv)) {
+    if (/^(GH|GITHUB)_/.test(k)) continue;
+    env[k] = v;
   }
-  // Disable update notifiers/pagers so they don't stall the child.
+  env.GH_CONFIG_DIR = ghConfigDir;
   env.GH_NO_UPDATE_NOTIFIER = '1';
   env.GH_PROMPT_DISABLED = '1';
   env.GH_PAGER = 'cat';
-  if (armEnv) {
-    for (const [k, v] of Object.entries(armEnv)) env[k] = v;
-  }
+  for (const [k, v] of Object.entries(armEnv ?? {})) env[k] = v;
   for (const [k, v] of Object.entries(agentEnv)) env[k] = v;
   return env;
 }
 
-async function copySkill(skillName: string, rootDir: string, trialWorkDir: string): Promise<void> {
-  const skillDir = join(trialWorkDir, '.claude', 'skills', skillName);
-  await mkdir(skillDir, { recursive: true });
-  const sourceDir = join(rootDir, '.claude', 'skills', skillName);
-  await cp(sourceDir, skillDir, { recursive: true });
+export async function copySkill(skillName: string, rootDir: string, workDir: string): Promise<void> {
+  const target = join(workDir, '.claude', 'skills', skillName);
+  await mkdir(target, { recursive: true });
+  await cp(join(rootDir, '.claude', 'skills', skillName), target, { recursive: true });
+}
+
+function errorMessage(err: unknown): string {
+  return err instanceof Error ? err.message : String(err);
 }
 
 export async function runTrial(opts: RunTrialOptions): Promise<TrialResult> {
@@ -138,9 +145,10 @@ export async function runTrial(opts: RunTrialOptions): Promise<TrialResult> {
     task,
     trialN,
     rootDir,
-    model = 'claude-sonnet-4-6',
+    model = DEFAULT_MODEL,
     requireSingleCliCommand = false,
-    agentEnv = {},
+    claudeCommand = 'claude',
+    timeoutMs = TRIAL_TIMEOUT_MS,
   } = opts;
   const armConfig = experiment.arms[arm];
 
@@ -149,110 +157,101 @@ export async function runTrial(opts: RunTrialOptions): Promise<TrialResult> {
   const transcriptsDir = join(artifactsRoot, 'transcripts', arm, task.id);
   const persistentOutputDir = join(resultsDir, String(trialN));
   const fixturesPath = join(rootDir, 'experiments', experiment.name, 'fixtures');
-
   await mkdir(resultsDir, { recursive: true });
   await mkdir(transcriptsDir, { recursive: true });
 
   const trialWorkDir = await mkdtemp(join(tmpdir(), `clivsmcp-${experiment.name}-${arm}-${task.id}-`));
-
-  if (arm === 'skill') {
-    await copySkill(experiment.classifier.intendedSkillName, rootDir, trialWorkDir);
-  }
-
-  const runtimeAgentEnv = experiment.buildAgentEnv ? experiment.buildAgentEnv(arm) : {};
+  const ghConfigDir = await mkdtemp(join(tmpdir(), 'clivsmcp-ghconfig-'));
   const seed = mkPairedSeed(experiment.name, runName, task.id, trialN);
-  const state = task.setup ? await task.setup(seed) : null;
-
-  const fixtureServer = await startFixtureServer(
-    fixturesPath,
-    task.renderResponse
-      ? (req, res, body) => task.renderResponse!(state, req, res, body)
-      : undefined,
-  );
-  const ctx: TaskContext = {
-    rootDir,
-    fixturesPath,
-    fixturesUrl: fixtureServer.url,
-    outputDir: trialWorkDir,
-    state,
-  };
   const timestamp = new Date().toISOString();
-  let prompt = task.prompt(ctx);
-  if (arm === 'skill' && requireSingleCliCommand) {
-    prompt += `\n\nStrict research accounting requirement: use exactly one ${experiment.classifier.intendedShellCommand} command per Bash tool call. Do not chain commands with &&, ;, pipes, redirects, or shell substitutions.`;
-  }
-  const args = buildClaudeArgs(armConfig, prompt, model, rootDir, 'stream-json');
-  const childEnv = buildChildEnv(armConfig.extraEnv, { ...runtimeAgentEnv, ...agentEnv });
 
-  let transcriptLines: string[] = [];
-  let stderrText = '';
+  let state: unknown = null;
+  let setupDone = false;
+  let fixtureServer: FixtureServer | undefined;
   let cliError: string | undefined;
-
-  const TRIAL_TIMEOUT_MS = 240_000;
+  let cleanupNote: string | undefined;
+  let metrics: Metrics;
+  let success: SuccessResult;
 
   try {
-    const result = await execa('claude', args, {
-      cwd: trialWorkDir,
-      reject: false,
-      stdin: 'ignore',
-      timeout: TRIAL_TIMEOUT_MS,
-      env: childEnv,
+    if (arm === 'skill') await copySkill(experiment.classifier.intendedSkillName, rootDir, trialWorkDir);
+
+    state = task.setup ? await task.setup(seed) : null;
+    setupDone = true;
+
+    fixtureServer = await startFixtureServer(
+      fixturesPath,
+      task.renderResponse ? (req, res, body) => task.renderResponse!(state, req, res, body) : undefined,
+    );
+    const ctx: TaskContext = { rootDir, fixturesPath, fixturesUrl: fixtureServer.url, outputDir: trialWorkDir, state };
+
+    let prompt = task.prompt(ctx);
+    if (arm === 'skill' && requireSingleCliCommand) {
+      prompt += `\n\nStrict research accounting requirement: use exactly one ${experiment.classifier.intendedShellCommand} command per Bash tool call. Do not chain commands with &&, ;, pipes, redirects, or shell substitutions.`;
+    }
+    const args = buildClaudeArgs(armConfig, prompt, model, rootDir, 'stream-json');
+    const agentEnv = experiment.buildAgentEnv ? experiment.buildAgentEnv(arm) : {};
+    const childEnv = buildChildEnv(armConfig.extraEnv, agentEnv, ghConfigDir);
+
+    let stdout = '';
+    let stderr = '';
+    let durationMs = 0;
+    try {
+      const result = await execa(claudeCommand, args, {
+        cwd: trialWorkDir,
+        reject: false,
+        stdin: 'ignore',
+        timeout: timeoutMs,
+        env: childEnv,
+        extendEnv: false,
+      });
+      stdout = result.stdout ?? '';
+      stderr = result.stderr ?? '';
+      durationMs = result.durationMs;
+      if (result.timedOut) cliError = `claude timed out after ${timeoutMs}ms`;
+      else if (result.exitCode !== 0) cliError = stderr || `claude exited with code ${result.exitCode}`;
+    } catch (err) {
+      cliError = errorMessage(err);
+    }
+
+    const home = homedir();
+    const transcript = redactTranscript(stdout, home, trialWorkDir);
+    await writeFile(join(transcriptsDir, `${trialN}.jsonl`), transcript, 'utf-8');
+    if (stderr.trim()) {
+      await writeFile(join(transcriptsDir, `${trialN}.stderr.log`), redactHomePaths(stderr, home), 'utf-8');
+    }
+    if (cliError) cliError = redactHomePaths(cliError, home);
+
+    metrics = parseTranscript(transcript.split('\n'), arm, experiment.classifier, {
+      armTools: armConfig.tools,
+      fallbackWallClockMs: durationMs,
     });
 
-    transcriptLines = (result.stdout ?? '').split('\n');
-    stderrText = result.stderr ?? '';
+    await rm(persistentOutputDir, { recursive: true, force: true });
+    await cp(trialWorkDir, persistentOutputDir, {
+      recursive: true,
+      filter: src => !src.slice(trialWorkDir.length).split(sep).includes('.claude'),
+    });
 
-    if (result.timedOut) {
-      cliError = `claude timed out after ${TRIAL_TIMEOUT_MS}ms`;
-    } else if (result.exitCode !== 0) {
-      cliError = stderrText || `claude exited with code ${result.exitCode}`;
-    }
-  } catch (err) {
-    cliError = err instanceof Error ? err.message : String(err);
-  } finally {
-    await fixtureServer.close().catch(() => undefined);
-  }
-
-  await writeFile(
-    join(transcriptsDir, `${trialN}.jsonl`),
-    transcriptLines.join('\n'),
-    'utf-8',
-  );
-
-  if (stderrText.trim()) {
-    await writeFile(join(transcriptsDir, `${trialN}.stderr.log`), stderrText, 'utf-8');
-  }
-
-  await rm(persistentOutputDir, { recursive: true, force: true });
-  await cp(trialWorkDir, persistentOutputDir, {
-    recursive: true,
-    filter: (src) => !src.includes(`${sep}.claude`),
-  });
-  await rm(trialWorkDir, { recursive: true, force: true });
-
-  const persistentCtx: TaskContext = { ...ctx, outputDir: persistentOutputDir };
-
-  const metrics = parseTranscript(transcriptLines, arm, experiment.classifier);
-
-  let success: SuccessResult;
-  try {
-    success = await task.successCheck(persistentCtx);
-  } catch (err) {
-    success = {
-      pass: false,
-      score: 0,
-      notes: `successCheck threw: ${err instanceof Error ? err.message : String(err)}`,
-    };
-  }
-
-  if (task.cleanup) {
     try {
-      await task.cleanup(state);
+      success = await task.successCheck({ ...ctx, outputDir: persistentOutputDir });
     } catch (err) {
-      const note = `cleanup threw: ${err instanceof Error ? err.message : String(err)}`;
-      success.notes = success.notes ? `${success.notes}\n${note}` : note;
+      success = { pass: false, score: 0, notes: `successCheck threw: ${errorMessage(err)}` };
     }
+  } finally {
+    await fixtureServer?.close().catch(() => undefined);
+    if (setupDone && task.cleanup) {
+      try {
+        await task.cleanup(state);
+      } catch (err) {
+        cleanupNote = `cleanup threw: ${errorMessage(err)}`;
+      }
+    }
+    await rm(trialWorkDir, { recursive: true, force: true });
+    await rm(ghConfigDir, { recursive: true, force: true });
   }
+
+  if (cleanupNote) success.notes = success.notes ? `${success.notes}\n${cleanupNote}` : cleanupNote;
 
   const trialResult: TrialResult = {
     experiment: experiment.name,
@@ -267,12 +266,6 @@ export async function runTrial(opts: RunTrialOptions): Promise<TrialResult> {
     success,
     ...(cliError ? { error: cliError } : {}),
   };
-
-  await writeFile(
-    join(resultsDir, `${trialN}.json`),
-    JSON.stringify(trialResult, null, 2),
-    'utf-8',
-  );
-
+  await writeFile(join(resultsDir, `${trialN}.json`), JSON.stringify(trialResult, null, 2), 'utf-8');
   return trialResult;
 }
