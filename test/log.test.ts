@@ -1,3 +1,4 @@
+// All token-shaped strings in this file are fake test fixtures (see SECURITY.md).
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { log } from '../harness/src/log.js';
 

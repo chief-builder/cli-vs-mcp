@@ -10,5 +10,14 @@ harness/dist/
 
 # Local secrets — never commit GitHub tokens
 .env
-.env.local
+.env.*
+!.env.example
+
+# Editors and local tool state
+.vscode/
+.idea/
+*.swp
+.claude/settings.local.json
+npm-debug.log*
+pnpm-debug.log*
 coverage/

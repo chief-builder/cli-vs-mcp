@@ -1,0 +1,6 @@
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Fake tokens used by redaction and env-scrub tests"
+paths = ['''^test/''']

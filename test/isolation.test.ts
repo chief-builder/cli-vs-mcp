@@ -1,3 +1,4 @@
+// All token-shaped strings in this file are fake test fixtures (see SECURITY.md).
 import { describe, expect, it } from 'vitest';
 import { execa } from 'execa';
 import { buildChildEnv, buildClaudeArgs, buildTrialSettings } from '../harness/src/runner.js';

@@ -1,0 +1,21 @@
+cli-vs-mcp
+Copyright (c) 2026 chief-builder. Licensed under the MIT License (see LICENSE).
+
+This repository includes third-party material:
+
+.claude/skills/playwright-cli/
+  Adapted from the playwright-cli skill shipped in the npm package
+  @playwright/cli 0.1.13, Copyright Microsoft Corporation, licensed under the
+  Apache License, Version 2.0 (see third_party/playwright-cli/LICENSE).
+
+  Modifications by chief-builder (2026) to SKILL.md:
+  - `allowed-tools` narrowed to `Bash(playwright-cli:*)` (removed npx/npm)
+  - removed the suggestion to pipe `--raw` output into other tools and the
+    `| jq` example
+  - added guidance not to truncate output with head/tail/grep and to prefer
+    `--raw eval` for data extraction
+  The files under references/ are unmodified.
+
+  The change notice lives here rather than inside SKILL.md because SKILL.md
+  is the experimental stimulus shown to the agent; editing it would change
+  the experiment.

@@ -1,6 +1,6 @@
 {
   "name": "cli-vs-mcp",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "description": "CLI vs MCP experiments \u2014 Playwright and GitHub tool-surface comparison",
   "license": "MIT",
