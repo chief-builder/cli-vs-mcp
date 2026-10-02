@@ -273,7 +273,6 @@
       <a href="cli_mcp_experiments_v2.html">Visual Guide</a>
       <a href="playwright_experiment_v2.html">Playwright V2</a>
       <a class="active" href="github_experiment_v2.html">GitHub V2</a>
-      <a href="github_experiment.html">Full GitHub</a>
     </nav>
   </div>
 </header>
@@ -298,7 +297,7 @@
         </div>
         <div class="metric">
           <div class="value">0/5</div>
-          <div class="label">MCP issue triage timed out at the 240 s wall.</div>
+          <div class="label">MCP issue triage timed out at the 240 s wall: the agent token couldn't read issues.</div>
         </div>
         <div class="metric">
           <div class="value">1.13x-1.38x</div>
@@ -319,20 +318,27 @@
         </div>
         <div class="image-callout">
           <strong>MCP Path</strong>
-          Typed tools stay inside the intended surface.
+          Typed tools, no Bash.
         </div>
       </div>
       <p class="caption">
-        Route map, not result chart: controller access seeds the repos; the agent reaches GitHub through either a CLI path that can escape surface or an MCP path that stays typed but can fan out.
+        Route map, not result chart: controller access seeds the repos; the agent reaches GitHub through either a CLI path that can escape surface or an MCP path of typed tools.
       </p>
     </div>
   </section>
+
+  <div class="callout">
+    <p><strong>Corrections (October 2026):</strong> issue-triage results, credential handling, and tool isolation on this page were revised. See the <a href="cli_mcp_experiments_v2.html#corrections">corrections note</a>.</p>
+  </div>
 
   <section>
     <div class="narrow">
       <h2>The Token Boundary</h2>
       <p>
-        The controller creates and verifies private repositories. The agent receives only the narrower per-arm credential.
+        The controller creates and verifies private repositories. The agent is meant to receive only the narrower per-arm credential.
+      </p>
+      <p>
+        During the n5 runs it didn't work that way: the env scrub removed nothing, so the controller token stayed visible to the agent, and the skill arm could also fall back to the developer's own <code>gh</code> login. Tool isolation was looser too: <code>--allowed-tools</code> didn't restrict tools under <code>bypassPermissions</code>, and <code>Bash(gh:*)</code> didn't restrict the shell. Since 2026-10-02 the scrub works, each arm gets a positive <code>--tools</code> list, file tools have deny rules for <code>~</code> and the repo, the skill arm's Bash runs inside an OS sandbox, and each trial gets an empty <code>GH_CONFIG_DIR</code>. The n5 data predates these changes.
       </p>
     </div>
     <div class="panel">
@@ -358,8 +364,8 @@
     </div>
     <div class="panel-grid panel">
       <div>
-        <img class="panel-image" src="assets/github-validity.png" alt="Abstract GitHub result divergence showing CLI boundary escape and MCP fanout">
-        <p class="caption">Route shape: CLI can reach the result while leaving the boundary; typed tools stay contained but may fan out.</p>
+        <img class="panel-image" src="assets/github-validity.png" alt="Abstract GitHub result divergence showing CLI boundary escape and a typed-tool MCP route">
+        <p class="caption">Route shape: CLI can reach the result while leaving the boundary; the MCP route goes through typed tool calls.</p>
       </div>
       <div>
         <table class="table">
@@ -368,15 +374,15 @@
           </thead>
           <tbody>
             <tr><td><code>repo_inventory</code></td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill bad">0/5</span></td><td><code>base64</code> decode outside <code>gh</code>.</td></tr>
-            <tr><td><code>issue_triage</code></td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill bad">0/5</span></td><td>Env probe plus token-lift attempt.</td></tr>
-            <tr><td><code>file_patch_pr</code></td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill bad">0/5</span></td><td>Shell variable for file payload.</td></tr>
+            <tr><td><code>issue_triage</code></td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill bad">0/5</span></td><td>Escalated credentials: controller token (3 trials) or the developer's <code>gh</code> login (2). The agent token got 403 on issues.</td></tr>
+            <tr><td><code>file_patch_pr</code></td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill bad">0/5</span></td><td><code>base64 -d</code> on read, shell variable for the file payload.</td></tr>
           </tbody>
         </table>
       </div>
     </div>
     <div class="callout">
       <p>
-        The pattern is not random. When <code>gh</code> lacks a high-level workflow primitive, the agent glues raw API calls together with shell text. That can be effective, but it is no longer the intended CLI-only surface.
+        For <code>repo_inventory</code> and <code>file_patch_pr</code> the pattern is not random. When <code>gh</code> lacks a high-level workflow primitive, the agent glues raw API calls together with shell text. That can be effective, but it is no longer the intended CLI-only surface. <code>issue_triage</code> is different: the agent token couldn't read issues, so every pass came from escalated credentials.
       </p>
     </div>
   </section>
@@ -385,7 +391,7 @@
     <div class="narrow">
       <h2>Where MCP Misleads</h2>
       <p>
-        MCP stays contained, but it can burn the budget when the expected primitive is missing, misnamed, or hard to discover.
+        The MCP numbers need context too. Its one 0/5 was a credential failure, not a tool-surface one, and its workflow-status fix shows the effect of exposing the right primitive.
       </p>
     </div>
     <div class="panel">
@@ -394,8 +400,8 @@
           <tr><th>MCP case</th><th class="num">Trials passed</th><th class="num">Turns</th><th class="num">Wall</th><th>Failure shape</th></tr>
         </thead>
         <tbody>
-          <tr><td><code>issue_triage</code></td><td class="num"><span class="pill bad">0/5</span></td><td class="num">75+</td><td class="num">240 s</td><td>Fanout across issue listing, search, and per-issue reads.</td></tr>
-          <tr><td>Workflow status before Actions toolset</td><td class="num"><span class="pill good">1/1</span></td><td class="num">60</td><td class="num">169.7 s</td><td>ToolSearch probes, then reconstruction through adjacent APIs. (From an earlier run, see <a href="github_experiment.html">full writeup</a>.)</td></tr>
+          <tr><td><code>issue_triage</code></td><td class="num"><span class="pill bad">0/5</span></td><td class="num">58–78</td><td class="num">240 s</td><td>403 on every issue call (5–29 per trial): the agent token lacked Issues read. The smoke run, with a different token, passed in 8 turns.</td></tr>
+          <tr><td>Workflow status before Actions toolset</td><td class="num">not recorded</td><td class="num">not recorded</td><td class="num">not recorded</td><td>Ran before the Actions toolset was enabled; no result JSON or transcript from that run is committed.</td></tr>
           <tr><td>Workflow status after Actions toolset</td><td class="num"><span class="pill good">5/5</span></td><td class="num">8</td><td class="num">15.4 s</td><td>One direct <code>actions_list</code> path.</td></tr>
         </tbody>
       </table>
@@ -455,11 +461,13 @@
         <tbody>
           <tr><td>Pass success</td><td class="num">5/5</td><td class="num">3/5</td></tr>
           <tr><td>Valid surface</td><td class="num">0/5</td><td class="num">2/5</td></tr>
+          <tr><td>Pass and valid</td><td class="num">0/5</td><td class="num">1/5</td></tr>
           <tr><td>Avg turns, passing</td><td class="num">~13</td><td class="num">~30</td></tr>
           <tr><td>Avg tokens, passing</td><td class="num">~144k</td><td class="num">~353k</td></tr>
           <tr><td>Avg wall, passing</td><td class="num">~35 s</td><td class="num">~108 s</td></tr>
         </tbody>
       </table>
+      <p class="caption">Passing directed trials averaged 353,047 tokens, 2.45x the original 143,875, and two of those three were invalid. The single trial that passed and stayed valid used 319,445 tokens, 2.22x. Call it about 2.2–2.5x.</p>
     </div>
     <div class="split">
       <div class="box">
@@ -468,7 +476,7 @@
       </div>
       <div class="box">
         <h3>What did not</h3>
-        <p>Some trials still escaped on the read side, and the valid route expanded into low-level Git data API endpoints (blobs, trees, refs).</p>
+        <p>Three of five trials still escaped on the read side with <code>base64 -d</code> (escapes went from 5/5 to 3/5), two trials hit the 240 s wall, and just a single trial both passed and stayed in surface.</p>
       </div>
     </div>
   </section>
@@ -476,10 +484,10 @@
   <section class="narrow">
     <h2>Takeaway</h2>
     <p>
-      GitHub shows both failure shapes clearly. CLI skill fails containment when the CLI lacks the workflow primitive. MCP fails convergence when the server does not expose the primitive the agent expects. Success rate alone hides the difference.
+      GitHub shows why success rate needs a validity check. CLI skill fails containment when the CLI lacks the workflow primitive, and on issue triage it reached the answer only through escalated credentials. MCP's one 0/5 traced back to the agent token, not the server. Success rate alone hides both.
     </p>
     <p>
-      Read the <a href="github_experiment.html">full GitHub writeup</a>, the <a href="playwright_experiment_v2.html">Playwright visual brief</a>, or the <a href="cli_mcp_experiments_v2.html">cross-experiment visual guide</a>.
+      Read the <a href="playwright_experiment_v2.html">Playwright visual brief</a> or the <a href="cli_mcp_experiments_v2.html">cross-experiment visual guide</a>.
     </p>
   </section>
 </main>
@@ -487,7 +495,7 @@
 <footer class="site">
   <div class="inner">
     <span>cli-vs-mcp · GitHub visual brief</span>
-    <span><a href="github_experiment.html">Full GitHub</a> · <a href="playwright_experiment_v2.html">Playwright V2</a></span>
+    <span><a href="cli_mcp_experiments_v2.html">Visual Guide</a> · <a href="playwright_experiment_v2.html">Playwright V2</a></span>
   </div>
 </footer>
 

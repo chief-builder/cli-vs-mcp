@@ -429,6 +429,8 @@
     margin: 22px 0;
   }
   .callout p:last-child { margin-bottom: 0; }
+  .callout ul { margin: 0; padding-left: 20px; }
+  .callout li { margin-bottom: 6px; }
   .sequence {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -539,10 +541,9 @@
 
 <header class="site">
   <div class="inner">
-    <a class="brand" href="cli_mcp_experiments.html">cli-vs-mcp</a>
+    <a class="brand" href="cli_mcp_experiments_v2.html">cli-vs-mcp</a>
     <nav>
       <a class="active" href="cli_mcp_experiments_v2.html">Visual Guide</a>
-      <a href="cli_mcp_experiments.html">Full Note</a>
       <a href="playwright_experiment_v2.html">Playwright V2</a>
       <a href="github_experiment_v2.html">GitHub V2</a>
     </nav>
@@ -571,12 +572,24 @@
           <span>GitHub skill trials succeeded by stepping outside the intended <code>gh</code>-only surface.</span>
         </div>
         <div class="thesis-item">
-          <strong>60 -> 8</strong>
-          <span>MCP workflow-status turns dropped after the right Actions primitive was exposed.</span>
+          <strong>8 turns</strong>
+          <span>MCP workflow status, 5/5, once the right Actions primitive was exposed. The earlier run without it wasn't recorded.</span>
         </div>
       </div>
     </div>
     <img class="hero-image" src="assets/tool-surfaces-hero.png" alt="Three abstract tool-surface lanes for baseline, CLI skill, and MCP server">
+  </section>
+
+  <section>
+    <div class="callout" id="corrections">
+      <p><strong>Corrections (October 2026)</strong></p>
+      <ul>
+        <li>GitHub <code>issue_triage</code> was a token-permission failure: the n5 agent token lacked Issues read, so every issue call returned 403 in both arms. MCP's 0/5 is a credential failure, not a tool-surface weakness. The skill arm's 5/5 came from escalated credentials in every trial (the controller token in three, the developer's own <code>gh</code> login in two).</li>
+        <li>The runner's env scrub didn't work during the runs: it removed nothing, so the controller token stayed visible to the agent even after commit <code>90d0dd7</code>. It is fixed as of 2026-10-02.</li>
+        <li>Tool isolation was looser than described during the n5 runs: <code>--allowed-tools</code> didn't restrict tools under <code>bypassPermissions</code>, every arm also had Read/Glob/Grep/Edit, and <code>Bash(gh:*)</code> didn't restrict the shell. Isolation is now enforced (see below); the n5 data predates it.</li>
+        <li>Playwright Tier 2 skill/MCP token ratio was 2.01x; it is 1.86x as the report computes it and 1.52x on completed trials only. The directed-prompt cost is about 2.2–2.5x, not ~3x.</li>
+      </ul>
+    </div>
   </section>
 
   <section>
@@ -597,7 +610,7 @@
         <div class="lane skill">
           <div class="name">skill</div>
           <div class="path" aria-label="CLI through Bash"></div>
-          <div class="dest">Skill docs plus narrow <code>Bash(gh:*)</code> or <code>Bash(playwright-cli:*)</code>.</div>
+          <div class="dest">Skill docs plus Bash for <code>gh</code> or <code>playwright-cli</code>.</div>
         </div>
         <div class="lane mcp">
           <div class="name">mcp</div>
@@ -605,6 +618,9 @@
           <div class="dest">Structured server tools over stdio. No Bash.</div>
         </div>
       </div>
+      <p class="caption">
+        How isolation works now: each arm gets a positive <code>--tools</code> list; file tools have deny rules for <code>~</code> and the repo; the GitHub skill arm's Bash runs inside an OS sandbox; each trial gets an empty <code>GH_CONFIG_DIR</code>. The n5 data on this page was collected before these changes, when every arm could also use Read/Glob/Grep/Edit and <code>Bash(gh:*)</code> did not restrict the shell.
+      </p>
     </div>
 
     <div class="score-grid">
@@ -626,7 +642,7 @@
       <div class="score">
         <div class="label">Shape</div>
         <div class="value">turns</div>
-        <div class="note">How many agent/tool loops the workflow needed.</div>
+        <div class="note">Assistant messages in the transcript; a rough proxy for loops, higher than API round-trips.</div>
       </div>
       <div class="score">
         <div class="label">Budget</div>
@@ -640,7 +656,7 @@
     <div class="narrow">
       <h2>Finding 1: When Primitives Match, MCP Costs Less</h2>
       <p>
-        In the clean comparisons where both arms passed and stayed valid, turn counts are nearly the same. The cost gap mostly comes from per-turn payload: MCP tool results carry less text than shell round-trips.
+        In the clean comparisons where both arms passed and stayed valid, MCP used fewer tokens on every task. Turn counts are within 2 on the GitHub tasks but not on all Playwright tasks: form took 19.4 skill vs 13.8 MCP turns, checkout 20.4 vs 27.0. The form gap comes from per-field <code>fill</code> calls versus one batched <code>browser_fill_form</code>.
       </p>
     </div>
 
@@ -727,11 +743,7 @@
       </p>
     </div>
 
-    <div class="panel-grid visual-panel">
-      <div>
-        <img src="assets/surface-escape.png" alt="Abstract command-line path escaping a boundary beside a contained typed-tool path">
-        <p class="caption">Generated image used as an editorial anchor. Exact validity numbers are rendered in the table.</p>
-      </div>
+    <div class="visual-panel">
       <div>
         <table class="mini-table">
           <thead>
@@ -761,7 +773,7 @@
         </table>
         <div class="callout">
           <p>
-            Success-only view: skill looks dominant. Validity-aware view: those same trials expose missing CLI affordances and one attempted token-lift path that the harness later fixed.
+            Success-only view: skill looks dominant. Validity-aware view: those same trials expose missing CLI affordances, and on <code>issue_triage</code> every pass used escalated credentials (the controller token in three trials, the developer's own <code>gh</code> login in two), because the agent token couldn't read issues.
           </p>
         </div>
       </div>
@@ -770,15 +782,15 @@
 
   <section>
     <div class="narrow">
-      <h2>Finding 3: Missing MCP Primitives Burn Budget</h2>
+      <h2>Finding 3: MCP's One 0/5 Was A Credential Failure</h2>
       <p>
-        MCP fails differently. It cannot fall back to shell helpers, so when the needed tool is missing or hard to discover, the agent fans out across adjacent tools.
+        MCP's 0/5 on <code>issue_triage</code> looked like a tool-surface weakness. It wasn't: the n5 agent token lacked Issues read permission, so every issue call (<code>list_issues</code>, <code>issue_read</code>, <code>search_issues</code>) returned 403 in both arms. The smoke run, with a different token, passed MCP in 8 turns. Exposing the right primitive still matters: once the Actions toolset was enabled, MCP workflow status passed 5/5 through a single <code>actions_list</code> call.
       </p>
     </div>
 
     <div class="panel-grid visual-panel">
       <div>
-        <img src="assets/mcp-fanout.png" alt="Abstract workflow branching into many tool probes with one direct path highlighted">
+        <img src="assets/mcp-fanout.png" alt="Abstract command-line path escaping a boundary beside a fenced typed-tool path">
       </div>
       <div>
         <table class="mini-table">
@@ -788,15 +800,15 @@
           <tbody>
             <tr>
               <td><code>issue_triage</code></td>
-              <td class="num">75+</td>
+              <td class="num">58–78</td>
               <td class="num">240 s timeout</td>
-              <td>Repeated probes across issue tools; no convergence in N=5.</td>
+              <td>403 on every issue call (5–29 per trial): the agent token lacked Issues read. Credential failure, not tool surface.</td>
             </tr>
             <tr>
               <td>Workflow status, before Actions</td>
-              <td class="num">60</td>
-              <td class="num">169.7 s</td>
-              <td>ToolSearch fanout and reconstruction from side paths. (From an earlier run, see <a href="cli_mcp_experiments.html">full note</a>.)</td>
+              <td class="num">not recorded</td>
+              <td class="num">not recorded</td>
+              <td>Ran before the Actions toolset was enabled; no result JSON or transcript from that run is committed.</td>
             </tr>
             <tr>
               <td>Workflow status, after Actions</td>
@@ -830,11 +842,13 @@
           <tbody>
             <tr><td>Pass success</td><td class="num">5/5</td><td class="num">3/5</td></tr>
             <tr><td>Valid surface</td><td class="num">0/5</td><td class="num">2/5</td></tr>
+            <tr><td>Pass and valid</td><td class="num">0/5</td><td class="num">1/5</td></tr>
             <tr><td>Avg turns, passing</td><td class="num">~13</td><td class="num">~30</td></tr>
             <tr><td>Avg tokens, passing</td><td class="num">~144k</td><td class="num">~353k</td></tr>
             <tr><td>Avg wall, passing</td><td class="num">~35 s</td><td class="num">~108 s</td></tr>
           </tbody>
         </table>
+        <p class="caption">Two of the three passing directed trials still escaped with <code>base64 -d</code>. Passing trials averaged 2.45x the original's tokens; the single trial that passed and stayed valid used 319,445 tokens, 2.22x. Escapes went from 5/5 to 3/5.</p>
       </div>
     </div>
 
@@ -851,7 +865,7 @@
       <div class="seq">
         <h3>Skill file patch PR</h3>
         <ol>
-          <li>Read file through raw REST</li>
+          <li class="bad-line">Read file through raw REST, decoded with <code>base64 -d</code></li>
           <li>Get main HEAD SHA</li>
           <li>Create branch through raw REST</li>
           <li class="bad-line">Stage file content with shell text</li>
@@ -866,7 +880,7 @@
     <div class="narrow">
       <h2>How To Choose</h2>
       <p>
-        The practical rule: pick the surface whose primitives already match the workflow. If neither does, expect either shell escapes or MCP fanout and measure before standardizing.
+        The practical rule: pick the surface whose primitives already match the workflow. If neither does, expect shell escapes on the CLI side, and measure both before standardizing.
       </p>
     </div>
 
@@ -883,7 +897,7 @@
         </div>
         <div class="matrix-row">
           <strong>Some extra token cost is acceptable.</strong>
-          <span>In clean tasks, skill often costs about 1.1x-1.4x MCP, with bigger gaps on chatty workflows.</span>
+          <span>In clean tasks, skill often costs about 1.1x-1.4x MCP, with a bigger gap (2.51x) on the Playwright form task.</span>
         </div>
       </div>
       <div class="matrix-col">
@@ -898,7 +912,7 @@
         </div>
         <div class="matrix-row">
           <strong>Agents will run this at volume.</strong>
-          <span>Lower per-turn payload becomes meaningful when workflows repeat often.</span>
+          <span>Lower token cost per task adds up when workflows repeat often.</span>
         </div>
       </div>
     </div>
@@ -914,7 +928,7 @@
       </div>
       <div class="decision">
         <strong>If MCP lacks a primitive</strong>
-        <span>Expect fanout and timeouts.</span>
+        <span>Check the server's tool catalog first; this study has no recorded case that sizes the cost.</span>
       </div>
       <div class="decision">
         <strong>If the stakes are high</strong>
@@ -927,13 +941,13 @@
     <div class="narrow">
       <h2>What This Version Leaves Out</h2>
       <p>
-        This page is the short version. The full note keeps the trial JSON example, Bash classifier phases, flag-by-flag runner explanation, caveats, and quick start commands.
+        This page is the short version. The trial JSON, Bash classifier, runner flags, and quick start commands live in the repo under <code>harness/src/</code> and <code>experiments/</code>.
       </p>
       <p>
         Keep three caveats attached to the visuals: N=5 is directional rather than benchmark-grade; the validity classifier is a witness, not a sandbox; MCP tool catalogs change between server versions; verify names against the version you're running.
       </p>
       <p>
-        Continue with the <a href="cli_mcp_experiments.html">full overview</a>, the <a href="playwright_experiment_v2.html">Playwright visual brief</a>, or the <a href="github_experiment_v2.html">GitHub visual brief</a>.
+        Continue with the <a href="playwright_experiment_v2.html">Playwright visual brief</a> or the <a href="github_experiment_v2.html">GitHub visual brief</a>.
       </p>
     </div>
   </section>
@@ -942,7 +956,7 @@
 <footer class="site">
   <div class="inner">
     <span>cli-vs-mcp · visual guide</span>
-    <span><a href="cli_mcp_experiments.html">Full note</a> · <a href="playwright_experiment_v2.html">Playwright V2</a> · <a href="github_experiment_v2.html">GitHub V2</a></span>
+    <span><a href="playwright_experiment_v2.html">Playwright V2</a> · <a href="github_experiment_v2.html">GitHub V2</a></span>
   </div>
 </footer>
 

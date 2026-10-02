@@ -241,7 +241,6 @@
       <a href="cli_mcp_experiments_v2.html">Visual Guide</a>
       <a class="active" href="playwright_experiment_v2.html">Playwright V2</a>
       <a href="github_experiment_v2.html">GitHub V2</a>
-      <a href="playwright_experiment.html">Full Playwright</a>
     </nav>
   </div>
 </header>
@@ -276,9 +275,13 @@
     </div>
     <div>
       <img class="hero-image" src="assets/playwright-hero.png" alt="Abstract browser automation diagram with CLI and MCP paths reaching the same browser">
-      <p class="caption">Both paths drive the same browser; the difference is how much page context each tool result carries.</p>
+      <p class="caption">Both paths drive the same browser; only the tool surface differs.</p>
     </div>
   </section>
+
+  <div class="callout">
+    <p><strong>Corrections (October 2026):</strong> the Tier 2 token ratio, the cost mechanism, and the recovery-failure description on this page were revised. See the <a href="cli_mcp_experiments_v2.html#corrections">corrections note</a>.</p>
+  </div>
 
   <section>
     <div class="narrow">
@@ -308,7 +311,7 @@
     <div class="narrow">
       <h2>The Cost Picture</h2>
       <p>
-        On tasks where both browser surfaces complete cleanly, MCP usually needs fewer tokens. The form task is an outlier: lots of action/check cycles amplify per-cycle overhead.
+        On tasks where both browser surfaces complete cleanly, MCP was cheaper on every task. The form task is the outlier: the skill arm fills one field per <code>fill</code> call, while MCP fills the whole form with one batched <code>browser_fill_form</code>.
       </p>
     </div>
     <div class="panel">
@@ -349,33 +352,28 @@
 
   <section>
     <div class="narrow">
-      <h2>Why MCP Is Cheaper Here</h2>
+      <h2>Why The Form Task Costs More</h2>
       <p>
-        The difference is mostly payload shape, not step count. CLI skill workflows often need an explicit snapshot after each action. Playwright MCP often bundles the post-action accessibility snapshot into the action result.
+        The data doesn't support a general mechanism, and the skill arm did not snapshot after every action. On <code>tier1_form</code> it made 25 <code>fill</code> calls but only 8 <code>snapshot</code> calls across five trials; MCP made 10 <code>browser_snapshot</code> calls. The form gap comes from per-field <code>fill</code> calls versus one batched <code>browser_fill_form</code>.
       </p>
     </div>
-    <div class="panel-grid panel">
-      <div>
-        <img class="panel-image" src="assets/playwright-cycle-cost.png" alt="Abstract comparison of separate action/snapshot cycles versus bundled MCP feedback cycles">
-        <p class="caption">Mechanism: CLI often separates action and observation; MCP often returns page context with the action.</p>
-      </div>
+    <div class="panel">
       <div class="sequence-grid">
         <div class="sequence">
-          <h3>Skill loop</h3>
+          <h3>Skill form fill</h3>
           <ol>
-            <li><code>playwright-cli click</code></li>
-            <li><code>playwright-cli snapshot</code></li>
-            <li>Read text payload</li>
-            <li>Repeat for the next action</li>
+            <li><code>playwright-cli fill</code> for one field</li>
+            <li>Repeat for each remaining field</li>
+            <li>25 <code>fill</code> calls over five trials</li>
+            <li>Only 8 <code>snapshot</code> calls over five trials</li>
           </ol>
         </div>
         <div class="sequence">
-          <h3>MCP loop</h3>
+          <h3>MCP form fill</h3>
           <ol>
-            <li><code>browser_click</code></li>
-            <li>Action result includes page context</li>
-            <li>Move to the next action</li>
-            <li>Fewer separate round trips</li>
+            <li><code>browser_fill_form</code> with every field</li>
+            <li>One batched call per trial</li>
+            <li>10 <code>browser_snapshot</code> calls over five trials</li>
           </ol>
         </div>
       </div>
@@ -386,12 +384,12 @@
     <div class="narrow">
       <h2>Where MCP Breaks</h2>
       <p>
-        The same shape that lowers payload does not automatically improve convergence. On <code>tier2_recovery</code>, MCP passed 2/5 and the other three trials hit the 240 s wall.
+        Lower cost does not mean better convergence. On <code>tier2_recovery</code>, MCP passed 2/5 (40%) and the other three trials hit the 240 s wall.
       </p>
     </div>
     <div class="callout">
       <p>
-        Conservative read: MCP can solve the recovery flow, but the tool-result shape leaves the agent prone to wedging on stale page state during multi-step correction. Typically the agent loops on a stale snapshot rather than re-fetching. The skill arm passed 5/5 at the same wall budget.
+        Conservative read: MCP can solve the recovery flow, but the three failed trials stalled after at most four tool calls and went silent until the 240 s kill (one after a single ToolSearch, one ending on an API retry event). The transcripts show no looping and no stale snapshots; the cause is not determined from them. The skill arm passed 5/5 at the same wall budget.
       </p>
     </div>
     <div class="panel">
@@ -401,19 +399,20 @@
         </thead>
         <tbody>
           <tr><td>Tier 1</td><td class="num">100%</td><td class="num">100%</td><td class="num">218,012</td><td class="num">132,996</td><td class="num">1.64x</td></tr>
-          <tr><td>Tier 2</td><td class="num">100%</td><td class="num">70%</td><td class="num">302,127</td><td class="num">150,630</td><td class="num">2.01x</td></tr>
+          <tr><td>Tier 2</td><td class="num">100%</td><td class="num">70%</td><td class="num">302,127</td><td class="num">162,609</td><td class="num">1.86x</td></tr>
         </tbody>
       </table>
+      <p class="caption">The Tier 2 MCP average includes three timed-out <code>tier2_recovery</code> trials whose tokens are lower-bound estimates. On completed trials only, MCP averages 199,165 tokens and the ratio is 1.52x, so read Tier 2 as about 1.5–1.9x.</p>
     </div>
   </section>
 
   <section class="narrow">
     <h2>Takeaway</h2>
     <p>
-      For browser automation, MCP has a strong cost advantage when the workflow remains stable: same success, similar turns, lower payload. The trade is that multi-step recovery can fail in a different way, so success and cost have to be read together.
+      For browser automation, MCP was cheaper on every Playwright task where both arms passed, with the same success on Tier 1. The trade is that multi-step recovery can fail in a different way, so success and cost have to be read together.
     </p>
     <p>
-      Read the <a href="playwright_experiment.html">full Playwright writeup</a>, the <a href="github_experiment_v2.html">GitHub visual brief</a>, or the <a href="cli_mcp_experiments_v2.html">cross-experiment visual guide</a>.
+      Read the <a href="github_experiment_v2.html">GitHub visual brief</a> or the <a href="cli_mcp_experiments_v2.html">cross-experiment visual guide</a>.
     </p>
   </section>
 </main>
@@ -421,7 +420,7 @@
 <footer class="site">
   <div class="inner">
     <span>cli-vs-mcp · Playwright visual brief</span>
-    <span><a href="playwright_experiment.html">Full Playwright</a> · <a href="github_experiment_v2.html">GitHub V2</a></span>
+    <span><a href="cli_mcp_experiments_v2.html">Visual Guide</a> · <a href="github_experiment_v2.html">GitHub V2</a></span>
   </div>
 </footer>
 
