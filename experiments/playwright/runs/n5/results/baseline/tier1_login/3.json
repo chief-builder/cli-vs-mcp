@@ -8,10 +8,10 @@
   "timestamp": "2026-05-16T12:52:01.810Z",
   "seed": "55365790571d6b4c",
   "metrics": {
-    "inputTokens": 0,
-    "outputTokens": 0,
-    "cachedInputTokens": 0,
-    "cacheCreationInputTokens": 0,
+    "inputTokens": 313,
+    "outputTokens": 528,
+    "cachedInputTokens": 804275,
+    "cacheCreationInputTokens": 40793,
     "toolCalls": [
       {
         "name": "ToolSearch",
@@ -148,8 +148,7 @@
     ],
     "toolCallCount": 33,
     "turns": 61,
-    "numTurns": 0,
-    "wallClockMs": 0,
+    "wallClockMs": 240000,
     "contextWindowPeak": 48286,
     "totalCostUsd": 0,
     "modelsUsed": [],
@@ -158,12 +157,14 @@
     "escapeToolUsed": false,
     "escapeToolCalls": [],
     "singleCliCommandPerToolCall": true,
-    "cliCommandGranularityViolations": []
+    "cliCommandGranularityViolations": [],
+    "incomplete": true,
+    "tokensEstimated": true
   },
   "success": {
     "pass": false,
     "score": 0,
-    "notes": "expected screenshot at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/baseline/tier1_login/3/login_landing.png (>1KB)"
+    "notes": "expected screenshot at ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/baseline/tier1_login/3/login_landing.png (>1KB)"
   },
   "error": "claude timed out after 240000ms"
 }

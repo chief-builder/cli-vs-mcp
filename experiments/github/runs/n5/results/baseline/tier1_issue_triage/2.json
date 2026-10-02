@@ -8,10 +8,10 @@
   "timestamp": "2026-05-16T20:40:31.997Z",
   "seed": "cb2278153a7b4a43",
   "metrics": {
-    "inputTokens": 0,
-    "outputTokens": 0,
-    "cachedInputTokens": 0,
-    "cacheCreationInputTokens": 0,
+    "inputTokens": 147,
+    "outputTokens": 353,
+    "cachedInputTokens": 787735,
+    "cacheCreationInputTokens": 45635,
     "toolCalls": [
       {
         "name": "ToolSearch",
@@ -144,8 +144,7 @@
     ],
     "toolCallCount": 32,
     "turns": 68,
-    "numTurns": 0,
-    "wallClockMs": 0,
+    "wallClockMs": 240000,
     "contextWindowPeak": 53128,
     "totalCostUsd": 0,
     "modelsUsed": [],
@@ -154,12 +153,14 @@
     "escapeToolUsed": false,
     "escapeToolCalls": [],
     "singleCliCommandPerToolCall": true,
-    "cliCommandGranularityViolations": []
+    "cliCommandGranularityViolations": [],
+    "incomplete": true,
+    "tokensEstimated": true
   },
   "success": {
     "pass": false,
     "score": 0,
-    "notes": "missing or invalid JSON at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/n5/results/baseline/tier1_issue_triage/2/issue_triage.json"
+    "notes": "missing or invalid JSON at ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/n5/results/baseline/tier1_issue_triage/2/issue_triage.json"
   },
   "error": "claude timed out after 240000ms"
 }

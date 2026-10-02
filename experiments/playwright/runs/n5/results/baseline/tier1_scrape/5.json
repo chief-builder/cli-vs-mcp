@@ -8,10 +8,10 @@
   "timestamp": "2026-05-16T13:54:30.888Z",
   "seed": "95365b3ff0625bbe",
   "metrics": {
-    "inputTokens": 0,
-    "outputTokens": 0,
-    "cachedInputTokens": 0,
-    "cacheCreationInputTokens": 0,
+    "inputTokens": 7,
+    "outputTokens": 67,
+    "cachedInputTokens": 32464,
+    "cacheCreationInputTokens": 5522,
     "toolCalls": [
       {
         "name": "ToolSearch",
@@ -28,8 +28,7 @@
     ],
     "toolCallCount": 3,
     "turns": 5,
-    "numTurns": 0,
-    "wallClockMs": 0,
+    "wallClockMs": 240000,
     "contextWindowPeak": 13015,
     "totalCostUsd": 0,
     "modelsUsed": [],
@@ -38,12 +37,14 @@
     "escapeToolUsed": false,
     "escapeToolCalls": [],
     "singleCliCommandPerToolCall": true,
-    "cliCommandGranularityViolations": []
+    "cliCommandGranularityViolations": [],
+    "incomplete": true,
+    "tokensEstimated": true
   },
   "success": {
     "pass": false,
     "score": 0,
-    "notes": "missing or invalid JSON at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/baseline/tier1_scrape/5/table.json"
+    "notes": "missing or invalid JSON at ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/baseline/tier1_scrape/5/table.json"
   },
   "error": "claude timed out after 240000ms"
 }

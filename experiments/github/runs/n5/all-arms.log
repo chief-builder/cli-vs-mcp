@@ -129,11 +129,11 @@ $ node --import tsx harness/src/cli.ts run --experiment github --run n5 --arm mc
   error: claude timed out after 240000ms
 → github/n5  tier1_pr_diff_answer  arm=mcp  trial=4/5
   trial 4 threw: Error: GET /repos/chief-builder-lab/clivsmcp-tier1-pr-diff-answer-20a6c6b2/contents/src/widget.ts?ref=feature-20a6c6b2 -> 404: {"message":"Not Found","documentation_url":"https://docs.github.com/rest/repos/contents#get-repository-content","status":"404"}
-    at fetchJson (/Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/tasks/tier1.ts:405:22)
+    at fetchJson (~/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/tasks/tier1.ts:405:22)
     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-    at async Object.setup (/Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/tasks/tier1.ts:325:25)
-    at async runTrial (/Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/harness/src/runner.ts:155:30)
-    at async Command.<anonymous> (/Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/harness/src/cli.ts:103:26)
+    at async Object.setup (~/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/tasks/tier1.ts:325:25)
+    at async runTrial (~/Documents/Projects/Experiments/cli-vs-mcp/harness/src/runner.ts:155:30)
+    at async Command.<anonymous> (~/Documents/Projects/Experiments/cli-vs-mcp/harness/src/cli.ts:103:26)
 → github/n5  tier1_pr_diff_answer  arm=mcp  trial=5/5
   ✗ score=0.00  valid  tokens_in=0  turns=0  time=0.0s
   error: claude timed out after 240000ms

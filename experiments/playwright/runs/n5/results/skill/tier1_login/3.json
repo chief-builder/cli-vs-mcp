@@ -60,7 +60,6 @@
     ],
     "toolCallCount": 9,
     "turns": 17,
-    "numTurns": 11,
     "wallClockMs": 43279,
     "contextWindowPeak": 22035,
     "totalCostUsd": 0.11948425000000001,
@@ -73,11 +72,13 @@
     "escapeToolUsed": false,
     "escapeToolCalls": [],
     "singleCliCommandPerToolCall": true,
-    "cliCommandGranularityViolations": []
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
   },
   "success": {
     "pass": true,
     "score": 1,
-    "notes": "screenshot saved at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/skill/tier1_login/3/login_landing.png"
+    "notes": "screenshot saved at ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/skill/tier1_login/3/login_landing.png"
   }
 }

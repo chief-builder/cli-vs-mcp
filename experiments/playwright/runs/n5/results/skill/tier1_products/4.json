@@ -89,7 +89,6 @@
     ],
     "toolCallCount": 15,
     "turns": 20,
-    "numTurns": 17,
     "wallClockMs": 54153,
     "contextWindowPeak": 22940,
     "totalCostUsd": 0.17413089999999998,
@@ -102,7 +101,9 @@
     "escapeToolUsed": false,
     "escapeToolCalls": [],
     "singleCliCommandPerToolCall": true,
-    "cliCommandGranularityViolations": []
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
   },
   "success": {
     "pass": true,

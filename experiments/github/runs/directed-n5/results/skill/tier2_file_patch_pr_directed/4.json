@@ -94,7 +94,6 @@
     ],
     "toolCallCount": 17,
     "turns": 30,
-    "numTurns": 18,
     "wallClockMs": 86599,
     "contextWindowPeak": 22791,
     "totalCostUsd": 0.22300284999999997,
@@ -121,7 +120,9 @@
         "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-f2ebd5aa/contents/src/widget.ts --jq '.content' | base64 -d",
         "reason": "non-gh Bash segment: base64 -d"
       }
-    ]
+    ],
+    "incomplete": false,
+    "tokensEstimated": false
   },
   "success": {
     "pass": true,

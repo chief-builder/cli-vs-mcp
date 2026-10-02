@@ -8,10 +8,10 @@
   "timestamp": "2026-05-15T03:29:58.940Z",
   "seed": "5bc330bbe80247c9",
   "metrics": {
-    "inputTokens": 0,
-    "outputTokens": 0,
-    "cachedInputTokens": 0,
-    "cacheCreationInputTokens": 0,
+    "inputTokens": 43,
+    "outputTokens": 370,
+    "cachedInputTokens": 452842,
+    "cacheCreationInputTokens": 32946,
     "toolCalls": [
       {
         "name": "ToolSearch",
@@ -108,8 +108,7 @@
     ],
     "toolCallCount": 23,
     "turns": 44,
-    "numTurns": 0,
-    "wallClockMs": 0,
+    "wallClockMs": 180000,
     "contextWindowPeak": 40439,
     "totalCostUsd": 0,
     "modelsUsed": [],
@@ -118,12 +117,14 @@
     "escapeToolUsed": false,
     "escapeToolCalls": [],
     "singleCliCommandPerToolCall": true,
-    "cliCommandGranularityViolations": []
+    "cliCommandGranularityViolations": [],
+    "incomplete": true,
+    "tokensEstimated": true
   },
   "success": {
     "pass": false,
     "score": 0,
-    "notes": "expected screenshot at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/smoke-n1/results/baseline/tier1_login/1/login_landing.png (>1KB)"
+    "notes": "expected screenshot at ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/smoke-n1/results/baseline/tier1_login/1/login_landing.png (>1KB)"
   },
   "error": "claude timed out after 180000ms"
 }

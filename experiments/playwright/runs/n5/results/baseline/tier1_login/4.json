@@ -108,7 +108,6 @@
     ],
     "toolCallCount": 23,
     "turns": 46,
-    "numTurns": 24,
     "wallClockMs": 155911,
     "contextWindowPeak": 36381,
     "totalCostUsd": 0.35000535,
@@ -117,15 +116,29 @@
       "claude-sonnet-4-6"
     ],
     "usedIntendedTool": false,
-    "validToolSurface": true,
-    "escapeToolUsed": false,
-    "escapeToolCalls": [],
-    "singleCliCommandPerToolCall": true,
-    "cliCommandGranularityViolations": []
+    "validToolSurface": false,
+    "escapeToolUsed": true,
+    "escapeToolCalls": [
+      {
+        "name": "TaskOutput",
+        "turnIndex": 26,
+        "reason": "TaskOutput is not allowed in the baseline arm"
+      }
+    ],
+    "singleCliCommandPerToolCall": false,
+    "cliCommandGranularityViolations": [
+      {
+        "name": "TaskOutput",
+        "turnIndex": 26,
+        "reason": "TaskOutput is not allowed in the baseline arm"
+      }
+    ],
+    "incomplete": false,
+    "tokensEstimated": false
   },
   "success": {
     "pass": false,
     "score": 0,
-    "notes": "expected screenshot at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/baseline/tier1_login/4/login_landing.png (>1KB)"
+    "notes": "expected screenshot at ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/baseline/tier1_login/4/login_landing.png (>1KB)"
   }
 }

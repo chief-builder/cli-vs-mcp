@@ -8,10 +8,10 @@
   "timestamp": "2026-05-17T15:23:06.712Z",
   "seed": "c0271edd1809caf6",
   "metrics": {
-    "inputTokens": 0,
-    "outputTokens": 0,
-    "cachedInputTokens": 0,
-    "cacheCreationInputTokens": 0,
+    "inputTokens": 152,
+    "outputTokens": 538,
+    "cachedInputTokens": 1049403,
+    "cacheCreationInputTokens": 45417,
     "toolCalls": [
       {
         "name": "ToolSearch",
@@ -169,8 +169,7 @@
     ],
     "toolCallCount": 38,
     "turns": 83,
-    "numTurns": 0,
-    "wallClockMs": 0,
+    "wallClockMs": 240000,
     "contextWindowPeak": 53007,
     "totalCostUsd": 0,
     "modelsUsed": [],
@@ -193,7 +192,9 @@
         "command": "gh issue list --repo chief-builder-lab/clivsmcp-tier2-issue-workflow-c0271edd --json number,title,state 2>&1",
         "reason": "Bash is not allowed in the baseline arm"
       }
-    ]
+    ],
+    "incomplete": true,
+    "tokensEstimated": true
   },
   "success": {
     "pass": false,

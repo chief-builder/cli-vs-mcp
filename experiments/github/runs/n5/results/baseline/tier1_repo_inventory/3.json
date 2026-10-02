@@ -100,7 +100,6 @@
     ],
     "toolCallCount": 21,
     "turns": 48,
-    "numTurns": 22,
     "wallClockMs": 213540,
     "contextWindowPeak": 37058,
     "totalCostUsd": 0.37204435,
@@ -113,11 +112,13 @@
     "escapeToolUsed": false,
     "escapeToolCalls": [],
     "singleCliCommandPerToolCall": true,
-    "cliCommandGranularityViolations": []
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
   },
   "success": {
     "pass": false,
     "score": 0,
-    "notes": "missing or invalid JSON at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/n5/results/baseline/tier1_repo_inventory/3/repo_inventory.json"
+    "notes": "missing or invalid JSON at ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/n5/results/baseline/tier1_repo_inventory/3/repo_inventory.json"
   }
 }

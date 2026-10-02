@@ -8,10 +8,10 @@
   "timestamp": "2026-05-16T14:22:58.989Z",
   "seed": "d902fe4b25a8b9c2",
   "metrics": {
-    "inputTokens": 0,
-    "outputTokens": 0,
-    "cachedInputTokens": 0,
-    "cacheCreationInputTokens": 0,
+    "inputTokens": 3,
+    "outputTokens": 8,
+    "cachedInputTokens": 7492,
+    "cacheCreationInputTokens": 4628,
     "toolCalls": [
       {
         "name": "ToolSearch",
@@ -20,8 +20,7 @@
     ],
     "toolCallCount": 1,
     "turns": 3,
-    "numTurns": 0,
-    "wallClockMs": 0,
+    "wallClockMs": 240000,
     "contextWindowPeak": 12123,
     "totalCostUsd": 0,
     "modelsUsed": [],
@@ -30,12 +29,14 @@
     "escapeToolUsed": false,
     "escapeToolCalls": [],
     "singleCliCommandPerToolCall": true,
-    "cliCommandGranularityViolations": []
+    "cliCommandGranularityViolations": [],
+    "incomplete": true,
+    "tokensEstimated": true
   },
   "success": {
     "pass": false,
     "score": 0,
-    "notes": "missing /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/baseline/tier1_form/4/form_result.txt"
+    "notes": "missing ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/baseline/tier1_form/4/form_result.txt"
   },
   "error": "claude timed out after 240000ms"
 }

@@ -8,10 +8,10 @@
   "timestamp": "2026-05-15T03:54:55.052Z",
   "seed": "1adeead8627f9960",
   "metrics": {
-    "inputTokens": 0,
-    "outputTokens": 0,
-    "cachedInputTokens": 0,
-    "cacheCreationInputTokens": 0,
+    "inputTokens": 16,
+    "outputTokens": 143,
+    "cachedInputTokens": 97186,
+    "cacheCreationInputTokens": 8081,
     "toolCalls": [
       {
         "name": "ToolSearch",
@@ -44,8 +44,7 @@
     ],
     "toolCallCount": 7,
     "turns": 16,
-    "numTurns": 0,
-    "wallClockMs": 0,
+    "wallClockMs": 180000,
     "contextWindowPeak": 15576,
     "totalCostUsd": 0,
     "modelsUsed": [],
@@ -54,12 +53,14 @@
     "escapeToolUsed": false,
     "escapeToolCalls": [],
     "singleCliCommandPerToolCall": true,
-    "cliCommandGranularityViolations": []
+    "cliCommandGranularityViolations": [],
+    "incomplete": true,
+    "tokensEstimated": true
   },
   "success": {
     "pass": false,
     "score": 0,
-    "notes": "missing or invalid JSON at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/smoke-n1/results/baseline/tier1_products/1/products.json"
+    "notes": "missing or invalid JSON at ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/smoke-n1/results/baseline/tier1_products/1/products.json"
   },
   "error": "claude timed out after 180000ms"
 }
