@@ -50,6 +50,8 @@ describe('fixture server', () => {
     const s = await setup();
     expect((await get(s.port, '/%2e%2e/%2e%2e/outside-secret.txt')).status).toBe(403);
     expect((await get(s.port, '/..%2f..%2foutside-secret.txt')).status).toBe(403);
+    // A sibling directory that shares the root's name as a prefix is outside too.
+    expect((await get(s.port, '/..%2fsite-evil%2fx')).status).toBe(403);
   });
 
   it('returns 404 for missing files and 405 for unhandled methods', async () => {
@@ -72,7 +74,7 @@ describe('fixture server', () => {
       return true;
     });
     expect(await get(s.port, '/dynamic', 'POST', Buffer.from('abc'))).toEqual({ status: 200, text: 'got 3' });
-    expect((await get(s.port, '/boom')).status).toBe(500);
+    expect(await get(s.port, '/boom')).toEqual({ status: 500, text: 'internal error' });
     expect((await get(s.port, '/index.html')).status).toBe(200);
   });
 });

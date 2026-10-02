@@ -1,0 +1,3 @@
+# Committed run artifacts include scripts written by the agent under test; they are data, not project code.
+paths-ignore:
+  - experiments/*/runs/**
