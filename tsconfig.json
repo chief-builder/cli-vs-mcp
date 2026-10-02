@@ -1,5 +1,5 @@
 {
-  "include": ["harness/src/**/*.ts", "experiments/*/**/*.ts"],
+  "include": ["harness/src/**/*.ts", "experiments/*/**/*.ts", "test/**/*.ts", "vitest.config.ts"],
   "compilerOptions": {
     "module": "nodenext",
     "target": "es2022",
