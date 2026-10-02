@@ -37,9 +37,7 @@ function applyTemplate(tpl: string, vars: Record<string, string>): string {
 }
 
 function escapeHtml(s: string): string {
-  return s.replace(/[&<>"']/g, c => (
-    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!
-  ));
+  return s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 }
 
 function urlPath(req: IncomingMessage): string {
@@ -94,7 +92,8 @@ async function readJsonIfExists<T = unknown>(path: string): Promise<T | null> {
 const tier1_login: Task = {
   id: 'tier1_login',
   tier: 1,
-  prompt: (ctx: TaskContext) => `
+  prompt: (ctx: TaskContext) =>
+    `
 Navigate a browser to this URL:
   ${ctx.fixturesUrl}/login/index.html
 
@@ -110,7 +109,7 @@ Once the dashboard is visible, take a screenshot of the rendered page and save i
 When the screenshot has been written, you are done.
   `.trim(),
 
-  successCheck: async (ctx) => {
+  successCheck: async ctx => {
     const path = join(ctx.outputDir, 'login_landing.png');
     const ok = await fileExistsWithMinSize(path, 1024);
     if (!ok) {
@@ -126,21 +125,28 @@ When the screenshot has been written, you are done.
 const tier1_scrape: Task = {
   id: 'tier1_scrape',
   tier: 1,
-  setup: (seed) => genScrapeState(seed),
+  setup: seed => genScrapeState(seed),
 
   renderResponse: async (state, req, res) => {
     if (urlPath(req) !== '/scrape/article.html') return false;
-    if (req.method !== 'GET') { sendStatus(res, 405, 'method not allowed'); return true; }
+    if (req.method !== 'GET') {
+      sendStatus(res, 405, 'method not allowed');
+      return true;
+    }
     const s = state as ScrapeState;
     const tpl = await loadTemplate('scrape/article.html.tmpl');
-    const rows = s.rows.map(r =>
-      `<tr><td>${r.rank}</td><td>${escapeHtml(r.city)}</td><td>${escapeHtml(r.country)}</td><td>${r.population}</td></tr>`
-    ).join('\n      ');
+    const rows = s.rows
+      .map(
+        r =>
+          `<tr><td>${r.rank}</td><td>${escapeHtml(r.city)}</td><td>${escapeHtml(r.country)}</td><td>${r.population}</td></tr>`,
+      )
+      .join('\n      ');
     sendHtml(res, applyTemplate(tpl, { ROWS: rows }));
     return true;
   },
 
-  prompt: (ctx: TaskContext) => `
+  prompt: (ctx: TaskContext) =>
+    `
 Navigate a browser to this URL:
   ${ctx.fixturesUrl}/scrape/article.html
 
@@ -158,7 +164,7 @@ Order must match the on-page row order (rank 1 first).
 When the file is written, you are done.
   `.trim(),
 
-  successCheck: async (ctx) => {
+  successCheck: async ctx => {
     const path = join(ctx.outputDir, 'table.json');
     const data = await readJsonIfExists<Array<Partial<ScrapeState['rows'][number]>>>(path);
     if (!data) return { pass: false, score: 0, notes: `missing or invalid JSON at ${path}` };
@@ -178,20 +184,22 @@ When the file is written, you are done.
       const city = String(g.city ?? '').trim();
       const country = String(g.country ?? '').trim();
       const popRaw = g.population;
-      const population = typeof popRaw === 'string'
-        ? parseInt(String(popRaw).replace(/[, ]/g, ''), 10)
-        : (popRaw ?? 0);
+      const population = typeof popRaw === 'string' ? parseInt(String(popRaw).replace(/[, ]/g, ''), 10) : (popRaw ?? 0);
       const ok = rank === exp.rank && city === exp.city && country === exp.country && population === exp.population;
       if (ok) matched++;
-      else mismatches.push(`row ${i + 1}: expected ${JSON.stringify(exp)}, got ${JSON.stringify({ rank, city, country, population })}`);
+      else
+        mismatches.push(
+          `row ${i + 1}: expected ${JSON.stringify(exp)}, got ${JSON.stringify({ rank, city, country, population })}`,
+        );
     }
     const score = matched / expected.length;
     return {
       pass: matched === expected.length,
       score,
-      notes: matched === expected.length
-        ? `all ${expected.length} rows match`
-        : `${matched}/${expected.length} rows match\n${mismatches.join('\n')}`,
+      notes:
+        matched === expected.length
+          ? `all ${expected.length} rows match`
+          : `${matched}/${expected.length} rows match\n${mismatches.join('\n')}`,
     };
   },
 };
@@ -223,27 +231,38 @@ function parseFormBody(req: IncomingMessage, body: Buffer): Record<string, strin
 const tier1_form: Task = {
   id: 'tier1_form',
   tier: 1,
-  setup: (seed) => genFormState(seed),
+  setup: seed => genFormState(seed),
 
   renderResponse: async (state, req, res, body) => {
     const path = urlPath(req);
     const s = state as FormState;
 
     if (path === '/form/index.html' || path === '/form/') {
-      if (req.method !== 'GET') { sendStatus(res, 405, 'method not allowed'); return true; }
+      if (req.method !== 'GET') {
+        sendStatus(res, 405, 'method not allowed');
+        return true;
+      }
       const tpl = await loadTemplate('form/index.html.tmpl');
       sendHtml(res, applyTemplate(tpl, { NONCE: s.nonce }));
       return true;
     }
 
     if (path === '/form/submit') {
-      if (req.method !== 'POST') { sendStatus(res, 405, 'method not allowed'); return true; }
+      if (req.method !== 'POST') {
+        sendStatus(res, 405, 'method not allowed');
+        return true;
+      }
       const fields = parseFormBody(req, body);
-      if (!fields) { sendJson(res, { error: 'malformed body' }, 400); return true; }
-      if (fields.nonce !== s.nonce) { sendJson(res, { error: 'bad nonce' }, 400); return true; }
+      if (!fields) {
+        sendJson(res, { error: 'malformed body' }, 400);
+        return true;
+      }
+      if (fields.nonce !== s.nonce) {
+        sendJson(res, { error: 'bad nonce' }, 400);
+        return true;
+      }
       const exp = s.expected;
-      const mismatched = (Object.keys(exp) as Array<keyof typeof exp>)
-        .filter(k => fields[k] !== exp[k]);
+      const mismatched = (Object.keys(exp) as Array<keyof typeof exp>).filter(k => fields[k] !== exp[k]);
       if (mismatched.length > 0) {
         sendJson(res, { error: 'field mismatch', fields: mismatched }, 400);
         return true;
@@ -255,7 +274,8 @@ const tier1_form: Task = {
     return false;
   },
 
-  prompt: (ctx: TaskContext) => `
+  prompt: (ctx: TaskContext) =>
+    `
 Navigate a browser to this URL:
   ${ctx.fixturesUrl}/form/index.html
 
@@ -277,7 +297,7 @@ The token is per-trial and is only revealed after a successful submission of the
 When the file is written, you are done.
   `.trim(),
 
-  successCheck: async (ctx) => {
+  successCheck: async ctx => {
     const path = join(ctx.outputDir, 'form_result.txt');
     let text: string;
     try {
@@ -299,20 +319,21 @@ When the file is written, you are done.
 const tier1_products: Task = {
   id: 'tier1_products',
   tier: 1,
-  setup: (seed) => genProductsState(seed),
+  setup: seed => genProductsState(seed),
 
   renderResponse: async (state, req, res) => {
     const path = urlPath(req);
     if (!path.startsWith('/products/')) return false;
-    if (req.method !== 'GET') { sendStatus(res, 405, 'method not allowed'); return true; }
+    if (req.method !== 'GET') {
+      sendStatus(res, 405, 'method not allowed');
+      return true;
+    }
 
     const s = state as ProductsState;
 
     if (path === '/products/index.html' || path === '/products/') {
       const tpl = await loadTemplate('products/index.html.tmpl');
-      const items = s.products
-        .map((_, i) => `<li><a href="p${i + 1}.html">Item ${i + 1}</a></li>`)
-        .join('\n      ');
+      const items = s.products.map((_, i) => `<li><a href="p${i + 1}.html">Item ${i + 1}</a></li>`).join('\n      ');
       sendHtml(res, applyTemplate(tpl, { ITEMS: items }));
       return true;
     }
@@ -321,20 +342,27 @@ const tier1_products: Task = {
     if (m) {
       const idx = parseInt(m[1]!, 10) - 1;
       const product = s.products[idx];
-      if (!product) { sendStatus(res, 404, 'not found'); return true; }
+      if (!product) {
+        sendStatus(res, 404, 'not found');
+        return true;
+      }
       const tpl = await loadTemplate('products/product.html.tmpl');
-      sendHtml(res, applyTemplate(tpl, {
-        TITLE: escapeHtml(product.title),
-        PRICE: escapeHtml(product.price),
-        DESCRIPTION: escapeHtml(product.description),
-      }));
+      sendHtml(
+        res,
+        applyTemplate(tpl, {
+          TITLE: escapeHtml(product.title),
+          PRICE: escapeHtml(product.price),
+          DESCRIPTION: escapeHtml(product.description),
+        }),
+      );
       return true;
     }
 
     return false;
   },
 
-  prompt: (ctx: TaskContext) => `
+  prompt: (ctx: TaskContext) =>
+    `
 Navigate a browser to this URL:
   ${ctx.fixturesUrl}/products/index.html
 
@@ -353,7 +381,7 @@ The array must be in visit order — p1 first, p5 last.
 When the file is written, you are done.
   `.trim(),
 
-  successCheck: async (ctx) => {
+  successCheck: async ctx => {
     const path = join(ctx.outputDir, 'products.json');
     const data = await readJsonIfExists<Array<{ title?: string; price?: string }>>(path);
     if (!data) return { pass: false, score: 0, notes: `missing or invalid JSON at ${path}` };
@@ -372,15 +400,19 @@ When the file is written, you are done.
       const title = String(g.title ?? '').trim();
       const price = String(g.price ?? '').trim();
       if (title === exp.title && price === exp.price) matched++;
-      else mismatches.push(`p${i + 1}: expected ${JSON.stringify({ title: exp.title, price: exp.price })}, got ${JSON.stringify({ title, price })}`);
+      else
+        mismatches.push(
+          `p${i + 1}: expected ${JSON.stringify({ title: exp.title, price: exp.price })}, got ${JSON.stringify({ title, price })}`,
+        );
     }
     const score = matched / expected.length;
     return {
       pass: matched === expected.length,
       score,
-      notes: matched === expected.length
-        ? `all ${expected.length} products match`
-        : `${matched}/${expected.length} products match\n${mismatches.join('\n')}`,
+      notes:
+        matched === expected.length
+          ? `all ${expected.length} products match`
+          : `${matched}/${expected.length} products match\n${mismatches.join('\n')}`,
     };
   },
 };

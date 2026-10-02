@@ -34,9 +34,7 @@ function applyTemplate(tpl: string, vars: Record<string, string>): string {
 }
 
 function escapeHtml(s: string): string {
-  return s.replace(/[&<>"']/g, c => (
-    { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!
-  ));
+  return s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 }
 
 function urlPath(req: IncomingMessage): string {
@@ -117,15 +115,6 @@ function setSidCookie(sid: string): string {
   return `sid=${sid}; Path=/; HttpOnly; SameSite=Lax`;
 }
 
-async function readJsonIfExists<T = unknown>(path: string): Promise<T | null> {
-  try {
-    const raw = await readFile(path, 'utf-8');
-    return JSON.parse(raw) as T;
-  } catch {
-    return null;
-  }
-}
-
 async function readTextIfExists(path: string): Promise<string | null> {
   try {
     return await readFile(path, 'utf-8');
@@ -138,7 +127,10 @@ async function readTextIfExists(path: string): Promise<string | null> {
 // Task — tier2_checkout
 // ---------------------------------------------------------------------------
 
-function ensureCheckoutSession(state: CheckoutState, req: IncomingMessage): { sid: string; sess: CheckoutSession; setCookie?: string } {
+function ensureCheckoutSession(
+  state: CheckoutState,
+  req: IncomingMessage,
+): { sid: string; sess: CheckoutSession; setCookie?: string } {
   let sid = readSid(req);
   let setCookie: string | undefined;
   if (!sid || !state.sessions.has(sid)) {
@@ -156,7 +148,7 @@ function ensureCheckoutSession(state: CheckoutState, req: IncomingMessage): { si
 const tier2_checkout: Task = {
   id: 'tier2_checkout',
   tier: 2,
-  setup: (seed) => genCheckoutState(seed),
+  setup: seed => genCheckoutState(seed),
 
   renderResponse: async (rawState, req, res, body) => {
     const s = rawState as CheckoutState;
@@ -168,9 +160,14 @@ const tier2_checkout: Task = {
 
     // --- GET / (product list) -------------------------------------------
     if (path === '/checkout/index.html' || path === '/checkout/') {
-      if (req.method !== 'GET') { sendStatus(res, 405, 'method not allowed'); return true; }
+      if (req.method !== 'GET') {
+        sendStatus(res, 405, 'method not allowed');
+        return true;
+      }
       const tpl = await loadTemplate('checkout/index.html.tmpl');
-      const items = s.products.map(p => `
+      const items = s.products
+        .map(
+          p => `
         <li class="product" data-product-id="${p.id}">
           <div class="product-title">${escapeHtml(p.title)}</div>
           <div class="price">${escapeHtml(p.price)}</div>
@@ -178,14 +175,19 @@ const tier2_checkout: Task = {
             <input type="hidden" name="product_id" value="${p.id}" />
             <button type="submit" id="add-${p.id}">Add to cart</button>
           </form>
-        </li>`).join('\n');
+        </li>`,
+        )
+        .join('\n');
       sendHtml(res, applyTemplate(tpl, { PRODUCTS: items }), 200, cookieHeader);
       return true;
     }
 
     // --- POST /checkout/add ---------------------------------------------
     if (path === '/checkout/add') {
-      if (req.method !== 'POST') { sendStatus(res, 405, 'method not allowed'); return true; }
+      if (req.method !== 'POST') {
+        sendStatus(res, 405, 'method not allowed');
+        return true;
+      }
       const fields = parseBody(req, body);
       const pid = fields.product_id;
       if (!pid || !s.products.some(p => p.id === pid)) {
@@ -199,16 +201,21 @@ const tier2_checkout: Task = {
 
     // --- GET /checkout/cart ---------------------------------------------
     if (path === '/checkout/cart') {
-      if (req.method !== 'GET') { sendStatus(res, 405, 'method not allowed'); return true; }
+      if (req.method !== 'GET') {
+        sendStatus(res, 405, 'method not allowed');
+        return true;
+      }
       const tpl = await loadTemplate('checkout/cart.html.tmpl');
       let cartBody: string;
       if (sess.cart.length === 0) {
         cartBody = `<p class="empty" id="empty-cart">Your cart is empty.</p>`;
       } else {
-        const rows = sess.cart.map(pid => {
-          const p = s.products.find(x => x.id === pid)!;
-          return `<tr><td>${escapeHtml(p.title)}</td><td>${escapeHtml(p.price)}</td></tr>`;
-        }).join('\n');
+        const rows = sess.cart
+          .map(pid => {
+            const p = s.products.find(x => x.id === pid)!;
+            return `<tr><td>${escapeHtml(p.title)}</td><td>${escapeHtml(p.price)}</td></tr>`;
+          })
+          .join('\n');
         cartBody = `
           <table id="cart-table">
             <thead><tr><th>Item</th><th>Price</th></tr></thead>
@@ -224,9 +231,17 @@ const tier2_checkout: Task = {
 
     // --- GET /checkout/shipping -----------------------------------------
     if (path === '/checkout/shipping') {
-      if (req.method !== 'GET') { sendStatus(res, 405, 'method not allowed'); return true; }
+      if (req.method !== 'GET') {
+        sendStatus(res, 405, 'method not allowed');
+        return true;
+      }
       if (sess.cart.length === 0) {
-        sendHtml(res, `<!doctype html><body><p id="error">Cart is empty. <a href="/checkout/index.html">Go back</a>.</p></body>`, 200, cookieHeader);
+        sendHtml(
+          res,
+          `<!doctype html><body><p id="error">Cart is empty. <a href="/checkout/index.html">Go back</a>.</p></body>`,
+          200,
+          cookieHeader,
+        );
         return true;
       }
       const tpl = await loadTemplate('checkout/shipping.html.tmpl');
@@ -236,8 +251,14 @@ const tier2_checkout: Task = {
 
     // --- POST /checkout/shipping/submit ---------------------------------
     if (path === '/checkout/shipping/submit') {
-      if (req.method !== 'POST') { sendStatus(res, 405, 'method not allowed'); return true; }
-      if (sess.cart.length === 0) { sendStatus(res, 400, 'empty cart'); return true; }
+      if (req.method !== 'POST') {
+        sendStatus(res, 405, 'method not allowed');
+        return true;
+      }
+      if (sess.cart.length === 0) {
+        sendStatus(res, 400, 'empty cart');
+        return true;
+      }
       const fields = parseBody(req, body);
       const exp = s.expectedShipping;
       const got = {
@@ -261,29 +282,47 @@ const tier2_checkout: Task = {
 
     // --- GET /checkout/confirm ------------------------------------------
     if (path === '/checkout/confirm') {
-      if (req.method !== 'GET') { sendStatus(res, 405, 'method not allowed'); return true; }
+      if (req.method !== 'GET') {
+        sendStatus(res, 405, 'method not allowed');
+        return true;
+      }
       if (sess.stage !== 'confirm' || !sess.shipping) {
-        sendHtml(res, `<!doctype html><body><p id="error">Shipping not completed yet. <a href="/checkout/shipping">Go back</a>.</p></body>`, 200, cookieHeader);
+        sendHtml(
+          res,
+          `<!doctype html><body><p id="error">Shipping not completed yet. <a href="/checkout/shipping">Go back</a>.</p></body>`,
+          200,
+          cookieHeader,
+        );
         return true;
       }
       const tpl = await loadTemplate('checkout/confirm.html.tmpl');
-      const items = sess.cart.map(pid => {
-        const p = s.products.find(x => x.id === pid)!;
-        return `<tr><td>${escapeHtml(p.title)}</td><td>${escapeHtml(p.price)}</td></tr>`;
-      }).join('\n');
-      sendHtml(res, applyTemplate(tpl, {
-        ITEMS: items,
-        SHIP_NAME: escapeHtml(sess.shipping.name),
-        SHIP_ADDRESS: escapeHtml(sess.shipping.address),
-        SHIP_CITY: escapeHtml(sess.shipping.city),
-        SHIP_ZIP: escapeHtml(sess.shipping.zip),
-      }), 200, cookieHeader);
+      const items = sess.cart
+        .map(pid => {
+          const p = s.products.find(x => x.id === pid)!;
+          return `<tr><td>${escapeHtml(p.title)}</td><td>${escapeHtml(p.price)}</td></tr>`;
+        })
+        .join('\n');
+      sendHtml(
+        res,
+        applyTemplate(tpl, {
+          ITEMS: items,
+          SHIP_NAME: escapeHtml(sess.shipping.name),
+          SHIP_ADDRESS: escapeHtml(sess.shipping.address),
+          SHIP_CITY: escapeHtml(sess.shipping.city),
+          SHIP_ZIP: escapeHtml(sess.shipping.zip),
+        }),
+        200,
+        cookieHeader,
+      );
       return true;
     }
 
     // --- POST /checkout/place_order -------------------------------------
     if (path === '/checkout/place_order') {
-      if (req.method !== 'POST') { sendStatus(res, 405, 'method not allowed'); return true; }
+      if (req.method !== 'POST') {
+        sendStatus(res, 405, 'method not allowed');
+        return true;
+      }
       if (sess.stage !== 'confirm' || !sess.shipping || sess.cart.length === 0) {
         sendStatus(res, 400, 'cannot place order in current stage');
         return true;
@@ -327,7 +366,7 @@ When the file is written, you are done.
 `.trim();
   },
 
-  successCheck: async (ctx) => {
+  successCheck: async ctx => {
     const path = join(ctx.outputDir, 'order_id.txt');
     const text = await readTextIfExists(path);
     const s = ctx.state as CheckoutState;
@@ -386,7 +425,7 @@ function ensureRecoverySession(state: RecoveryState, req: IncomingMessage): { si
 const tier2_recovery: Task = {
   id: 'tier2_recovery',
   tier: 2,
-  setup: (seed) => genRecoveryState(seed),
+  setup: seed => genRecoveryState(seed),
 
   renderResponse: async (rawState, req, res, body) => {
     const s = rawState as RecoveryState;
@@ -398,21 +437,32 @@ const tier2_recovery: Task = {
 
     // --- GET /recovery/index.html ---------------------------------------
     if (path === '/recovery/index.html' || path === '/recovery/') {
-      if (req.method !== 'GET') { sendStatus(res, 405, 'method not allowed'); return true; }
+      if (req.method !== 'GET') {
+        sendStatus(res, 405, 'method not allowed');
+        return true;
+      }
       const tpl = await loadTemplate('recovery/index.html.tmpl');
-      sendHtml(res, applyTemplate(tpl, {
-        NONCE: s.nonce,
-        VAL_NAME: '',
-        VAL_EMAIL: '',
-        VAL_CODE: '',
-        ERRORS: '',
-      }), 200, cookieHeader);
+      sendHtml(
+        res,
+        applyTemplate(tpl, {
+          NONCE: s.nonce,
+          VAL_NAME: '',
+          VAL_EMAIL: '',
+          VAL_CODE: '',
+          ERRORS: '',
+        }),
+        200,
+        cookieHeader,
+      );
       return true;
     }
 
     // --- POST /recovery/submit ------------------------------------------
     if (path === '/recovery/submit') {
-      if (req.method !== 'POST') { sendStatus(res, 405, 'method not allowed'); return true; }
+      if (req.method !== 'POST') {
+        sendStatus(res, 405, 'method not allowed');
+        return true;
+      }
       const fields = parseBody(req, body);
       if (fields.nonce !== s.nonce) {
         sendStatus(res, 400, 'bad nonce');
@@ -427,27 +477,38 @@ const tier2_recovery: Task = {
 
       const errors: string[] = [];
       if (name !== s.expectedName) {
-        errors.push(`<div class="error" id="error-name">Name does not match the account on file. Enter "${escapeHtml(s.expectedName)}".</div>`);
+        errors.push(
+          `<div class="error" id="error-name">Name does not match the account on file. Enter "${escapeHtml(s.expectedName)}".</div>`,
+        );
       }
       if (email !== s.expectedEmail) {
-        errors.push(`<div class="error" id="error-email">Email does not match the account on file. Enter "${escapeHtml(s.expectedEmail)}".</div>`);
+        errors.push(
+          `<div class="error" id="error-email">Email does not match the account on file. Enter "${escapeHtml(s.expectedEmail)}".</div>`,
+        );
       }
       if (code !== s.requiredCode) {
         // The error reveals the per-trial code — this is the introspection
         // point that distinguishes the tasks. Agent must read this from the
         // DOM after the failed submit.
-        errors.push(`<div class="error" id="error-code">The verification code is "${escapeHtml(s.requiredCode)}". Enter it exactly to proceed.</div>`);
+        errors.push(
+          `<div class="error" id="error-code">The verification code is "${escapeHtml(s.requiredCode)}". Enter it exactly to proceed.</div>`,
+        );
       }
 
       if (errors.length > 0) {
         const tpl = await loadTemplate('recovery/index.html.tmpl');
-        sendHtml(res, applyTemplate(tpl, {
-          NONCE: s.nonce,
-          VAL_NAME: escapeHtml(name),
-          VAL_EMAIL: escapeHtml(email),
-          VAL_CODE: escapeHtml(code),
-          ERRORS: errors.join('\n'),
-        }), 200, cookieHeader);
+        sendHtml(
+          res,
+          applyTemplate(tpl, {
+            NONCE: s.nonce,
+            VAL_NAME: escapeHtml(name),
+            VAL_EMAIL: escapeHtml(email),
+            VAL_CODE: escapeHtml(code),
+            ERRORS: errors.join('\n'),
+          }),
+          200,
+          cookieHeader,
+        );
         return true;
       }
 
@@ -459,7 +520,8 @@ const tier2_recovery: Task = {
     return false;
   },
 
-  prompt: (ctx: TaskContext) => `
+  prompt: (ctx: TaskContext) =>
+    `
 Navigate a browser to this URL:
   ${ctx.fixturesUrl}/recovery/index.html
 
@@ -478,7 +540,7 @@ Save just the token to:
 When the file is written, you are done.
 `.trim(),
 
-  successCheck: async (ctx) => {
+  successCheck: async ctx => {
     const path = join(ctx.outputDir, 'recovery_token.txt');
     const text = await readTextIfExists(path);
     const s = ctx.state as RecoveryState;

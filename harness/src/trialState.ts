@@ -1,4 +1,4 @@
-import { createHash, randomBytes } from 'node:crypto';
+import { createHash } from 'node:crypto';
 
 // Deterministic PRNG (mulberry32) seeded from FNV-1a hash of a hex seed.
 // Avoids adding seedrandom as a dep. Reproducible across runs given the
@@ -28,7 +28,9 @@ function rngFromSeed(seed: string, salt: string): () => number {
 function hexN(rng: () => number, len: number): string {
   let s = '';
   while (s.length < len) {
-    s += Math.floor(rng() * 0x10000).toString(16).padStart(4, '0');
+    s += Math.floor(rng() * 0x10000)
+      .toString(16)
+      .padStart(4, '0');
   }
   return s.slice(0, len);
 }
@@ -37,17 +39,9 @@ function intBetween(rng: () => number, lo: number, hi: number): number {
   return Math.floor(rng() * (hi - lo + 1)) + lo;
 }
 
-/** Generates a fresh per-trial seed (16 hex chars, ~64 bits of entropy). */
-export function mkSeed(): string {
-  return randomBytes(8).toString('hex');
-}
-
 /** Deterministic paired seed shared by every arm for the same task/trial. */
 export function mkPairedSeed(experiment: string, runName: string, taskId: string, trialN: number): string {
-  return createHash('sha256')
-    .update(`${experiment}:${runName}:${taskId}:${trialN}`)
-    .digest('hex')
-    .slice(0, 16);
+  return createHash('sha256').update(`${experiment}:${runName}:${taskId}:${trialN}`).digest('hex').slice(0, 16);
 }
 
 // ---------------------------------------------------------------------------
@@ -123,8 +117,8 @@ export interface FormFields {
 }
 
 export interface FormState {
-  nonce: string;       // 16 hex; rendered into a hidden form field on GET
-  token: string;       // 32 hex; revealed only on a valid POST
+  nonce: string; // 16 hex; rendered into a hidden form field on GET
+  token: string; // 32 hex; revealed only on a valid POST
   expected: FormFields;
 }
 
@@ -133,7 +127,7 @@ export const FORM_EXPECTED: FormFields = {
   email: 'test@example.com',
   phone: '+1-555-0100',
   company: 'Acme Corp',
-  country: 'US',                      // <select> value, not the visible label
+  country: 'US', // <select> value, not the visible label
   message: 'This is a test message.',
 };
 
@@ -151,13 +145,13 @@ export function genFormState(seed: string): FormState {
 // ---------------------------------------------------------------------------
 
 export interface CheckoutProduct {
-  id: string;       // "p1" | "p2" | "p3"
-  title: string;    // "Product-XXXXXX"
-  price: string;    // "$NNN.NN"
+  id: string; // "p1" | "p2" | "p3"
+  title: string; // "Product-XXXXXX"
+  price: string; // "$NNN.NN"
 }
 
 export interface CheckoutSession {
-  cart: string[];                                                    // product ids
+  cart: string[]; // product ids
   shipping?: { name: string; address: string; city: string; zip: string };
   stage: 'browsing' | 'shipping' | 'confirm' | 'placed';
   orderId?: string;
@@ -166,7 +160,7 @@ export interface CheckoutSession {
 export interface CheckoutState {
   products: CheckoutProduct[];
   targetProductId: string;
-  targetSubstring: string;   // 4 hex chars present in exactly one product title
+  targetSubstring: string; // 4 hex chars present in exactly one product title
   expectedShipping: { name: string; address: string; city: string; zip: string };
   sessions: Map<string, CheckoutSession>;
   placedOrders: Array<{ sid: string; orderId: string; productIds: string[] }>;
@@ -185,7 +179,7 @@ export function genCheckoutState(seed: string): CheckoutState {
   // Each product gets a 6-hex title. The first 4 hex of the target product's
   // title double as the substring the agent must match. Other products share
   // no overlap because their hex strings are independently sampled.
-  let targetIdx = intBetween(rng, 0, 2);
+  const targetIdx = intBetween(rng, 0, 2);
   for (let i = 0; i < 3; i++) {
     const title = 'Product-' + hexN(rng, 6);
     const dollars = intBetween(rng, 10, 999);
@@ -218,8 +212,8 @@ export interface RecoverySession {
 
 export interface RecoveryState {
   nonce: string;
-  token: string;           // 32 hex; revealed only on valid POST
-  requiredCode: string;    // 8 hex; agent learns this from the inline error
+  token: string; // 32 hex; revealed only on valid POST
+  requiredCode: string; // 8 hex; agent learns this from the inline error
   expectedName: string;
   expectedEmail: string;
   sessions: Map<string, RecoverySession>;

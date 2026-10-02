@@ -1,13 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { Task, TaskContext } from '../../../harness/src/tasks.js';
-import {
-  ghConfigFromEnv,
-  provisionRepo,
-  repoNameFor,
-  type ProvisionedRepo,
-  type RepoSeed,
-} from '../provisioner.js';
+import { ghConfigFromEnv, provisionRepo, repoNameFor, type ProvisionedRepo, type RepoSeed } from '../provisioner.js';
 
 function hexFromSeed(seed: string, salt: string, len: number): string {
   // FNV-1a derived hex — same source style as harness/src/trialState.ts so
@@ -52,7 +46,7 @@ const tier1_repo_inventory: Task = {
   id: 'tier1_repo_inventory',
   tier: 1,
 
-  setup: async (seed) => {
+  setup: async seed => {
     const cfg = ghConfigFromEnv();
     const marker = hexFromSeed(seed, 'marker', 16);
     const expectedDescription = `cli-vs-mcp sandbox repo (${seed.slice(0, 6)})`;
@@ -81,7 +75,7 @@ const tier1_repo_inventory: Task = {
     } satisfies RepoInventoryState;
   },
 
-  cleanup: async (state) => {
+  cleanup: async state => {
     const s = state as RepoInventoryState | null;
     if (s) await s.repo.cleanupHandle();
   },
@@ -105,7 +99,7 @@ When the file is written, you are done.
     `.trim();
   },
 
-  successCheck: async (ctx) => {
+  successCheck: async ctx => {
     const path = join(ctx.outputDir, 'repo_inventory.json');
     const data = await readJsonIfExists<{
       description?: string;
@@ -117,9 +111,10 @@ When the file is written, you are done.
     const expected = ctx.state as RepoInventoryState;
 
     const descOk = (data.description ?? '').trim() === expected.expectedDescription;
-    const topicsOk = Array.isArray(data.topics)
-      && data.topics.length === expected.expectedTopics.length
-      && expected.expectedTopics.every(t => data.topics!.includes(t));
+    const topicsOk =
+      Array.isArray(data.topics) &&
+      data.topics.length === expected.expectedTopics.length &&
+      expected.expectedTopics.every(t => data.topics!.includes(t));
     const branchOk = (data.default_branch ?? '').trim() === expected.expectedDefaultBranch;
     const markerOk = (data.readme_marker ?? '').trim() === expected.hiddenMarker;
     const checks = [descOk, topicsOk, branchOk, markerOk];
@@ -128,9 +123,10 @@ When the file is written, you are done.
     return {
       pass: matched === checks.length,
       score,
-      notes: matched === checks.length
-        ? 'all repo facts match'
-        : `mismatch: description=${descOk} topics=${topicsOk} default_branch=${branchOk} readme_marker=${markerOk}`,
+      notes:
+        matched === checks.length
+          ? 'all repo facts match'
+          : `mismatch: description=${descOk} topics=${topicsOk} default_branch=${branchOk} readme_marker=${markerOk}`,
       extras: {
         repoFullName: expected.repo.fullName,
         expectedDescription: expected.expectedDescription,
@@ -155,7 +151,7 @@ const tier1_issue_triage: Task = {
   id: 'tier1_issue_triage',
   tier: 1,
 
-  setup: async (seed) => {
+  setup: async seed => {
     const cfg = ghConfigFromEnv();
     const hiddenMarker = `MARKER-${hexFromSeed(seed, 'issue-marker', 12).toUpperCase()}`;
     const targetIssueTitle = `Target issue ${hexFromSeed(seed, 'issue-title', 6)}`;
@@ -204,7 +200,7 @@ const tier1_issue_triage: Task = {
     return { repo, hiddenMarker, targetIssueTitle, targetLabels } satisfies IssueTriageState;
   },
 
-  cleanup: async (state) => {
+  cleanup: async state => {
     const s = state as IssueTriageState | null;
     if (s) await s.repo.cleanupHandle();
   },
@@ -230,7 +226,7 @@ When the file is written, you are done.
     `.trim();
   },
 
-  successCheck: async (ctx) => {
+  successCheck: async ctx => {
     const path = join(ctx.outputDir, 'issue_triage.json');
     const data = await readJsonIfExists<{
       issue_number?: number;
@@ -252,9 +248,10 @@ When the file is written, you are done.
     return {
       pass: matched === checks.length,
       score: matched / checks.length,
-      notes: matched === checks.length
-        ? 'issue found, fields match'
-        : `mismatch: title=${titleOk} marker=${markerOk} labels=${labelsOk} number=${numberOk}`,
+      notes:
+        matched === checks.length
+          ? 'issue found, fields match'
+          : `mismatch: title=${titleOk} marker=${markerOk} labels=${labelsOk} number=${numberOk}`,
       extras: { repoFullName: expected.repo.fullName, expectedTitle: expected.targetIssueTitle },
     };
   },
@@ -275,7 +272,7 @@ const tier1_pr_diff_answer: Task = {
   id: 'tier1_pr_diff_answer',
   tier: 1,
 
-  setup: async (seed) => {
+  setup: async seed => {
     const cfg = ghConfigFromEnv();
     const answerFunctionName = `fn_${hexFromSeed(seed, 'fn', 6)}`;
     const changedFile = 'src/widget.ts';
@@ -310,11 +307,9 @@ const tier1_pr_diff_answer: Task = {
     const repo = await provisionRepo(cfg, repoNameFor('tier1_pr_diff_answer', seed), repoSeed);
 
     // Create branch + updated file + PR
-    const baseRef = await fetchJson(
-      cfg.host,
-      cfg.controllerToken,
-      `/repos/${repo.fullName}/git/refs/heads/main`,
-    ) as { object: { sha: string } };
+    const baseRef = (await fetchJson(cfg.host, cfg.controllerToken, `/repos/${repo.fullName}/git/refs/heads/main`)) as {
+      object: { sha: string };
+    };
     const branchName = `feature-${seed.slice(0, 8)}`;
     await postJson(cfg.host, cfg.controllerToken, `/repos/${repo.fullName}/git/refs`, {
       ref: `refs/heads/${branchName}`,
@@ -327,11 +322,11 @@ const tier1_pr_diff_answer: Task = {
     let currentFile: { sha: string } | undefined;
     for (let attempt = 0; attempt < 6; attempt++) {
       try {
-        currentFile = await fetchJson(
+        currentFile = (await fetchJson(
           cfg.host,
           cfg.controllerToken,
           `/repos/${repo.fullName}/contents/${encodeURI(changedFile)}?ref=${branchName}`,
-        ) as { sha: string };
+        )) as { sha: string };
         break;
       } catch (err) {
         if (attempt === 5 || !/-> 404:/.test(String(err))) throw err;
@@ -346,12 +341,12 @@ const tier1_pr_diff_answer: Task = {
       branch: branchName,
     });
 
-    const pr = await postJson(cfg.host, cfg.controllerToken, `/repos/${repo.fullName}/pulls`, {
+    const pr = (await postJson(cfg.host, cfg.controllerToken, `/repos/${repo.fullName}/pulls`, {
       title: `Add ${answerFunctionName}`,
       head: branchName,
       base: 'main',
       body: `This PR adds a new exported function to ${changedFile}.`,
-    }) as { number: number };
+    })) as { number: number };
 
     return {
       repo,
@@ -361,7 +356,7 @@ const tier1_pr_diff_answer: Task = {
     } satisfies PrDiffAnswerState;
   },
 
-  cleanup: async (state) => {
+  cleanup: async state => {
     const s = state as PrDiffAnswerState | null;
     if (s) await s.repo.cleanupHandle();
   },
@@ -384,7 +379,7 @@ When the file is written, you are done.
     `.trim();
   },
 
-  successCheck: async (ctx) => {
+  successCheck: async ctx => {
     const path = join(ctx.outputDir, 'pr_diff.json');
     const data = await readJsonIfExists<{
       pr_number?: number;
@@ -402,9 +397,10 @@ When the file is written, you are done.
     return {
       pass: matched === checks.length,
       score: matched / checks.length,
-      notes: matched === checks.length
-        ? 'PR diff answers match'
-        : `mismatch: pr_number=${numberOk} changed_file=${fileOk} added_function_name=${fnOk}`,
+      notes:
+        matched === checks.length
+          ? 'PR diff answers match'
+          : `mismatch: pr_number=${numberOk} changed_file=${fileOk} added_function_name=${fnOk}`,
       extras: { repoFullName: expected.repo.fullName, expectedFn: expected.answerFunctionName },
     };
   },
@@ -470,21 +466,17 @@ const tier1_workflow_status: Task = {
   id: 'tier1_workflow_status',
   tier: 1,
 
-  setup: async (seed) => {
+  setup: async seed => {
     const cfg = ghConfigFromEnv();
     const marker = hexFromSeed(seed, 'workflow-name', 8).toUpperCase();
     const expectedWorkflowName = `Build ${marker}`;
 
     // Bare repo (no auto_init); we commit a single workflow file ourselves so
     // the resulting push gives us a deterministic head_sha to verify against.
-    const repo = await provisionRepo(
-      cfg,
-      repoNameFor('tier1_workflow_status', seed),
-      {
-        description: 'tier1_workflow_status sandbox',
-        files: [{ path: 'README.md', content: '# workflow status sandbox\n' }],
-      },
-    );
+    const repo = await provisionRepo(cfg, repoNameFor('tier1_workflow_status', seed), {
+      description: 'tier1_workflow_status sandbox',
+      files: [{ path: 'README.md', content: '# workflow status sandbox\n' }],
+    });
 
     // Push the workflow file. The push triggers the workflow on the `push` event.
     const workflowYaml = [
@@ -497,12 +489,15 @@ const tier1_workflow_status: Task = {
       `      - run: echo "build ${marker}"`,
       ``,
     ].join('\n');
-    const putResp = await putJson(cfg.host, cfg.controllerToken,
+    const putResp = (await putJson(
+      cfg.host,
+      cfg.controllerToken,
       `/repos/${repo.fullName}/contents/${encodeURI('.github/workflows/seeded.yml')}`,
       {
         message: `add workflow ${marker}`,
         content: Buffer.from(workflowYaml, 'utf-8').toString('base64'),
-      }) as { commit: { sha: string } };
+      },
+    )) as { commit: { sha: string } };
     const expectedHeadSha = putResp.commit.sha;
 
     // Poll for the run to appear and complete. Workflow runs queue and execute
@@ -511,16 +506,19 @@ const tier1_workflow_status: Task = {
     let runId = -1;
     let conclusion: string | null = null;
     while (Date.now() < deadline) {
-      const runs = await fetchJson(cfg.host, cfg.controllerToken,
-        `/repos/${repo.fullName}/actions/runs?per_page=5`) as {
-          workflow_runs: Array<{
-            id: number;
-            status: string;
-            conclusion: string | null;
-            head_sha: string;
-            name?: string;
-          }>;
-        };
+      const runs = (await fetchJson(
+        cfg.host,
+        cfg.controllerToken,
+        `/repos/${repo.fullName}/actions/runs?per_page=5`,
+      )) as {
+        workflow_runs: Array<{
+          id: number;
+          status: string;
+          conclusion: string | null;
+          head_sha: string;
+          name?: string;
+        }>;
+      };
       const match = runs.workflow_runs.find(r => r.head_sha === expectedHeadSha);
       if (match) {
         runId = match.id;
@@ -534,8 +532,8 @@ const tier1_workflow_status: Task = {
 
     if (conclusion !== 'success') {
       throw new Error(
-        `workflow run did not complete with success within 90s `
-        + `(runId=${runId}, conclusion=${conclusion ?? 'still-pending'})`,
+        `workflow run did not complete with success within 90s ` +
+          `(runId=${runId}, conclusion=${conclusion ?? 'still-pending'})`,
       );
     }
 
@@ -549,7 +547,7 @@ const tier1_workflow_status: Task = {
     } satisfies WorkflowStatusState;
   },
 
-  cleanup: async (state) => {
+  cleanup: async state => {
     const s = state as WorkflowStatusState | null;
     if (s) await s.repo.cleanupHandle();
   },
@@ -572,7 +570,7 @@ When the file is written, you are done.
     `.trim();
   },
 
-  successCheck: async (ctx) => {
+  successCheck: async ctx => {
     const path = join(ctx.outputDir, 'run_status.json');
     const data = await readJsonIfExists<{
       workflow_name?: string;
@@ -591,9 +589,10 @@ When the file is written, you are done.
     return {
       pass: matched === checks.length,
       score,
-      notes: matched === checks.length
-        ? 'workflow run fields all match'
-        : `mismatch: name=${nameOk} conclusion=${conclusionOk} head_sha=${headOk}`,
+      notes:
+        matched === checks.length
+          ? 'workflow run fields all match'
+          : `mismatch: name=${nameOk} conclusion=${conclusionOk} head_sha=${headOk}`,
       extras: {
         repoFullName: expected.repo.fullName,
         runId: expected.runId,

@@ -29,11 +29,7 @@ export interface FixtureServer {
  * returns true the request was handled (response written). If false, the
  * server tries to serve a matching file under `rootDir`.
  */
-export type FixtureRenderer = (
-  req: IncomingMessage,
-  res: ServerResponse,
-  body: Buffer,
-) => Promise<boolean> | boolean;
+export type FixtureRenderer = (req: IncomingMessage, res: ServerResponse, body: Buffer) => Promise<boolean> | boolean;
 
 const MAX_BODY_BYTES = 1_000_000;
 
@@ -57,10 +53,7 @@ async function readBody(req: IncomingMessage): Promise<Buffer> {
  * dynamic content can be served from process memory without ever writing it
  * to disk — closing the filesystem-side cheat path for baseline.
  */
-export async function startFixtureServer(
-  rootDir: string,
-  renderer?: FixtureRenderer,
-): Promise<FixtureServer> {
+export async function startFixtureServer(rootDir: string, renderer?: FixtureRenderer): Promise<FixtureServer> {
   const normalizedRoot = normalize(rootDir);
 
   const server: Server = createServer(async (req, res) => {
@@ -135,8 +128,9 @@ export async function startFixtureServer(
   return {
     port: addr.port,
     url: `http://localhost:${addr.port}`,
-    close: () => new Promise<void>((resolve, reject) => {
-      server.close(err => (err ? reject(err) : resolve()));
-    }),
+    close: () =>
+      new Promise<void>((resolve, reject) => {
+        server.close(err => (err ? reject(err) : resolve()));
+      }),
   };
 }
