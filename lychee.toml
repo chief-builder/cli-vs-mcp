@@ -1,0 +1,11 @@
+# Link check config for CI (lychee).
+max_retries = 3
+accept = [200, 206, 429]
+exclude = [
+  # Loopback examples in docs.
+  '^https?://(localhost|127\.0\.0\.1)',
+  # Requires sign-in, returns 404 to anonymous clients.
+  '^https://github\.com/chief-builder/cli-vs-mcp/security/advisories/new',
+  # The CI badge and workflow page only exist once ci.yml is on main.
+  '^https://github\.com/chief-builder/cli-vs-mcp/actions/workflows/ci\.yml',
+]
