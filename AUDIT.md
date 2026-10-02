@@ -495,3 +495,25 @@ Each item becomes one or more small conventional commits on this branch.
 - W2 / S1 / S2 at the source: switch arms to `--tools` (and possibly `--bare` with `--add-dir`) and extend classifiers to allow-lists. This changes trial conditions, so the committed n5 numbers would describe the old configuration until re-run.
 - Retire the v1 docs pages, or label them as archived.
 - Re-run n5 with current Claude Code and pinned subjects.
+
+---
+
+## Addendum: findings during Phase 2 (2026-10-02)
+
+- **The env scrub never worked.** execa's `extendEnv` defaults to `true`, which merges `process.env` back into the
+  child, so deleting keys from the env object had no effect. The `90d0dd7` fix therefore did not remove the controller
+  token. Fixed with `extendEnv: false`; a test asserts a scrubbed variable is invisible to a real child process.
+- **An empty `GH_CONFIG_DIR` alone does not stop `gh auth token`.** On macOS `gh` still reads the keychain. Claude
+  Code's OS sandbox (`sandbox.enabled`, `allowUnsandboxedCommands: false`, `filesystem.denyRead: ["~/"]`) does block it.
+  This was verified by running Bash commands through `claude -p` that print only AVAILABLE/BLOCKED. While testing, an
+  unsandboxed probe printed the author's `gh` OAuth token into the local session log (not into the repo); the author
+  was asked to rotate it.
+- **`--tools` exists and works.** It restricts the built-in tool set; unknown names are ignored. Deny rules
+  `Read(~/**)` / `Edit(~/**)` hold under `bypassPermissions` for Read, Glob and Grep. Verified with `verify-arms` on
+  Claude Code 2.1.287: baseline `Glob Grep Read ToolSearch Write`, skill `Bash Skill ToolSearch Write`, mcp
+  `ToolSearch Write` plus 23 Playwright MCP tools.
+- **Re-classification of committed runs** with the allow-list classifier flipped 4 trials to invalid surface, all of
+  them failed trials, so no headline pass/valid number changed.
+- **Live GitHub verification is blocked.** The controller token in the local `.env` returns 401 Bad credentials, so no
+  GitHub trial could be run (nothing was created).
+- **TypeScript 7** passes `tsc` but typescript-eslint 8.71 refuses it, so TypeScript is held at 6.0.3.
