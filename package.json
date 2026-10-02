@@ -3,25 +3,25 @@
   "version": "1.0.0",
   "private": true,
   "description": "CLI vs MCP experiments — Playwright and GitHub tool-surface comparison",
+  "license": "MIT",
   "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "packageManager": "pnpm@12.8.1",
   "scripts": {
     "harness": "node --import tsx harness/src/cli.ts",
     "typecheck": "tsc --noEmit"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild"
-    ]
-  },
   "devDependencies": {
     "@playwright/cli": "0.1.13",
-    "@types/node": "^25.6.2",
-    "tsx": "^4.21.0",
-    "typescript": "^6.0.3"
+    "@types/node": "^24.19.0",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
   },
   "dependencies": {
-    "commander": "^14.0.3",
-    "execa": "^9.6.1",
-    "zod": "^4.4.3"
+    "commander": "^15.0.0",
+    "execa": "^10.0.1",
+    "zod": "^4.6.5"
   }
 }
