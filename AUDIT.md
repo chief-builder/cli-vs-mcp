@@ -544,3 +544,15 @@ Each item becomes one or more small conventional commits on this branch.
   The artifacts contain no token-shaped strings or home paths, and no sandbox repos were left behind.
 - **Residual.** The baseline's file tools can still read outside `~` and the repo, e.g. `$TMPDIR` (it made 28 such
   calls). Results are redacted; full confinement needs a container.
+
+### Re-run `n5-v2` (2026-10-03)
+
+- 161 trials: skill and mcp at N=5, baseline at N=2, plus the directed variant (skill only, N=5). Run under the
+  current isolation on Claude Code 2.1.288 with the same pinned subjects. Results are in
+  `experiments/*/runs/n5-v2/findings.md`; the README, findings and docs site now lead with them, and `n5` is kept as
+  history.
+- Harness problems found during the run, all fixed and covered by tests:
+  - The controller token lacked Actions: read, and the setup failure leaked repos (`8a6cc40`).
+  - Claude Code's `__unparsedToolInput` caused 2 false escapes (`40521c2`).
+  - The `issue_create` checker window was too short, causing 1 false negative, kept as recorded (`40521c2`).
+  - Tier 2 needed re-classification with `github-rw` (`8d113c0`).

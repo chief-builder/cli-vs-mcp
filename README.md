@@ -106,24 +106,29 @@ A full N=5 run of one experiment is several hundred `claude -p` calls. Budget ac
 
 ### GitHub experiment
 
-Create a dedicated sandbox org and two fine-grained PATs scoped to it, then put them in `.env` at the repo root
+Create a dedicated sandbox org and three fine-grained PATs scoped to it, then put them in `.env` at the repo root
 (gitignored and loaded automatically by `pnpm harness`):
 
 ```bash
 GITHUB_SANDBOX_OWNER=my-sandbox-org
-GITHUB_CONTROLLER_TOKEN=github_pat_...   # Administration, Contents, Issues, Pull requests, Workflows: write
-GITHUB_AGENT_TOKEN=github_pat_...        # Tier 1: Metadata, Contents, Issues, Pull requests, Actions: read
-                                         # Tier 2 (github-rw): Contents, Issues, Pull requests: write
+GITHUB_CONTROLLER_TOKEN=github_pat_...   # Administration, Contents, Issues, Pull requests, Workflows: write; Actions: read
+GITHUB_AGENT_TOKEN=github_pat_...        # Tier 1: Contents, Issues, Pull requests, Actions: read (nothing else)
+GITHUB_AGENT_TOKEN_RW=github_pat_...     # Tier 2: Contents, Issues, Pull requests: write; Actions: read; no Administration
 ```
 
 ```bash
 docker pull ghcr.io/github/github-mcp-server@sha256:e3816a476a977cfb836e7d221510011436c654d11861db66ecfd826601aba6a4
 pnpm harness verify-arms --experiment github
 pnpm harness run --experiment github    --run myrun --arm skill --tier 1 --trials 5
-pnpm harness run --experiment github-rw --run myrun --arm mcp   --tier 2 --trials 5
+# Tier 2 needs write access: override the agent token for that command only
+GITHUB_AGENT_TOKEN="$(grep '^GITHUB_AGENT_TOKEN_RW=' .env | cut -d= -f2-)" \
+  pnpm harness run --experiment github-rw --run myrun --arm mcp --tier 2 --trials 5
 ```
 
-Use a separate GitHub identity for the agent token if you can. The n5 runs used the same user for both tokens.
+Every token needs resource owner = the sandbox org and repository access = all repositories (trials create new repos).
+A variable already set in the shell takes precedence over `.env`.
+
+Use a separate GitHub identity for the agent tokens if you can. Both committed runs used one user for all tokens.
 
 ## Configuration
 
@@ -131,7 +136,8 @@ Use a separate GitHub identity for the agent token if you can. The n5 runs used 
 |---|---|---|---|
 | `GITHUB_SANDBOX_OWNER` | env / `.env` | required for GitHub | User or org that owns throwaway repos |
 | `GITHUB_CONTROLLER_TOKEN` | env / `.env` | required for GitHub | Provisions and deletes repos; never passed to the agent |
-| `GITHUB_AGENT_TOKEN` | env / `.env` | required for GitHub | Given to the agent as `GH_TOKEN`/`GITHUB_TOKEN` (skill) or `GITHUB_PERSONAL_ACCESS_TOKEN` (mcp) |
+| `GITHUB_AGENT_TOKEN` | env / `.env` | required for GitHub | Given to the agent as `GH_TOKEN`/`GITHUB_TOKEN` (skill) or `GITHUB_PERSONAL_ACCESS_TOKEN` (mcp). Read-only for Tier 1 |
+| `GITHUB_AGENT_TOKEN_RW` | `.env` | optional | Not read by the harness; pass it as `GITHUB_AGENT_TOKEN` for Tier 2 runs |
 | `GITHUB_HOST` | env / `.env` | `api.github.com` | API host for the provisioner; forwarded to the agent as `GH_HOST`/`GITHUB_HOST` |
 | `LOG_FORMAT` | env | human | `json` for one JSON object per log line |
 | `--model` | `run`, `verify-arms` | `claude-sonnet-4-6` | `DEFAULT_MODEL` in `harness/src/config.ts` |
@@ -164,56 +170,69 @@ table to JSON), `tier1_form` (submit a form with a per-trial nonce), `tier1_prod
 `tier1_pr_diff_answer`, `tier1_workflow_status`. Tier 2 (`--experiment github-rw`): `tier2_issue_workflow`,
 `tier2_file_patch_pr`, `tier2_file_patch_pr_directed`, `tier2_issue_create`.
 
-## Results (N=5)
+## Results
 
-All figures are regenerated from the committed result JSON (`experiments/*/runs/*/findings.md`). Token figures are
-total tokens (input + cache read + cache creation + output) averaged over valid-surface trials.
+### Current run: `n5-v2` (2026-10-03)
 
-**Playwright** (`experiments/playwright/runs/n5/findings.md`)
+N=5 per task for skill and mcp (baseline N=2), with Claude Code 2.1.288, `claude-sonnet-4-6`, the pinned tool versions
+above, and the isolation described in [How a trial is isolated](#how-a-trial-is-isolated). Full tables and narrative:
+[Playwright](experiments/playwright/runs/n5-v2/findings.md), [GitHub](experiments/github/runs/n5-v2/findings.md).
+Token figures are total tokens averaged over trials that passed and stayed in surface.
 
-| Tier | baseline | skill | mcp | Skill/MCP tokens |
+- **MCP passed and stayed in surface on every task** (Playwright 30/30, GitHub 35/35).
+- **MCP used fewer tokens on every task.** Skill cost 1.5–2.1× as much, except `tier1_form` at 2.67×, where the skill
+  arm makes one `fill` call per field and MCP one `browser_fill_form`.
+- **The CLI arm escapes when `gh` lacks the primitive.** Skill passed `tier1_repo_inventory` and `tier2_file_patch_pr`
+  5/5 but stayed in surface **0/5** (`gh api … | base64 -d`; shell variables and `$(…)` to build the PUT body). It
+  stayed in surface on every other task.
+- **Naming the workaround in the prompt didn't fix it.** `tier2_file_patch_pr_directed`: 2/5 pass, 3/5 valid, **0/5
+  both**. Passing trials used 2.63× the tokens of the undirected run; the three valid trials timed out in extended
+  thinking.
+- **Baseline** (no execution tools): 0/26.
+
+| Playwright task | Skill/MCP tokens | | GitHub task (clean) | Skill/MCP tokens |
 |---|---|---|---|---|
-| 1 | 0/20 | 20/20 | 20/20 | 1.64× |
-| 2 | 0/10 | 10/10 | 7/10 (`tier2_recovery` 2/5) | 1.86× (1.52× on completed trials) |
+| `tier1_login` | 2.07× | | `tier1_issue_triage` | 1.67× |
+| `tier1_scrape` | 1.54× | | `tier1_pr_diff_answer` | 1.71× |
+| `tier1_form` | 2.67× | | `tier1_workflow_status` | 1.52× |
+| `tier1_products` | 1.53× | | `tier2_issue_workflow` | 1.77× |
+| `tier2_checkout` | 1.68× | | `tier2_issue_create` | 1.69× |
+| `tier2_recovery` | 2.06× | | | |
 
-MCP used fewer tokens on every Playwright task (per-task 1.29×–1.42×, except `tier1_form` at 2.51×, where the skill arm
-filled fields one `fill` call at a time and MCP used one `browser_fill_form`). The three failed MCP `tier2_recovery`
-trials stalled after at most 4 tool calls and were killed at 240 s; the transcripts don't show why.
+One recorded skill failure on `tier2_issue_create` is a success-check false negative: the issue was created correctly,
+but the check's list window was too short. The window has been widened, and the trial is kept as recorded.
 
-**GitHub, clean comparisons** (both arms passed and stayed in surface)
+### First run: `n5` (May 2026)
 
-| Task | Skill/MCP tokens |
-|---|---|
-| `tier1_workflow_status` | 1.13× |
-| `tier1_pr_diff_answer` | 1.32× |
-| `tier2_issue_create` | 1.31× |
-| `tier2_issue_workflow` | 1.38× |
+The first N=5 run used Claude Code 2.1.142–2.1.143 and looser isolation. `--allowed-tools` did not restrict tools, and
+the environment scrub did not take effect. Its stored results were re-classified with the current classifier; see the
+[Playwright](experiments/playwright/runs/n5/findings.md) and [GitHub](experiments/github/runs/n5/findings.md) findings.
+How `n5-v2` differs:
 
-**GitHub, validity findings**
-
-- `tier1_repo_inventory` and `tier2_file_patch_pr`: skill passed 5/5 but **0/5 stayed in surface** (`gh api … | base64 -d`
-  to decode file content; shell variables to build the PUT body). MCP passed 5/5 in surface.
-- `tier2_file_patch_pr_directed`: naming the in-surface workaround in the prompt gave 3/5 pass, 2/5 in surface, and only
-  1/5 both. Passing trials cost about 2.45× the undirected run's tokens.
-- `tier1_issue_triage` is **not a valid comparison**. The n5 agent token lacked Issues read access, so every issue call
-  returned 403 in both arms. MCP timed out 5/5. The skill arm "passed" 5/5 only by using the controller token (3 trials)
-  or the developer's own `gh` login (2 trials). That was possible because the environment scrub did not take effect at
-  the time; it is fixed now (see [SECURITY.md](SECURITY.md)).
+- **`tier1_issue_triage` was not a valid comparison in `n5`.** The agent token lacked Issues read: MCP 0/5, and the skill
+  arm passed only by using the controller token or the developer's own `gh` login. With a correctly scoped token, both
+  arms solve it 5/5.
+- **MCP `tier2_recovery`** went from 2/5 to 5/5.
+- **Cost ratios rose.** They were 1.13–1.38× (GitHub) and 1.29–1.42× (Playwright, form 2.51×). Both arms got cheaper,
+  MCP more so: each turn's fixed context fell (mcp ~12k → ~8.5k tokens, skill ~16.6k → ~13–15k). The tool restriction
+  and the Claude Code upgrade changed at the same time, so treat the exact multiple as setup-specific. The direction (MCP
+  cheaper) held in both runs.
+- **Unchanged:** the `base64 -d` validity escapes on the same two tasks.
 
 ## Project status and limitations
 
 This is a research harness, not a benchmark suite. Read the results with these limits in mind:
 
 - **N=5 per cell.** Treat the ratios as directional rather than precise.
-- **Isolation changed after the data was collected.** The committed n5 runs used Claude Code 2.1.142–2.1.143 with the
-  older isolation, in which `--allowed-tools` did not restrict tools and the env scrub did not apply. Results were
-  re-classified with the current allow-list classifier. Re-running under the current isolation is an open item.
+- **Two runs, two setups.** `n5-v2` uses the current isolation; `n5` predates it (see Results). Cost multiples differ
+  between them; compare runs only with that in mind.
 - **Experiment subjects are pinned on purpose.** These are `@playwright/cli` 0.1.13, `@playwright/mcp` 0.0.75,
   `github-mcp-server` v1.0.4 and model `claude-sonnet-4-6`. Newer versions exist, and upgrading them requires a new run.
   Claude Code itself is not pinned; record `claude --version` with any new run.
 - **MCP protocol version.** The harness does not implement MCP; Claude Code is the client. The negotiated protocol
   version is not recorded. The current specification revision is 2026-07-28.
-- **Same identity.** In the n5 runs the controller and agent tokens belonged to the same GitHub user.
+- **Same identity.** In both runs all GitHub tokens belonged to the same user. `n5-v2` used separate read-only (Tier 1)
+  and read-write (Tier 2) agent tokens.
 - **Sandbox coverage.** Only the GitHub skill arm runs Bash in the OS sandbox. The Playwright skill arm needs local
   browsers and a loopback server, so it relies on the classifier and file-tool deny rules.
 - **File-tool reach.** Reads are denied under `~` and the repo, but not elsewhere (for example the user's `$TMPDIR`).
