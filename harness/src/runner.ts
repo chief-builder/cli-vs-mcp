@@ -62,6 +62,10 @@ export function buildTrialSettings(armConfig: ArmConfig, rootDir: string): Recor
       failIfUnavailable: true,
       allowUnsandboxedCommands: false,
       autoAllowBashIfSandboxed: true,
+      // macOS: lets Go CLIs such as gh reach the system TLS trust service. Without it every
+      // gh call fails with "x509: OSStatus -26276". Verified to keep the keychain and $HOME
+      // blocked. Ignored on Linux.
+      enableWeakerNetworkIsolation: true,
       filesystem: { denyRead: ['~/'] },
       network: { allowedDomains: [...armConfig.sandboxNetwork] },
     };

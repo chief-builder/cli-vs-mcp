@@ -216,6 +216,10 @@ This is a research harness, not a benchmark suite. Read the results with these l
 - **Same identity.** In the n5 runs the controller and agent tokens belonged to the same GitHub user.
 - **Sandbox coverage.** Only the GitHub skill arm runs Bash in the OS sandbox. The Playwright skill arm needs local
   browsers and a loopback server, so it relies on the classifier and file-tool deny rules.
+- **File-tool reach.** Reads are denied under `~` and the repo, but not elsewhere (for example the user's `$TMPDIR`).
+  Answers are never on disk, and such reads are redacted from artifacts; full confinement needs a container.
+- **macOS sandbox setting.** The GitHub skill arm sets `enableWeakerNetworkIsolation` so `gh` can verify TLS (without
+  it every `gh` call fails with `x509: OSStatus -26276`). The keychain and `$HOME` stay blocked; this was tested.
 - **Timeouts.** Token counts for killed trials are lower bounds (streamed output tokens are partial and side-model calls
   are missing).
 

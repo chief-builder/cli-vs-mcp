@@ -26,7 +26,9 @@ the agent a GitHub token when you run the GitHub experiment. Things to know befo
 - **History.** Before 2026-10-02 the scrub did not take effect (execa merged the parent environment back in), and an
   agent could use the controller token or the developer's own `gh` login. That happened in the committed n5 runs. If
   you ran older versions of this harness with real tokens, rotate them.
-- **Files.** File tools are denied under `~` and the repo. The Playwright skill arm's Bash is not sandboxed (it needs
+- **Files.** File tools are denied under `~` and the repo. They can still read elsewhere, notably the per-user temp
+  directory (`$TMPDIR`) around the trial directory; those results are redacted from artifacts but the agent sees them.
+  Run trials in a container or VM if that matters to you. The Playwright skill arm's Bash is not sandboxed (it needs
   local browsers); treat it like running an untrusted script as your user.
 - **Artifacts.** Transcripts are redacted (home paths, out-of-trial file reads) before they are written, but review
   `experiments/*/runs/` before you commit new runs.

@@ -517,3 +517,30 @@ Each item becomes one or more small conventional commits on this branch.
 - **Live GitHub verification is blocked.** The controller token in the local `.env` returns 401 Bad credentials, so no
   GitHub trial could be run (nothing was created).
 - **TypeScript 7** passes `tsc` but typescript-eslint 8.71 refuses it, so TypeScript is held at 6.0.3.
+
+### Live GitHub verification (after token rotation)
+
+- New tokens checked with a non-destructive probe. The controller can create and delete repos and write workflows. The
+  read-only agent token reads repo, contents, issues, PRs and Actions, and every write or admin call is refused. The
+  read-write agent token can write issues, files and PRs, and admin calls are refused. All three tokens belong to the
+  same user.
+- **Correction to the earlier sandbox claim.** Under the sandbox, `gh` could not verify TLS on macOS
+  (`x509: OSStatus -26276`, because Go CLIs need the system trust service). The earlier probe's `gh api` exit code 1
+  was this failure, not a 401 as assumed. The first live skill trial fell back to `curl` and was correctly flagged
+  INVALID. Fixed by setting `sandbox.enableWeakerNetworkIsolation`, the documented setting for Go CLIs on macOS. It was
+  re-verified to authenticate `gh` while keeping the keychain (`gh auth token`, `security`) and `$HOME` reads blocked.
+- `verify-arms --experiment github` (Claude Code 2.1.288): baseline `Glob Grep Read ToolSearch Write`; skill `Bash
+  Skill ToolSearch Write`; mcp `ToolSearch Write` plus 26 tools from the read-only server.
+- Trials (`experiments/github/runs/isolation-check`):
+
+  | Task | Arm | Result |
+  |---|---|---|
+  | `tier1_pr_diff_answer` | baseline | fail, valid, timeout |
+  | `tier1_pr_diff_answer` | skill | pass, valid, 10.3 s |
+  | `tier1_pr_diff_answer` | mcp | pass, valid, 8.4 s |
+  | `tier2_issue_create` (RW token) | skill | pass, valid |
+  | `tier2_issue_create` (RW token) | mcp | pass, valid |
+
+  The artifacts contain no token-shaped strings or home paths, and no sandbox repos were left behind.
+- **Residual.** The baseline's file tools can still read outside `~` and the repo, e.g. `$TMPDIR` (it made 28 such
+  calls). Results are redacted; full confinement needs a container.

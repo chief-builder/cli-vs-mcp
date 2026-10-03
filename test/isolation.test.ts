@@ -109,6 +109,7 @@ describe('buildClaudeArgs / buildTrialSettings', () => {
       enabled: true,
       failIfUnavailable: true,
       allowUnsandboxedCommands: false,
+      enableWeakerNetworkIsolation: true,
       filesystem: { denyRead: ['~/'] },
       network: { allowedDomains: ['api.github.com', 'github.com'] },
     });

@@ -1,0 +1,56 @@
+{
+  "experiment": "github",
+  "runName": "isolation-check",
+  "arm": "mcp",
+  "taskId": "tier2_issue_create",
+  "tier": 2,
+  "trialN": 1,
+  "timestamp": "2026-10-03T00:14:26.970Z",
+  "seed": "7bba41c3e8a8989a",
+  "metrics": {
+    "inputTokens": 7,
+    "outputTokens": 415,
+    "cachedInputTokens": 21684,
+    "cacheCreationInputTokens": 6658,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "mcp__github__issue_write",
+        "turnIndex": 5
+      }
+    ],
+    "toolCallCount": 2,
+    "turns": 6,
+    "wallClockMs": 7693,
+    "contextWindowPeak": 9889,
+    "totalCostUsd": 0.052699199999999995,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "issue created with all expected fields",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-issue-create-7bba41c3",
+      "issueNumber": 1,
+      "expectedTitle": "Investigate 1017903E",
+      "expectedLabels": [
+        "bug",
+        "priority-high"
+      ]
+    }
+  }
+}
