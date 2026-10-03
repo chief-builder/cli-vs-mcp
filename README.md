@@ -146,7 +146,7 @@ Commands (`pnpm harness <cmd> --help` for details):
 | `run` | `--experiment --run --arm --trials` | `--tier <1-3>` or `--task <id>`; `--model`; `--single-cli-command` |
 | `report` | `--experiment --run` | `--tier` or `--all-tiers`; `--crossover-analysis`; `--single-cli-command`; `--include-cost`; `--output <path>` |
 | `verify-arms` | `--experiment` | `--arm`; `--model` |
-| `recompute-metrics` | `--experiment --run` | `--arm` (re-parses stored transcripts; use `github-rw` for Tier 2 GitHub runs) |
+| `recompute-metrics` | `--experiment --run` | `--arm`; `--tier` (re-parses stored transcripts; use `github-rw --tier 2` for Tier 2 GitHub results) |
 | `redact-artifacts` | | `--experiment` |
 
 Results are written to `experiments/<exp>/runs/<run>/results/<arm>/<task>/<n>.json` with the transcript at

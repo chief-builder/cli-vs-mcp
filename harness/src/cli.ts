@@ -228,7 +228,8 @@ program
   .requiredOption('--experiment <name>', 'experiment name', experimentName)
   .requiredOption('--run <name>', 'run namespace', runName)
   .option('--arm <arm>', 'one arm (default: all)', armName)
-  .action(async (opts: { experiment: ExperimentSpec; run: string; arm?: Arm }) => {
+  .option('--tier <n>', 'only results from this tier (use when a run mixes github and github-rw tasks)', tierNumber)
+  .action(async (opts: { experiment: ExperimentSpec; run: string; arm?: Arm; tier?: number }) => {
     const experiment = opts.experiment;
     const root = artifactRoot(resolve(process.cwd()), experiment.name, opts.run);
     let updated = 0;
@@ -238,13 +239,14 @@ program
       for (const transcriptPath of await collectFiles(transcriptRoot, n => n.endsWith('.jsonl'))) {
         const rel = transcriptPath.slice(transcriptRoot.length + 1);
         const resultPath = join(root, 'results', arm, rel.replace(/\.jsonl$/, '.json'));
-        let result: { metrics?: unknown; error?: string };
+        let result: { metrics?: unknown; error?: string; tier?: number };
         try {
           result = JSON.parse(await readFile(resultPath, 'utf-8')) as typeof result;
         } catch {
           missing++;
           continue;
         }
+        if (opts.tier !== undefined && result.tier !== opts.tier) continue;
         // Killed trials have no `result` event; their wall clock is the timeout that killed them.
         const timeout = /timed out after (\d+)ms/.exec(result.error ?? '');
         const transcript = await readFile(transcriptPath, 'utf-8');
