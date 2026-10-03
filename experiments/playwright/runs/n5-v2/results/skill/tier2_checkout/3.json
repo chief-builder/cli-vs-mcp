@@ -1,0 +1,121 @@
+{
+  "experiment": "playwright",
+  "runName": "n5-v2",
+  "arm": "skill",
+  "taskId": "tier2_checkout",
+  "tier": 2,
+  "trialN": 3,
+  "timestamp": "2026-10-03T01:00:48.592Z",
+  "seed": "e8738b68e8c4507b",
+  "metrics": {
+    "inputTokens": 21,
+    "outputTokens": 1649,
+    "cachedInputTokens": 296669,
+    "cacheCreationInputTokens": 14020,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "playwright-cli open http://localhost:62709/checkout/index.html"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "playwright-cli snapshot"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "playwright-cli click e20"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "playwright-cli snapshot"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 12,
+        "command": "playwright-cli click e15"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 13,
+        "command": "playwright-cli snapshot"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 15,
+        "command": "playwright-cli fill e5 \"Test User\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 16,
+        "command": "playwright-cli fill e7 \"123 Main St\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 17,
+        "command": "playwright-cli fill e9 \"Springfield\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 18,
+        "command": "playwright-cli fill e11 \"12345\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 19,
+        "command": "playwright-cli click e12"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 20,
+        "command": "playwright-cli snapshot"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 22,
+        "command": "playwright-cli click e17"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 23,
+        "command": "playwright-cli --raw eval \"document.getElementById('order-id').textContent\""
+      },
+      {
+        "name": "Write",
+        "turnIndex": 25
+      }
+    ],
+    "toolCallCount": 16,
+    "turns": 26,
+    "wallClockMs": 39572,
+    "contextWindowPeak": 20378,
+    "totalCostUsd": 0.19791869999999998,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "order placed with target product",
+    "extras": {
+      "orders_placed": 1,
+      "sessions_seen": 1
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "experiment": "github",
+  "runName": "n5-v2",
+  "arm": "skill",
+  "taskId": "tier1_issue_triage",
+  "tier": 1,
+  "trialN": 1,
+  "timestamp": "2026-10-03T00:23:26.659Z",
+  "seed": "104f839547de0d53",
+  "metrics": {
+    "inputTokens": 7,
+    "outputTokens": 576,
+    "cachedInputTokens": 55460,
+    "cacheCreationInputTokens": 10908,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 3
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "gh issue list --repo chief-builder-lab/clivsmcp-tier1-issue-triage-104f8395 --state open --json number,title,body,labels"
+      },
+      {
+        "name": "Write",
+        "turnIndex": 8
+      }
+    ],
+    "toolCallCount": 3,
+    "turns": 9,
+    "wallClockMs": 26884,
+    "contextWindowPeak": 17478,
+    "totalCostUsd": 0.09074700000000001,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "issue found, fields match",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier1-issue-triage-104f8395",
+      "expectedTitle": "Target issue 230551"
+    }
+  }
+}

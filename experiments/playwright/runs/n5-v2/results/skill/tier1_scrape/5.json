@@ -1,0 +1,57 @@
+{
+  "experiment": "playwright",
+  "runName": "n5-v2",
+  "arm": "skill",
+  "taskId": "tier1_scrape",
+  "tier": 1,
+  "trialN": 5,
+  "timestamp": "2026-10-03T00:26:33.455Z",
+  "seed": "493fc7234753d7e9",
+  "metrics": {
+    "inputTokens": 9,
+    "outputTokens": 758,
+    "cachedInputTokens": 69633,
+    "cacheCreationInputTokens": 11152,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "playwright-cli open http://localhost:60672/scrape/article.html"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "playwright-cli --raw eval \"JSON.stringify([...document.querySelectorAll('#population-table tbody tr')].map(row => { const cells = row.querySelectorAll('td'); return { rank: parseInt(cells[0].textContent.trim()), city: cells[1].textContent.trim(), country: cells[2].textContent.trim(), population: parseInt(cells[3].textContent.trim().replace(/,/g, '')) }; }))\""
+      },
+      {
+        "name": "Write",
+        "turnIndex": 7
+      }
+    ],
+    "toolCallCount": 4,
+    "turns": 8,
+    "wallClockMs": 15113,
+    "contextWindowPeak": 17510,
+    "totalCostUsd": 0.09919889999999999,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "all 5 rows match"
+  }
+}

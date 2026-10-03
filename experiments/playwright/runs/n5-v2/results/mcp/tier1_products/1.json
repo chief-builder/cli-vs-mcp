@@ -1,0 +1,91 @@
+{
+  "experiment": "playwright",
+  "runName": "n5-v2",
+  "arm": "mcp",
+  "taskId": "tier1_products",
+  "tier": 1,
+  "trialN": 1,
+  "timestamp": "2026-10-03T00:48:17.370Z",
+  "seed": "900cf4dd49a02ae6",
+  "metrics": {
+    "inputTokens": 18,
+    "outputTokens": 1196,
+    "cachedInputTokens": 130417,
+    "cacheCreationInputTokens": 8036,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 5
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 6
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 7
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 10
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 11
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 12
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 13
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 14
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 15
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 16
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 17
+      },
+      {
+        "name": "Write",
+        "turnIndex": 19
+      }
+    ],
+    "toolCallCount": 13,
+    "turns": 20,
+    "wallClockMs": 30058,
+    "contextWindowPeak": 11267,
+    "totalCostUsd": 0.10533510000000001,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "all 5 products match"
+  }
+}

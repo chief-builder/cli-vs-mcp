@@ -1,0 +1,97 @@
+{
+  "experiment": "playwright",
+  "runName": "n5-v2",
+  "arm": "skill",
+  "taskId": "tier1_form",
+  "tier": 1,
+  "trialN": 2,
+  "timestamp": "2026-10-03T00:31:01.767Z",
+  "seed": "951a443f9e7f2b39",
+  "metrics": {
+    "inputTokens": 16,
+    "outputTokens": 1231,
+    "cachedInputTokens": 213415,
+    "cacheCreationInputTokens": 12539,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "playwright-cli open http://localhost:61115/form/index.html"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "playwright-cli snapshot"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "playwright-cli fill e5 \"Test User\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "playwright-cli fill e7 \"test@example.com\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 11,
+        "command": "playwright-cli fill e9 \"+1-555-0100\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 12,
+        "command": "playwright-cli fill e11 \"Acme Corp\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 13,
+        "command": "playwright-cli select e13 \"United States\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 14,
+        "command": "playwright-cli fill e15 \"This is a test message.\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 15,
+        "command": "playwright-cli click e16"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 16,
+        "command": "playwright-cli --raw eval \"document.getElementById('token')?.textContent\""
+      },
+      {
+        "name": "Write",
+        "turnIndex": 18
+      }
+    ],
+    "toolCallCount": 12,
+    "turns": 19,
+    "wallClockMs": 41520,
+    "contextWindowPeak": 18897,
+    "totalCostUsd": 0.1577715,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "per-trial token present"
+  }
+}

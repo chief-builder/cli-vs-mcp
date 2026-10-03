@@ -1,0 +1,6 @@
+{
+  "title": "Fix MARKER-95ABB13A",
+  "body": "addresses-95ABB13A\n\nReplaces the TODO comment for MARKER-95ABB13A with an exported `solve_95ABB13A` function that returns `\"done-95ABB13A\"`.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)",
+  "head": "fix-MARKER-95ABB13A",
+  "base": "main"
+}

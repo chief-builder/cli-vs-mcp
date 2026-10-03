@@ -1,0 +1,49 @@
+{
+  "experiment": "github",
+  "runName": "n5-v2",
+  "arm": "baseline",
+  "taskId": "tier2_issue_workflow",
+  "tier": 2,
+  "trialN": 1,
+  "timestamp": "2026-10-03T00:24:16.633Z",
+  "seed": "ffaf7fc4ab3e2b2f",
+  "metrics": {
+    "inputTokens": 4,
+    "outputTokens": 992,
+    "cachedInputTokens": 14353,
+    "cacheCreationInputTokens": 4990,
+    "toolCalls": [
+      {
+        "name": "Glob",
+        "turnIndex": 3
+      }
+    ],
+    "toolCallCount": 1,
+    "turns": 5,
+    "wallClockMs": 17734,
+    "contextWindowPeak": 9827,
+    "totalCostUsd": 0.0491379,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "label=false closed=false comment=false decoys-untouched=true (target untouched — decoy check not credited)",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-issue-workflow-ffaf7fc4",
+      "targetIssueNumber": 2,
+      "expectedLabel": "priority-high",
+      "expectedCommentPhrase": "triaged-EBB9585F"
+    }
+  }
+}

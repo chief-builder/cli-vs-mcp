@@ -1,0 +1,87 @@
+{
+  "experiment": "playwright",
+  "runName": "n5-v2",
+  "arm": "mcp",
+  "taskId": "tier1_products",
+  "tier": 1,
+  "trialN": 5,
+  "timestamp": "2026-10-03T00:50:38.808Z",
+  "seed": "da6176fdd499a779",
+  "metrics": {
+    "inputTokens": 17,
+    "outputTokens": 1183,
+    "cachedInputTokens": 122580,
+    "cacheCreationInputTokens": 8384,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 5
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 6
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 9
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 10
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 11
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 12
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 13
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 14
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 15
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 16
+      },
+      {
+        "name": "Write",
+        "turnIndex": 18
+      }
+    ],
+    "toolCallCount": 12,
+    "turns": 19,
+    "wallClockMs": 31671,
+    "contextWindowPeak": 11615,
+    "totalCostUsd": 0.10487399999999998,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "all 5 products match"
+  }
+}

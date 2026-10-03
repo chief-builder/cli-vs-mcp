@@ -1,0 +1,59 @@
+{
+  "experiment": "playwright",
+  "runName": "n5-v2",
+  "arm": "mcp",
+  "taskId": "tier1_scrape",
+  "tier": 1,
+  "trialN": 2,
+  "timestamp": "2026-10-03T00:27:02.673Z",
+  "seed": "cfb277b5e7bec53a",
+  "metrics": {
+    "inputTokens": 12,
+    "outputTokens": 867,
+    "cachedInputTokens": 48535,
+    "cacheCreationInputTokens": 7251,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 2
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 4
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 5
+      },
+      {
+        "name": "mcp__playwright__browser_evaluate",
+        "turnIndex": 7
+      },
+      {
+        "name": "Write",
+        "turnIndex": 8
+      }
+    ],
+    "toolCallCount": 5,
+    "turns": 9,
+    "wallClockMs": 18303,
+    "contextWindowPeak": 10482,
+    "totalCostUsd": 0.07110749999999999,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "all 5 rows match"
+  }
+}

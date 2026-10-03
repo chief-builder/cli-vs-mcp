@@ -1,0 +1,53 @@
+{
+  "experiment": "github",
+  "runName": "n5-v2",
+  "arm": "baseline",
+  "taskId": "tier2_file_patch_pr",
+  "tier": 2,
+  "trialN": 2,
+  "timestamp": "2026-10-03T00:31:36.446Z",
+  "seed": "ec228df51f857b62",
+  "metrics": {
+    "inputTokens": 5,
+    "outputTokens": 1694,
+    "cachedInputTokens": 24229,
+    "cacheCreationInputTokens": 5216,
+    "toolCalls": [
+      {
+        "name": "Glob",
+        "turnIndex": 3
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 5
+      }
+    ],
+    "toolCallCount": 2,
+    "turns": 7,
+    "wallClockMs": 28441,
+    "contextWindowPeak": 10053,
+    "totalCostUsd": 0.0639897,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "title=false body=false fn-present=false fn-returns-expected=false only-target-file=false",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-file-patch-pr-ec228df5",
+      "prNumber": null,
+      "expectedFunctionName": "solve_3140CAB9",
+      "expectedPrTitle": "Fix MARKER-3140CAB9"
+    }
+  }
+}

@@ -1,0 +1,222 @@
+{
+  "experiment": "playwright",
+  "runName": "n5-v2",
+  "arm": "baseline",
+  "taskId": "tier2_recovery",
+  "tier": 2,
+  "trialN": 2,
+  "timestamp": "2026-10-03T01:23:38.979Z",
+  "seed": "bcd818a3585e96fc",
+  "metrics": {
+    "inputTokens": 30,
+    "outputTokens": 277,
+    "cachedInputTokens": 1073829,
+    "cacheCreationInputTokens": 69120,
+    "toolCalls": [
+      {
+        "name": "Glob",
+        "turnIndex": 3
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 6
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 7
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 10
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 13
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 14
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 17
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 18
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 21
+      },
+      {
+        "name": "Read",
+        "turnIndex": 23
+      },
+      {
+        "name": "Read",
+        "turnIndex": 24
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 27
+      },
+      {
+        "name": "Read",
+        "turnIndex": 28
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 31
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 32
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 35
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 36
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 39
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 40
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 43
+      },
+      {
+        "name": "Read",
+        "turnIndex": 46
+      },
+      {
+        "name": "Read",
+        "turnIndex": 47
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 50
+      },
+      {
+        "name": "Read",
+        "turnIndex": 51
+      },
+      {
+        "name": "Read",
+        "turnIndex": 54
+      },
+      {
+        "name": "Read",
+        "turnIndex": 55
+      },
+      {
+        "name": "Read",
+        "turnIndex": 58
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 59
+      },
+      {
+        "name": "Read",
+        "turnIndex": 61
+      },
+      {
+        "name": "Read",
+        "turnIndex": 64
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 65
+      },
+      {
+        "name": "Read",
+        "turnIndex": 68
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 69
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 72
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 73
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 76
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 77
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 80
+      },
+      {
+        "name": "Read",
+        "turnIndex": 81
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 84
+      },
+      {
+        "name": "Read",
+        "turnIndex": 85
+      },
+      {
+        "name": "Read",
+        "turnIndex": 88
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 89
+      },
+      {
+        "name": "Read",
+        "turnIndex": 91
+      },
+      {
+        "name": "Read",
+        "turnIndex": 92
+      }
+    ],
+    "toolCallCount": 45,
+    "turns": 92,
+    "wallClockMs": 240000,
+    "contextWindowPeak": 73957,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": true,
+    "tokensEstimated": true
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "missing ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5-v2/results/baseline/tier2_recovery/2/recovery_token.txt",
+    "extras": {
+      "recovery_attempts": 0,
+      "sessions_seen": 0
+    }
+  },
+  "error": "claude timed out after 240000ms"
+}

@@ -1,0 +1,90 @@
+lane=gh-t2 experiment=github-rw run=n5-v2 started=2026-10-03T00:19:34Z
+claude=2.1.288 (Claude Code) node=v24.15.0 model=claude-sonnet-4-6
+playwright-cli=0.1.13 playwright-mcp=@playwright/mcp@0.0.75 github-mcp-server=v1.0.4(digest)
+harness commit=29b7e6a
+→ github/n5-v2  tier2_issue_workflow  arm=skill  trial=1/5
+  ✓ score=1.00  valid  tokens_in=9 turns=10 time=18.1s
+→ github/n5-v2  tier2_issue_workflow  arm=skill  trial=2/5
+  ✓ score=1.00  valid  tokens_in=9 turns=11 time=16.7s
+→ github/n5-v2  tier2_issue_workflow  arm=skill  trial=3/5
+  ✓ score=1.00  valid  tokens_in=9 turns=10 time=19.5s
+→ github/n5-v2  tier2_issue_workflow  arm=skill  trial=4/5
+  ✓ score=1.00  valid  tokens_in=9 turns=10 time=18.2s
+→ github/n5-v2  tier2_issue_workflow  arm=skill  trial=5/5
+  ✓ score=1.00  valid  tokens_in=9 turns=10 time=17.7s
+→ github/n5-v2  tier2_issue_workflow  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=12 turns=16 time=26.7s
+→ github/n5-v2  tier2_issue_workflow  arm=mcp  trial=2/5
+  ✓ score=1.00  valid  tokens_in=11 turns=14 time=19.1s
+→ github/n5-v2  tier2_issue_workflow  arm=mcp  trial=3/5
+  ✓ score=1.00  valid  tokens_in=9 turns=12 time=20.4s
+→ github/n5-v2  tier2_issue_workflow  arm=mcp  trial=4/5
+  ✓ score=1.00  valid  tokens_in=9 turns=12 time=15.6s
+→ github/n5-v2  tier2_issue_workflow  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=11 turns=12 time=18.2s
+→ github/n5-v2  tier2_issue_workflow  arm=baseline  trial=1/2
+  ✗ score=0.00  valid  tokens_in=4 turns=5 time=17.7s
+→ github/n5-v2  tier2_issue_workflow  arm=baseline  trial=2/2
+  ✗ score=0.00  valid  tokens_in=4 turns=5 time=48.4s
+→ github/n5-v2  tier2_file_patch_pr  arm=skill  trial=1/5
+  ✓ score=1.00  INVALID  tokens_in=10 turns=13 time=28.5s
+→ github/n5-v2  tier2_file_patch_pr  arm=skill  trial=2/5
+  ✓ score=1.00  INVALID  tokens_in=12 turns=12 time=26.2s
+→ github/n5-v2  tier2_file_patch_pr  arm=skill  trial=3/5
+  ✓ score=1.00  INVALID  tokens_in=12 turns=12 time=34.6s
+→ github/n5-v2  tier2_file_patch_pr  arm=skill  trial=4/5
+  ✓ score=1.00  INVALID  tokens_in=12 turns=14 time=35.7s
+→ github/n5-v2  tier2_file_patch_pr  arm=skill  trial=5/5
+  ✓ score=1.00  INVALID  tokens_in=12 turns=13 time=36.2s
+→ github/n5-v2  tier2_file_patch_pr  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=9 turns=12 time=18.3s
+→ github/n5-v2  tier2_file_patch_pr  arm=mcp  trial=2/5
+  ✓ score=1.00  valid  tokens_in=9 turns=12 time=17.0s
+→ github/n5-v2  tier2_file_patch_pr  arm=mcp  trial=3/5
+  ✓ score=1.00  valid  tokens_in=9 turns=12 time=16.6s
+→ github/n5-v2  tier2_file_patch_pr  arm=mcp  trial=4/5
+  ✓ score=1.00  valid  tokens_in=10 turns=14 time=20.7s
+→ github/n5-v2  tier2_file_patch_pr  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=10 turns=13 time=26.3s
+→ github/n5-v2  tier2_file_patch_pr  arm=baseline  trial=1/2
+  ✗ score=0.00  valid  tokens_in=4 turns=5 time=17.7s
+→ github/n5-v2  tier2_file_patch_pr  arm=baseline  trial=2/2
+  ✗ score=0.00  valid  tokens_in=5 turns=7 time=28.4s
+→ github/n5-v2  tier2_issue_create  arm=skill  trial=1/5
+  ✓ score=1.00  valid  tokens_in=6 turns=6 time=8.7s
+→ github/n5-v2  tier2_issue_create  arm=skill  trial=2/5
+  ✓ score=1.00  valid  tokens_in=6 turns=6 time=8.9s
+→ github/n5-v2  tier2_issue_create  arm=skill  trial=3/5
+  ✓ score=1.00  valid  tokens_in=6 turns=6 time=8.8s
+→ github/n5-v2  tier2_issue_create  arm=skill  trial=4/5
+  ✓ score=1.00  valid  tokens_in=6 turns=5 time=7.8s
+→ github/n5-v2  tier2_issue_create  arm=skill  trial=5/5
+  ✗ score=0.00  valid  tokens_in=6 turns=6 time=7.3s
+→ github/n5-v2  tier2_issue_create  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=7 turns=6 time=6.9s
+→ github/n5-v2  tier2_issue_create  arm=mcp  trial=2/5
+  ✓ score=1.00  valid  tokens_in=7 turns=6 time=7.7s
+→ github/n5-v2  tier2_issue_create  arm=mcp  trial=3/5
+  ✓ score=1.00  valid  tokens_in=7 turns=6 time=7.6s
+→ github/n5-v2  tier2_issue_create  arm=mcp  trial=4/5
+  ✓ score=1.00  valid  tokens_in=7 turns=6 time=8.1s
+→ github/n5-v2  tier2_issue_create  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=7 turns=6 time=6.7s
+→ github/n5-v2  tier2_issue_create  arm=baseline  trial=1/2
+  ✗ score=0.00  valid  tokens_in=3 turns=2 time=16.4s
+→ github/n5-v2  tier2_issue_create  arm=baseline  trial=2/2
+  ✗ score=0.00  valid  tokens_in=5 turns=7 time=28.0s
+→ github/n5-v2  tier2_file_patch_pr_directed  arm=skill  trial=1/5
+  ✓ score=1.00  INVALID  tokens_in=14 turns=27 time=219.0s
+→ github/n5-v2  tier2_file_patch_pr_directed  arm=skill  trial=2/5
+  ✓ score=1.00  INVALID  tokens_in=24 turns=36 time=126.2s
+→ github/n5-v2  tier2_file_patch_pr_directed  arm=skill  trial=3/5
+  ✗ score=0.00  valid  tokens_in=7 turns=10 time=240.3s
+  trial error  error=claude timed out after 240000ms
+→ github/n5-v2  tier2_file_patch_pr_directed  arm=skill  trial=4/5
+  ✗ score=0.00  valid  tokens_in=8 turns=13 time=240.1s
+  trial error  error=claude timed out after 240000ms
+→ github/n5-v2  tier2_file_patch_pr_directed  arm=skill  trial=5/5
+  ✗ score=0.00  valid  tokens_in=6 turns=10 time=240.2s
+  trial error  error=claude timed out after 240000ms
+finished=2026-10-03T00:54:26Z

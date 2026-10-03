@@ -1,0 +1,87 @@
+{
+  "experiment": "playwright",
+  "runName": "n5-v2",
+  "arm": "baseline",
+  "taskId": "tier1_scrape",
+  "tier": 1,
+  "trialN": 2,
+  "timestamp": "2026-10-03T00:28:54.940Z",
+  "seed": "cfb277b5e7bec53a",
+  "metrics": {
+    "inputTokens": 14,
+    "outputTokens": 4886,
+    "cachedInputTokens": 177380,
+    "cacheCreationInputTokens": 33678,
+    "toolCalls": [
+      {
+        "name": "Read",
+        "turnIndex": 3
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 5
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 8
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 9
+      },
+      {
+        "name": "Read",
+        "turnIndex": 12
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 14
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 15
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 18
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 21
+      },
+      {
+        "name": "Read",
+        "turnIndex": 22
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 25
+      },
+      {
+        "name": "Read",
+        "turnIndex": 26
+      }
+    ],
+    "toolCallCount": 12,
+    "turns": 28,
+    "wallClockMs": 90306,
+    "contextWindowPeak": 38482,
+    "totalCostUsd": 0.32853975,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "missing or invalid JSON at ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5-v2/results/baseline/tier1_scrape/2/table.json"
+  }
+}

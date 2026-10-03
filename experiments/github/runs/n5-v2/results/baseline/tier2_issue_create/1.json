@@ -1,0 +1,42 @@
+{
+  "experiment": "github",
+  "runName": "n5-v2",
+  "arm": "baseline",
+  "taskId": "tier2_issue_create",
+  "tier": 2,
+  "trialN": 1,
+  "timestamp": "2026-10-03T00:35:08.419Z",
+  "seed": "2443b53e89eeb150",
+  "metrics": {
+    "inputTokens": 3,
+    "outputTokens": 1041,
+    "cachedInputTokens": 4836,
+    "cacheCreationInputTokens": 4637,
+    "toolCalls": [],
+    "toolCallCount": 0,
+    "turns": 2,
+    "wallClockMs": 16409,
+    "contextWindowPeak": 9476,
+    "totalCostUsd": 0.0448968,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "no open issue found with title \"Investigate E2535366\" after 6 attempts",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-issue-create-2443b53e",
+      "expectedTitle": "Investigate E2535366"
+    }
+  }
+}

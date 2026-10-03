@@ -1,0 +1,65 @@
+{
+  "experiment": "github",
+  "runName": "n5-v2",
+  "arm": "mcp",
+  "taskId": "tier2_file_patch_pr",
+  "tier": 2,
+  "trialN": 4,
+  "timestamp": "2026-10-03T00:30:11.445Z",
+  "seed": "27d5f2f50afb3778",
+  "metrics": {
+    "inputTokens": 10,
+    "outputTokens": 1278,
+    "cachedInputTokens": 55158,
+    "cacheCreationInputTokens": 8665,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "mcp__github__get_file_contents",
+        "turnIndex": 6
+      },
+      {
+        "name": "mcp__github__create_branch",
+        "turnIndex": 9
+      },
+      {
+        "name": "mcp__github__create_or_update_file",
+        "turnIndex": 11
+      },
+      {
+        "name": "mcp__github__create_pull_request",
+        "turnIndex": 13
+      }
+    ],
+    "toolCallCount": 5,
+    "turns": 14,
+    "wallClockMs": 20668,
+    "contextWindowPeak": 11896,
+    "totalCostUsd": 0.08773740000000001,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "PR + branch file content + scope all match",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-file-patch-pr-27d5f2f5",
+      "prNumber": 1,
+      "expectedFunctionName": "solve_46C7DBF5",
+      "expectedPrTitle": "Fix MARKER-46C7DBF5"
+    }
+  }
+}

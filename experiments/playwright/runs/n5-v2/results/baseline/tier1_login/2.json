@@ -1,0 +1,43 @@
+{
+  "experiment": "playwright",
+  "runName": "n5-v2",
+  "arm": "baseline",
+  "taskId": "tier1_login",
+  "tier": 1,
+  "trialN": 2,
+  "timestamp": "2026-10-03T00:25:18.041Z",
+  "seed": "84b0a990d6170d2e",
+  "metrics": {
+    "inputTokens": 4,
+    "outputTokens": 410,
+    "cachedInputTokens": 14351,
+    "cacheCreationInputTokens": 4992,
+    "toolCalls": [
+      {
+        "name": "Glob",
+        "turnIndex": 3
+      }
+    ],
+    "toolCallCount": 1,
+    "turns": 4,
+    "wallClockMs": 9257,
+    "contextWindowPeak": 9829,
+    "totalCostUsd": 0.040419300000000005,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "expected screenshot at ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5-v2/results/baseline/tier1_login/2/login_landing.png (>1KB)"
+  }
+}

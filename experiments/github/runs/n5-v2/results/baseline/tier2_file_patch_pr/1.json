@@ -1,0 +1,49 @@
+{
+  "experiment": "github",
+  "runName": "n5-v2",
+  "arm": "baseline",
+  "taskId": "tier2_file_patch_pr",
+  "tier": 2,
+  "trialN": 1,
+  "timestamp": "2026-10-03T00:31:12.357Z",
+  "seed": "4d2483ad6b7e9cbc",
+  "metrics": {
+    "inputTokens": 4,
+    "outputTokens": 1093,
+    "cachedInputTokens": 14390,
+    "cacheCreationInputTokens": 4981,
+    "toolCalls": [
+      {
+        "name": "Glob",
+        "turnIndex": 3
+      }
+    ],
+    "toolCallCount": 1,
+    "turns": 5,
+    "wallClockMs": 17660,
+    "contextWindowPeak": 9818,
+    "totalCostUsd": 0.05061,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "title=false body=false fn-present=false fn-returns-expected=false only-target-file=false",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-file-patch-pr-4d2483ad",
+      "prNumber": null,
+      "expectedFunctionName": "solve_9861392E",
+      "expectedPrTitle": "Fix MARKER-9861392E"
+    }
+  }
+}

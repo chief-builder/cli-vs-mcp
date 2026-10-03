@@ -1,0 +1,157 @@
+lane=playwright experiment=playwright run=n5-v2 started=2026-10-03T00:19:34Z
+claude=2.1.288 (Claude Code) node=v24.15.0 model=claude-sonnet-4-6
+playwright-cli=0.1.13 playwright-mcp=@playwright/mcp@0.0.75 github-mcp-server=v1.0.4(digest)
+harness commit=29b7e6a
+→ playwright/n5-v2  tier1_login  arm=skill  trial=1/5
+  ✓ score=1.00  valid  tokens_in=13 turns=13 time=28.3s
+→ playwright/n5-v2  tier1_login  arm=skill  trial=2/5
+  ✓ score=1.00  valid  tokens_in=14 turns=14 time=73.0s
+→ playwright/n5-v2  tier1_login  arm=skill  trial=3/5
+  ✓ score=1.00  valid  tokens_in=13 turns=13 time=21.6s
+→ playwright/n5-v2  tier1_login  arm=skill  trial=4/5
+  ✓ score=1.00  valid  tokens_in=14 turns=14 time=45.1s
+→ playwright/n5-v2  tier1_login  arm=skill  trial=5/5
+  ✓ score=1.00  valid  tokens_in=14 turns=14 time=26.7s
+→ playwright/n5-v2  tier1_login  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=11 turns=13 time=21.5s
+→ playwright/n5-v2  tier1_login  arm=mcp  trial=2/5
+  ✓ score=1.00  valid  tokens_in=13 turns=15 time=22.0s
+→ playwright/n5-v2  tier1_login  arm=mcp  trial=3/5
+  ✓ score=1.00  valid  tokens_in=11 turns=13 time=17.1s
+→ playwright/n5-v2  tier1_login  arm=mcp  trial=4/5
+  ✓ score=1.00  valid  tokens_in=13 turns=14 time=18.8s
+→ playwright/n5-v2  tier1_login  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=11 turns=13 time=18.5s
+→ playwright/n5-v2  tier1_login  arm=baseline  trial=1/2
+  ✗ score=0.00  valid  tokens_in=6 turns=11 time=39.9s
+→ playwright/n5-v2  tier1_login  arm=baseline  trial=2/2
+  ✗ score=0.00  valid  tokens_in=4 turns=4 time=9.3s
+→ playwright/n5-v2  tier1_scrape  arm=skill  trial=1/5
+  ✓ score=1.00  valid  tokens_in=9 turns=8 time=17.6s
+→ playwright/n5-v2  tier1_scrape  arm=skill  trial=2/5
+  ✓ score=1.00  valid  tokens_in=9 turns=8 time=13.3s
+→ playwright/n5-v2  tier1_scrape  arm=skill  trial=3/5
+  ✓ score=1.00  valid  tokens_in=8 turns=8 time=13.7s
+→ playwright/n5-v2  tier1_scrape  arm=skill  trial=4/5
+  ✓ score=1.00  valid  tokens_in=9 turns=8 time=17.4s
+→ playwright/n5-v2  tier1_scrape  arm=skill  trial=5/5
+  ✓ score=1.00  valid  tokens_in=9 turns=8 time=15.1s
+→ playwright/n5-v2  tier1_scrape  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=9 turns=9 time=11.9s
+→ playwright/n5-v2  tier1_scrape  arm=mcp  trial=2/5
+  ✓ score=1.00  valid  tokens_in=12 turns=9 time=18.3s
+→ playwright/n5-v2  tier1_scrape  arm=mcp  trial=3/5
+  ✓ score=1.00  valid  tokens_in=12 turns=11 time=14.0s
+→ playwright/n5-v2  tier1_scrape  arm=mcp  trial=4/5
+  ✓ score=1.00  valid  tokens_in=12 turns=9 time=12.5s
+→ playwright/n5-v2  tier1_scrape  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=9 turns=9 time=10.1s
+→ playwright/n5-v2  tier1_scrape  arm=baseline  trial=1/2
+  ✗ score=0.00  valid  tokens_in=8 turns=17 time=51.8s
+→ playwright/n5-v2  tier1_scrape  arm=baseline  trial=2/2
+  ✗ score=0.00  valid  tokens_in=14 turns=28 time=90.3s
+→ playwright/n5-v2  tier1_form  arm=skill  trial=1/5
+  ✓ score=1.00  valid  tokens_in=17 turns=20 time=35.0s
+→ playwright/n5-v2  tier1_form  arm=skill  trial=2/5
+  ✓ score=1.00  valid  tokens_in=16 turns=19 time=41.5s
+→ playwright/n5-v2  tier1_form  arm=skill  trial=3/5
+  ✓ score=1.00  valid  tokens_in=18 turns=20 time=45.0s
+→ playwright/n5-v2  tier1_form  arm=skill  trial=4/5
+  ✓ score=1.00  valid  tokens_in=17 turns=17 time=49.6s
+→ playwright/n5-v2  tier1_form  arm=skill  trial=5/5
+  ✓ score=1.00  valid  tokens_in=18 turns=18 time=46.4s
+→ playwright/n5-v2  tier1_form  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=12 turns=12 time=21.0s
+→ playwright/n5-v2  tier1_form  arm=mcp  trial=2/5
+  ✓ score=1.00  valid  tokens_in=13 turns=14 time=24.6s
+→ playwright/n5-v2  tier1_form  arm=mcp  trial=3/5
+  ✓ score=1.00  valid  tokens_in=12 turns=15 time=19.9s
+→ playwright/n5-v2  tier1_form  arm=mcp  trial=4/5
+  ✓ score=1.00  valid  tokens_in=13 turns=14 time=23.7s
+→ playwright/n5-v2  tier1_form  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=13 turns=13 time=24.1s
+→ playwright/n5-v2  tier1_form  arm=baseline  trial=1/2
+  ✗ score=0.00  valid  tokens_in=26 turns=84 time=240.2s
+  trial error  error=claude timed out after 240000ms
+→ playwright/n5-v2  tier1_form  arm=baseline  trial=2/2
+  ✗ score=0.00  valid  tokens_in=22 turns=67 time=240.2s
+  trial error  error=claude timed out after 240000ms
+→ playwright/n5-v2  tier1_products  arm=skill  trial=1/5
+  ✓ score=1.00  valid  tokens_in=13 turns=14 time=31.5s
+→ playwright/n5-v2  tier1_products  arm=skill  trial=2/5
+  ✓ score=1.00  valid  tokens_in=17 turns=18 time=60.4s
+→ playwright/n5-v2  tier1_products  arm=skill  trial=3/5
+  ✓ score=1.00  valid  tokens_in=18 turns=18 time=33.5s
+→ playwright/n5-v2  tier1_products  arm=skill  trial=4/5
+  ✓ score=1.00  valid  tokens_in=19 turns=19 time=70.1s
+→ playwright/n5-v2  tier1_products  arm=skill  trial=5/5
+  ✓ score=1.00  valid  tokens_in=18 turns=18 time=43.1s
+→ playwright/n5-v2  tier1_products  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=18 turns=20 time=30.1s
+→ playwright/n5-v2  tier1_products  arm=mcp  trial=2/5
+  ✓ score=1.00  valid  tokens_in=19 turns=24 time=33.2s
+→ playwright/n5-v2  tier1_products  arm=mcp  trial=3/5
+  ✓ score=1.00  valid  tokens_in=18 turns=22 time=29.0s
+→ playwright/n5-v2  tier1_products  arm=mcp  trial=4/5
+  ✓ score=1.00  valid  tokens_in=22 turns=22 time=27.5s
+→ playwright/n5-v2  tier1_products  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=17 turns=19 time=31.7s
+→ playwright/n5-v2  tier1_products  arm=baseline  trial=1/2
+  ✗ score=0.00  valid  tokens_in=34 turns=88 time=240.2s
+  trial error  error=claude timed out after 240000ms
+→ playwright/n5-v2  tier1_products  arm=baseline  trial=2/2
+  ✗ score=0.00  valid  tokens_in=33 turns=89 time=240.2s
+  trial error  error=claude timed out after 240000ms
+→ playwright/n5-v2  tier2_checkout  arm=skill  trial=1/5
+  ✓ score=1.00  valid  tokens_in=18 turns=17 time=32.3s
+→ playwright/n5-v2  tier2_checkout  arm=skill  trial=2/5
+  ✓ score=1.00  valid  tokens_in=18 turns=19 time=58.0s
+→ playwright/n5-v2  tier2_checkout  arm=skill  trial=3/5
+  ✓ score=1.00  valid  tokens_in=21 turns=26 time=39.6s
+→ playwright/n5-v2  tier2_checkout  arm=skill  trial=4/5
+  ✓ score=1.00  valid  tokens_in=18 turns=21 time=39.5s
+→ playwright/n5-v2  tier2_checkout  arm=skill  trial=5/5
+  ✓ score=1.00  valid  tokens_in=18 turns=22 time=45.1s
+→ playwright/n5-v2  tier2_checkout  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=18 turns=22 time=28.3s
+→ playwright/n5-v2  tier2_checkout  arm=mcp  trial=2/5
+  ✓ score=1.00  valid  tokens_in=18 turns=21 time=28.9s
+→ playwright/n5-v2  tier2_checkout  arm=mcp  trial=3/5
+  ✓ score=1.00  valid  tokens_in=18 turns=23 time=28.1s
+→ playwright/n5-v2  tier2_checkout  arm=mcp  trial=4/5
+  ✓ score=1.00  valid  tokens_in=18 turns=21 time=28.0s
+→ playwright/n5-v2  tier2_checkout  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=21 turns=22 time=32.9s
+→ playwright/n5-v2  tier2_checkout  arm=baseline  trial=1/2
+  ✗ score=0.00  valid  tokens_in=21 turns=55 time=240.3s
+  trial error  error=claude timed out after 240000ms
+→ playwright/n5-v2  tier2_checkout  arm=baseline  trial=2/2
+  ✗ score=0.00  valid  tokens_in=35 turns=89 time=240.2s
+  trial error  error=claude timed out after 240000ms
+→ playwright/n5-v2  tier2_recovery  arm=skill  trial=1/5
+  ✓ score=1.00  valid  tokens_in=18 turns=24 time=33.6s
+→ playwright/n5-v2  tier2_recovery  arm=skill  trial=2/5
+  ✓ score=1.00  valid  tokens_in=18 turns=20 time=46.3s
+→ playwright/n5-v2  tier2_recovery  arm=skill  trial=3/5
+  ✓ score=1.00  valid  tokens_in=16 turns=20 time=40.8s
+→ playwright/n5-v2  tier2_recovery  arm=skill  trial=4/5
+  ✓ score=1.00  valid  tokens_in=17 turns=19 time=49.9s
+→ playwright/n5-v2  tier2_recovery  arm=skill  trial=5/5
+  ✓ score=1.00  valid  tokens_in=18 turns=20 time=40.5s
+→ playwright/n5-v2  tier2_recovery  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=15 turns=16 time=25.1s
+→ playwright/n5-v2  tier2_recovery  arm=mcp  trial=2/5
+  ✓ score=1.00  valid  tokens_in=15 turns=16 time=20.2s
+→ playwright/n5-v2  tier2_recovery  arm=mcp  trial=3/5
+  ✓ score=1.00  valid  tokens_in=15 turns=16 time=24.2s
+→ playwright/n5-v2  tier2_recovery  arm=mcp  trial=4/5
+  ✓ score=1.00  valid  tokens_in=15 turns=16 time=24.6s
+→ playwright/n5-v2  tier2_recovery  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=15 turns=17 time=21.9s
+→ playwright/n5-v2  tier2_recovery  arm=baseline  trial=1/2
+  ✗ score=0.00  valid  tokens_in=30 turns=74 time=240.2s
+  trial error  error=claude timed out after 240000ms
+→ playwright/n5-v2  tier2_recovery  arm=baseline  trial=2/2
+  ✗ score=0.00  valid  tokens_in=30 turns=92 time=240.2s
+  trial error  error=claude timed out after 240000ms
+finished=2026-10-03T01:27:39Z

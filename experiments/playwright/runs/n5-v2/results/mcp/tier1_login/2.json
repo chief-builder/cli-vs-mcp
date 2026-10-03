@@ -1,0 +1,71 @@
+{
+  "experiment": "playwright",
+  "runName": "n5-v2",
+  "arm": "mcp",
+  "taskId": "tier1_login",
+  "tier": 1,
+  "trialN": 2,
+  "timestamp": "2026-10-03T00:23:16.487Z",
+  "seed": "84b0a990d6170d2e",
+  "metrics": {
+    "inputTokens": 13,
+    "outputTokens": 957,
+    "cachedInputTokens": 83746,
+    "cacheCreationInputTokens": 8269,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 5
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 6
+      },
+      {
+        "name": "mcp__playwright__browser_fill_form",
+        "turnIndex": 7
+      },
+      {
+        "name": "mcp__playwright__browser_click",
+        "turnIndex": 8
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 9
+      },
+      {
+        "name": "mcp__playwright__browser_take_screenshot",
+        "turnIndex": 11
+      },
+      {
+        "name": "mcp__playwright__browser_take_screenshot",
+        "turnIndex": 14
+      }
+    ],
+    "toolCallCount": 8,
+    "turns": 15,
+    "wallClockMs": 21996,
+    "contextWindowPeak": 11500,
+    "totalCostUsd": 0.08913179999999998,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "screenshot saved at ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5-v2/results/mcp/tier1_login/2/login_landing.png"
+  }
+}
