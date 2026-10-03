@@ -444,8 +444,11 @@ When the issue has been created you are done — you do not need to write any lo
       labels: Array<{ name: string }>;
       pull_request?: unknown;
     };
+    // GitHub's issue list can lag a fresh create by several seconds; 6 x 500 ms produced
+    // a false negative in n5-v2 (issue created with the right title, check missed it).
+    const ATTEMPTS = 12;
     let candidates: IssueRow[] = [];
-    for (let attempt = 0; attempt < 6; attempt++) {
+    for (let attempt = 0; attempt < ATTEMPTS; attempt++) {
       const issues = (await fetchJson(
         cfg.host,
         cfg.controllerToken,
@@ -453,14 +456,14 @@ When the issue has been created you are done — you do not need to write any lo
       )) as IssueRow[];
       candidates = issues.filter(i => !i.pull_request && i.title.trim() === expected.expectedTitle.trim());
       if (candidates.length > 0) break;
-      if (attempt < 5) await new Promise(r => setTimeout(r, 500));
+      if (attempt < ATTEMPTS - 1) await new Promise(r => setTimeout(r, 1000));
     }
 
     if (candidates.length === 0) {
       return {
         pass: false,
         score: 0,
-        notes: `no open issue found with title "${expected.expectedTitle}" after 6 attempts`,
+        notes: `no open issue found with title "${expected.expectedTitle}" after ${ATTEMPTS} attempts`,
         extras: { repoFullName: repo, expectedTitle: expected.expectedTitle },
       };
     }

@@ -97,6 +97,28 @@ interface ResultEvent {
 
 type StreamEvent = AssistantEvent | ResultEvent | { type: string };
 
+/**
+ * Claude Code sometimes records a tool call's input as
+ * `{ "__unparsedToolInput": { "raw": "<json>" } }` (seen with 2.1.288). Recover the real
+ * input so the classifier sees the actual command instead of an empty one.
+ */
+export function normalizeToolInput(input: unknown): unknown {
+  if (!input || typeof input !== 'object') return input;
+  const raw = (input as { __unparsedToolInput?: { raw?: unknown } }).__unparsedToolInput?.raw;
+  if (typeof raw !== 'string') return input;
+  try {
+    return JSON.parse(raw) as unknown;
+  } catch {
+    // Truncated JSON: pull out the string fields the classifier needs.
+    const out: Record<string, string> = {};
+    for (const key of ['command', 'skill']) {
+      const m = new RegExp(`"${key}"\\s*:\\s*("(?:\\\\.|[^"\\\\])*")`).exec(raw);
+      if (m) out[key] = JSON.parse(m[1]!) as string;
+    }
+    return out;
+  }
+}
+
 function getSkillName(input: unknown): string | null {
   if (!input || typeof input !== 'object') return null;
   const skill = (input as { skill?: unknown }).skill;
@@ -212,7 +234,8 @@ export function parseTranscript(
         }
       }
 
-      for (const block of e.message.content) {
+      for (const raw of e.message.content) {
+        const block = raw.type === 'tool_use' ? { ...raw, input: normalizeToolInput(raw.input) } : raw;
         if (block.type === 'tool_use') {
           const command = block.name === 'Bash' ? getBashCommand(block.input) : undefined;
           const record: ToolCallRecord = {

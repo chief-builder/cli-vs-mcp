@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { classifyToolUse, parseTranscript } from '../harness/src/metrics.js';
+import { classifyToolUse, normalizeToolInput, parseTranscript } from '../harness/src/metrics.js';
 import { playwrightExperiment } from '../harness/src/experiments/playwright.js';
 import { githubExperiment } from '../harness/src/experiments/github.js';
 import type { Arm } from '../harness/src/experiment.js';
@@ -137,5 +137,28 @@ describe('classifyToolUse (allow-list)', () => {
     expect(
       classifyToolUse('mcp', gh.classifier, gh.arms.mcp.tools, 'mcp__github__list_issues', {}).surfaceReason,
     ).toBeNull();
+  });
+});
+
+describe('normalizeToolInput', () => {
+  it('passes ordinary input through', () => {
+    expect(normalizeToolInput({ command: 'gh pr view 1' })).toEqual({ command: 'gh pr view 1' });
+  });
+  it('parses __unparsedToolInput.raw', () => {
+    const raw = JSON.stringify({ command: 'gh run list --json name', description: 'List runs' });
+    expect(normalizeToolInput({ __unparsedToolInput: { raw } })).toEqual({
+      command: 'gh run list --json name',
+      description: 'List runs',
+    });
+  });
+  it('recovers the command from truncated raw JSON', () => {
+    const raw = '{"command": "gh api repos/o/r --jq \\".name\\"", "description": "Look';
+    expect(normalizeToolInput({ __unparsedToolInput: { raw } })).toEqual({ command: 'gh api repos/o/r --jq ".name"' });
+  });
+  it('classifies an unparsed Bash call by its real command', () => {
+    const raw = JSON.stringify({ command: 'playwright-cli snapshot' });
+    const m = parse('skill', lines(toolUse('a', 'Bash', { __unparsedToolInput: { raw } })));
+    expect(m.validToolSurface).toBe(true);
+    expect(m.toolCalls[0]?.command).toBe('playwright-cli snapshot');
   });
 });
