@@ -253,23 +253,23 @@
       <p class="lede">
         Same browser, same fixtures, same model. The skill arm drives Chromium through <code>playwright-cli</code>; the MCP arm drives it through typed browser tools.
       </p>
-      <p class="meta">N=5 · 6 tasks · 3 arms · 240 s wall budget · exact run data in <code>experiments/playwright/runs/n5</code></p>
+      <p class="meta">Run n5-v2 · N=5 (baseline N=2) · 6 tasks · 3 arms · 240 s wall budget · Claude Code 2.1.288, <code>claude-sonnet-4-6</code>, <code>@playwright/cli</code> 0.1.13, <code>@playwright/mcp</code> 0.0.75 · exact run data in <code>experiments/playwright/runs/n5-v2</code></p>
       <div class="metric-grid">
         <div class="metric">
           <div class="value">20/20</div>
           <div class="label">Tier 1 success for both skill and MCP.</div>
         </div>
         <div class="metric">
-          <div class="value">1.64x</div>
+          <div class="value">1.92x</div>
           <div class="label">Tier 1 token ratio: skill / MCP.</div>
         </div>
         <div class="metric">
           <div class="value">10/10</div>
-          <div class="label">Tier 2 skill success at the 240 s budget.</div>
+          <div class="label">Tier 2 success for both skill and MCP, recovery included.</div>
         </div>
         <div class="metric">
-          <div class="value">7/10</div>
-          <div class="label">Tier 2 MCP; recovery is the weak spot.</div>
+          <div class="value">1.84x</div>
+          <div class="label">Tier 2 token ratio: skill / MCP.</div>
         </div>
       </div>
     </div>
@@ -280,7 +280,7 @@
   </section>
 
   <div class="callout">
-    <p><strong>Corrections (October 2026):</strong> the Tier 2 token ratio, the cost mechanism, and the recovery-failure description on this page were revised. See the <a href="cli_mcp_experiments_v2.html#corrections">corrections note</a>.</p>
+    <p><strong>First run (May 2026):</strong> this page now shows the n5-v2 run. The first run, n5, used looser isolation; see the <a href="cli_mcp_experiments_v2.html#first-run">first-run note</a> for its numbers and why they differ.</p>
   </div>
 
   <section>
@@ -301,7 +301,7 @@
           <tr><td><code>tier1_form</code></td><td>Submit a form and capture the per-trial token.</td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill good">5/5</span></td></tr>
           <tr><td><code>tier1_products</code></td><td>Visit five product pages and write title/price JSON.</td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill good">5/5</span></td></tr>
           <tr><td><code>tier2_checkout</code></td><td>Find a marked product, add to cart, complete checkout.</td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill good">5/5</span></td></tr>
-          <tr><td><code>tier2_recovery</code></td><td>Trigger an error, read the code, resubmit correctly.</td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill warn">2/5</span></td></tr>
+          <tr><td><code>tier2_recovery</code></td><td>Trigger an error, read the code, resubmit correctly.</td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill good">5/5</span></td></tr>
         </tbody>
       </table>
     </div>
@@ -311,7 +311,7 @@
     <div class="narrow">
       <h2>The Cost Picture</h2>
       <p>
-        On tasks where both browser surfaces complete cleanly, MCP was cheaper on every task. The form task is the outlier: the skill arm fills one field per <code>fill</code> call, while MCP fills the whole form with one batched <code>browser_fill_form</code>.
+        Both browser surfaces completed every task cleanly, and MCP was cheaper on every one, 1.53x–2.07x. The form task is the outlier at 2.67x: the skill arm fills one field per <code>fill</code> call, while MCP fills the whole form with one batched <code>browser_fill_form</code>.
       </p>
     </div>
     <div class="panel">
@@ -322,31 +322,36 @@
       <div class="chart">
         <div class="bar-row">
           <div class="bar-label">login</div>
-          <div class="bars"><span class="bar skill" style="width: 62%"></span><span class="bar mcp" style="width: 44%"></span></div>
-          <div class="bar-value">1.42x</div>
+          <div class="bars"><span class="bar skill" style="width: 62%"></span><span class="bar mcp" style="width: 30%"></span></div>
+          <div class="bar-value">2.07x</div>
         </div>
         <div class="bar-row">
           <div class="bar-label">scrape</div>
-          <div class="bars"><span class="bar skill" style="width: 34%"></span><span class="bar mcp" style="width: 26%"></span></div>
-          <div class="bar-value">1.33x</div>
+          <div class="bars"><span class="bar skill" style="width: 31%"></span><span class="bar mcp" style="width: 20%"></span></div>
+          <div class="bar-value">1.54x</div>
         </div>
         <div class="bar-row">
           <div class="bar-label">form</div>
-          <div class="bars"><span class="bar skill" style="width: 96%"></span><span class="bar mcp" style="width: 38%"></span></div>
-          <div class="bar-value">2.51x</div>
+          <div class="bars"><span class="bar skill" style="width: 91%"></span><span class="bar mcp" style="width: 34%"></span></div>
+          <div class="bar-value">2.67x</div>
         </div>
         <div class="bar-row">
           <div class="bar-label">products</div>
-          <div class="bars"><span class="bar skill" style="width: 94%"></span><span class="bar mcp" style="width: 67%"></span></div>
-          <div class="bar-value">1.41x</div>
+          <div class="bars"><span class="bar skill" style="width: 87%"></span><span class="bar mcp" style="width: 57%"></span></div>
+          <div class="bar-value">1.53x</div>
         </div>
         <div class="bar-row">
           <div class="bar-label">checkout</div>
-          <div class="bars"><span class="bar skill" style="width: 100%"></span><span class="bar mcp" style="width: 78%"></span></div>
-          <div class="bar-value">1.29x</div>
+          <div class="bars"><span class="bar skill" style="width: 100%"></span><span class="bar mcp" style="width: 59%"></span></div>
+          <div class="bar-value">1.68x</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">recovery</div>
+          <div class="bars"><span class="bar skill" style="width: 89%"></span><span class="bar mcp" style="width: 43%"></span></div>
+          <div class="bar-value">2.06x</div>
         </div>
       </div>
-      <p class="caption">Widths are normalized to checkout skill tokens, the largest completed clean task at 304,195 total tokens.</p>
+      <p class="caption">Widths are normalized to checkout skill tokens, the largest clean task at 266,073 total tokens. Averages are over trials that passed and stayed valid.</p>
     </div>
   </section>
 
@@ -382,14 +387,14 @@
 
   <section>
     <div class="narrow">
-      <h2>Where MCP Breaks</h2>
+      <h2>Recovery Now Converges</h2>
       <p>
-        Lower cost does not mean better convergence. On <code>tier2_recovery</code>, MCP passed 2/5 (40%) and the other three trials hit the 240 s wall.
+        Lower cost and convergence went together in this run. On <code>tier2_recovery</code>, the first run's weak spot for MCP, both arms passed 5/5 and stayed in surface.
       </p>
     </div>
     <div class="callout">
       <p>
-        Conservative read: MCP can solve the recovery flow, but the three failed trials stalled after at most four tool calls and went silent until the 240 s kill (one after a single ToolSearch, one ending on an API retry event). The transcripts show no looping and no stale snapshots; the cause is not determined from them. The skill arm passed 5/5 at the same wall budget.
+        Conservative read: MCP solved the recovery flow in all five trials, averaging 115,117 tokens and 16.2 turns against the skill arm's 236,852 tokens and 20.6 turns (2.06x). The first-run result for this task is in the <a href="cli_mcp_experiments_v2.html#first-run">first-run note</a>.
       </p>
     </div>
     <div class="panel">
@@ -398,18 +403,18 @@
           <tr><th>Tier</th><th class="num">Skill success</th><th class="num">MCP success</th><th class="num">Skill avg tokens</th><th class="num">MCP avg tokens</th><th class="num">Skill/MCP</th></tr>
         </thead>
         <tbody>
-          <tr><td>Tier 1</td><td class="num">100%</td><td class="num">100%</td><td class="num">218,012</td><td class="num">132,996</td><td class="num">1.64x</td></tr>
-          <tr><td>Tier 2</td><td class="num">100%</td><td class="num">70%</td><td class="num">302,127</td><td class="num">162,609</td><td class="num">1.86x</td></tr>
+          <tr><td>Tier 1</td><td class="num">100%</td><td class="num">100%</td><td class="num">179,932</td><td class="num">93,546</td><td class="num">1.92x</td></tr>
+          <tr><td>Tier 2</td><td class="num">100%</td><td class="num">100%</td><td class="num">251,463</td><td class="num">136,538</td><td class="num">1.84x</td></tr>
         </tbody>
       </table>
-      <p class="caption">The Tier 2 MCP average includes three timed-out <code>tier2_recovery</code> trials whose tokens are lower-bound estimates. On completed trials only, MCP averages 199,165 tokens and the ratio is 1.52x, so read Tier 2 as about 1.5–1.9x.</p>
+      <p class="caption">Tier averages as the harness report computes them. Every skill and MCP Playwright trial passed and stayed in surface.</p>
     </div>
   </section>
 
   <section class="narrow">
     <h2>Takeaway</h2>
     <p>
-      For browser automation, MCP was cheaper on every Playwright task where both arms passed, with the same success on Tier 1. The trade is that multi-step recovery can fail in a different way, so success and cost have to be read together.
+      For browser automation, MCP was cheaper on every Playwright task, with the same 5/5 success on all six, recovery included. The multiple depends on the harness setup, 1.53x–2.07x here with form at 2.67x; the direction (MCP cheaper) held in both runs. Success and cost still have to be read together.
     </p>
     <p>
       Read the <a href="github_experiment_v2.html">GitHub visual brief</a> or the <a href="cli_mcp_experiments_v2.html">cross-experiment visual guide</a>.
