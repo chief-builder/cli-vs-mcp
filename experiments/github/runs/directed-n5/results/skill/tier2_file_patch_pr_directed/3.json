@@ -8,10 +8,10 @@
   "timestamp": "2026-05-17T16:53:54.733Z",
   "seed": "4d6ce5ca7df7c900",
   "metrics": {
-    "inputTokens": 0,
-    "outputTokens": 0,
-    "cachedInputTokens": 0,
-    "cacheCreationInputTokens": 0,
+    "inputTokens": 8,
+    "outputTokens": 96,
+    "cachedInputTokens": 83345,
+    "cacheCreationInputTokens": 8285,
     "toolCalls": [
       {
         "name": "Skill",
@@ -44,8 +44,7 @@
     ],
     "toolCallCount": 6,
     "turns": 14,
-    "numTurns": 0,
-    "wallClockMs": 0,
+    "wallClockMs": 240000,
     "contextWindowPeak": 19249,
     "totalCostUsd": 0,
     "modelsUsed": [],
@@ -68,7 +67,9 @@
         "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-4d6ce5ca/contents/src/widget.ts --jq '.content' | base64 -d",
         "reason": "non-gh Bash segment: base64 -d"
       }
-    ]
+    ],
+    "incomplete": true,
+    "tokensEstimated": true
   },
   "success": {
     "pass": false,

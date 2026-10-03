@@ -1,0 +1,71 @@
+{
+  "experiment": "github",
+  "runName": "n5-v2",
+  "arm": "skill",
+  "taskId": "tier2_file_patch_pr_directed",
+  "tier": 2,
+  "trialN": 4,
+  "timestamp": "2026-10-03T00:46:16.117Z",
+  "seed": "27d5fbde6ec4e16f",
+  "metrics": {
+    "inputTokens": 8,
+    "outputTokens": 71,
+    "cachedInputTokens": 90345,
+    "cacheCreationInputTokens": 11613,
+    "toolCalls": [
+      {
+        "name": "Bash",
+        "turnIndex": 3,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-27d5fbde/contents/src/widget.ts"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-27d5fbde/git/ref/heads/main"
+      },
+      {
+        "name": "Write",
+        "turnIndex": 9
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-27d5fbde/git/refs --input /private/var/folders/h7/mhpz888d6xzcm62796jyks1c0000gn/T/clivsmcp-github-skill-tier2_file_patch_pr_directed-o73bE7/create-branch.json"
+      },
+      {
+        "name": "Write",
+        "turnIndex": 12
+      },
+      {
+        "name": "Write",
+        "turnIndex": 13
+      }
+    ],
+    "toolCallCount": 6,
+    "turns": 13,
+    "wallClockMs": 240000,
+    "contextWindowPeak": 18183,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": true,
+    "tokensEstimated": true
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "title=false body=false fn-present=false fn-returns-expected=false only-target-file=false",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-27d5fbde",
+      "prNumber": null,
+      "expectedFunctionName": "solve_D638C2D4",
+      "expectedPrTitle": "Fix MARKER-D638C2D4"
+    }
+  },
+  "error": "claude timed out after 240000ms"
+}

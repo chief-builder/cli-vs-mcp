@@ -1,0 +1,8 @@
+node_modules/
+coverage/
+pnpm-lock.yaml
+experiments/*/runs/
+experiments/*/fixtures/
+docs/
+.claude/
+*.md

@@ -8,10 +8,10 @@
   "timestamp": "2026-05-15T12:36:55.916Z",
   "seed": "e188e4d291e21097",
   "metrics": {
-    "inputTokens": 0,
-    "outputTokens": 0,
-    "cachedInputTokens": 0,
-    "cacheCreationInputTokens": 0,
+    "inputTokens": 34,
+    "outputTokens": 206,
+    "cachedInputTokens": 357061,
+    "cacheCreationInputTokens": 30876,
     "toolCalls": [
       {
         "name": "ToolSearch",
@@ -92,8 +92,7 @@
     ],
     "toolCallCount": 19,
     "turns": 43,
-    "numTurns": 0,
-    "wallClockMs": 0,
+    "wallClockMs": 180000,
     "contextWindowPeak": 38369,
     "totalCostUsd": 0,
     "modelsUsed": [],
@@ -102,12 +101,14 @@
     "escapeToolUsed": false,
     "escapeToolCalls": [],
     "singleCliCommandPerToolCall": true,
-    "cliCommandGranularityViolations": []
+    "cliCommandGranularityViolations": [],
+    "incomplete": true,
+    "tokensEstimated": true
   },
   "success": {
     "pass": false,
     "score": 0,
-    "notes": "missing or invalid JSON at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/smoke-n1/results/baseline/tier1_pr_diff_answer/1/pr_diff.json"
+    "notes": "missing or invalid JSON at ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/smoke-n1/results/baseline/tier1_pr_diff_answer/1/pr_diff.json"
   },
   "error": "claude timed out after 180000ms"
 }

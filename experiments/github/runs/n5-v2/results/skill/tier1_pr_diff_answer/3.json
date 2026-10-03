@@ -1,0 +1,56 @@
+{
+  "experiment": "github",
+  "runName": "n5-v2",
+  "arm": "skill",
+  "taskId": "tier1_pr_diff_answer",
+  "tier": 1,
+  "trialN": 3,
+  "timestamp": "2026-10-03T00:33:04.450Z",
+  "seed": "f1dc6a2ea2e9ca83",
+  "metrics": {
+    "inputTokens": 8,
+    "outputTokens": 509,
+    "cachedInputTokens": 55321,
+    "cacheCreationInputTokens": 10691,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 4,
+        "command": "gh pr diff 1 --repo chief-builder-lab/clivsmcp-tier1-pr-diff-answer-f1dc6a2e"
+      },
+      {
+        "name": "Write",
+        "turnIndex": 5
+      }
+    ],
+    "toolCallCount": 3,
+    "turns": 6,
+    "wallClockMs": 11434,
+    "contextWindowPeak": 17261,
+    "totalCostUsd": 0.0884013,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "PR diff answers match",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier1-pr-diff-answer-f1dc6a2e",
+      "expectedFn": "fn_5e7370"
+    }
+  }
+}

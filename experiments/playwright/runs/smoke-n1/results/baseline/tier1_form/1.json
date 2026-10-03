@@ -8,10 +8,10 @@
   "timestamp": "2026-05-15T03:35:59.332Z",
   "seed": "cfa013b92796da47",
   "metrics": {
-    "inputTokens": 0,
-    "outputTokens": 0,
-    "cachedInputTokens": 0,
-    "cacheCreationInputTokens": 0,
+    "inputTokens": 34,
+    "outputTokens": 169,
+    "cachedInputTokens": 291768,
+    "cacheCreationInputTokens": 22147,
     "toolCalls": [
       {
         "name": "ToolSearch",
@@ -76,8 +76,7 @@
     ],
     "toolCallCount": 15,
     "turns": 34,
-    "numTurns": 0,
-    "wallClockMs": 0,
+    "wallClockMs": 180000,
     "contextWindowPeak": 29642,
     "totalCostUsd": 0,
     "modelsUsed": [],
@@ -86,12 +85,14 @@
     "escapeToolUsed": false,
     "escapeToolCalls": [],
     "singleCliCommandPerToolCall": true,
-    "cliCommandGranularityViolations": []
+    "cliCommandGranularityViolations": [],
+    "incomplete": true,
+    "tokensEstimated": true
   },
   "success": {
     "pass": false,
     "score": 0,
-    "notes": "missing /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/smoke-n1/results/baseline/tier1_form/1/form_result.txt"
+    "notes": "missing ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/smoke-n1/results/baseline/tier1_form/1/form_result.txt"
   },
   "error": "claude timed out after 180000ms"
 }

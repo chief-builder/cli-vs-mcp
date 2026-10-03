@@ -79,7 +79,6 @@
     ],
     "toolCallCount": 13,
     "turns": 23,
-    "numTurns": 15,
     "wallClockMs": 57105,
     "contextWindowPeak": 21336,
     "totalCostUsd": 0.15265939999999997,
@@ -101,7 +100,7 @@
         "name": "Bash",
         "turnIndex": 15,
         "command": "GH_TOKEN=$(gh auth token --hostname github.com 2>/dev/null || echo \"\") && echo \"Token starts with: ${GH_TOKEN:0:15}\"",
-        "reason": "shell redirection: GH_TOKEN=$(gh auth token --hostname github.com 2>/dev/null || echo \"\") && echo \"Token starts with: ${GH_TOKEN:0:15}\""
+        "reason": "non-gh Bash segment: GH_TOKEN=$(gh auth token --hostname github.com"
       },
       {
         "name": "Bash",
@@ -119,13 +118,13 @@
         "name": "Bash",
         "turnIndex": 19,
         "command": "gh auth token --secure-storage 2>/dev/null || gh auth token -h github.com 2>/dev/null | head -1",
-        "reason": "shell redirection: gh auth token --secure-storage 2>/dev/null || gh auth token -h github.com 2>/dev/null | head -1"
+        "reason": "non-gh Bash segment: head -1"
       },
       {
         "name": "Bash",
         "turnIndex": 20,
         "command": "curl -s -H \"Authorization: token <GH_OAUTH_REDACTED>\" -H \"Accept: application/vnd.github.v3+json\" \"https://api.github.com/repos/chief-builder-lab/clivsmcp-tier1-issue-triage-cb227815/issues?state=open&per_page=50\" | python3 -c \"\nimport json,sys\ndata = json.load(sys.stdin)\nif isinstance(data, list):\n    for i in data:\n        print(json.dumps({'number':i['number'],'title':i['title'],'body':i.get('body',''),'labels':[l['name'] for l in i['labels']]}))\nelse:\n    print(data)\n\"",
-        "reason": "non-gh Bash segment: curl -s -H \"Authorization: token <GH_OAUTH_REDACTED>\" -H \"Accept: application/vnd.github.v3+json\" \""
+        "reason": "non-gh Bash segment: curl -s -H \"Authorization: token -H \"Accept: application/vnd.github.v3+json\" \"https://api.github.com/repos/chief-builder"
       }
     ],
     "singleCliCommandPerToolCall": false,
@@ -140,7 +139,7 @@
         "name": "Bash",
         "turnIndex": 15,
         "command": "GH_TOKEN=$(gh auth token --hostname github.com 2>/dev/null || echo \"\") && echo \"Token starts with: ${GH_TOKEN:0:15}\"",
-        "reason": "shell redirection: GH_TOKEN=$(gh auth token --hostname github.com 2>/dev/null || echo \"\") && echo \"Token starts with: ${GH_TOKEN:0:15}\""
+        "reason": "non-gh Bash segment: GH_TOKEN=$(gh auth token --hostname github.com"
       },
       {
         "name": "Bash",
@@ -158,15 +157,17 @@
         "name": "Bash",
         "turnIndex": 19,
         "command": "gh auth token --secure-storage 2>/dev/null || gh auth token -h github.com 2>/dev/null | head -1",
-        "reason": "shell redirection: gh auth token --secure-storage 2>/dev/null || gh auth token -h github.com 2>/dev/null | head -1"
+        "reason": "non-gh Bash segment: head -1"
       },
       {
         "name": "Bash",
         "turnIndex": 20,
         "command": "curl -s -H \"Authorization: token <GH_OAUTH_REDACTED>\" -H \"Accept: application/vnd.github.v3+json\" \"https://api.github.com/repos/chief-builder-lab/clivsmcp-tier1-issue-triage-cb227815/issues?state=open&per_page=50\" | python3 -c \"\nimport json,sys\ndata = json.load(sys.stdin)\nif isinstance(data, list):\n    for i in data:\n        print(json.dumps({'number':i['number'],'title':i['title'],'body':i.get('body',''),'labels':[l['name'] for l in i['labels']]}))\nelse:\n    print(data)\n\"",
-        "reason": "non-gh Bash segment: curl -s -H \"Authorization: token <GH_OAUTH_REDACTED>\" -H \"Accept: application/vnd.github.v3+json\" \""
+        "reason": "non-gh Bash segment: curl -s -H \"Authorization: token -H \"Accept: application/vnd.github.v3+json\" \"https://api.github.com/repos/chief-builder"
       }
-    ]
+    ],
+    "incomplete": false,
+    "tokensEstimated": false
   },
   "success": {
     "pass": true,

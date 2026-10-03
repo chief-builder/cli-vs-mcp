@@ -1,15 +1,17 @@
-# Experiment Report: github / issue-create-n5 — Tier 2
-_Generated: 2026-05-17T17:35:31.445Z_
+# Experiment Report: github / issue-create-n5 — All Tiers
+_Generated: 2026-10-02T19:17:16.235Z_
 _Validity mode: practical — chained Bash calls are valid when every segment is the intended CLI._
 
 ## Per-Task Results
 
 _Per-task averages include all trials (invalid trials too) so the Valid Surface column tells you when escapes occurred. The tier summary and crossover below restrict to valid trials only._
 
-| Task | Tier | Arm | Trials | Success | Valid Surface | Single CLI Cmd | Score | Input Tok | Cached Tok | Cache Create Tok | Output Tok | Total Tok | Tool Calls | Turns | Time |
-|------|------|-----|--------|---------|---------------|----------------|-------|-----------|------------|------------------|------------|-----------|------------|-------|------|
-| tier2_issue_create | 2 | skill | 5 | 100% | 100% | 100% | 1.0 | 561 | 45498 | 7282 | 419 | 53760 | 2.0 | 5.2 | 13.0s |
-| tier2_issue_create | 2 | mcp | 5 | 100% | 100% | 100% | 1.0 | 561 | 33882 | 6296 | 431 | 41169 | 2.0 | 5.8 | 10.6s |
+_Timed-out trials have no final usage totals. Their tokens are summed from per-message usage, which undercounts output and side-model calls, so averages that include them are lower bounds. Their time is the timeout that killed them._
+
+| Task | Tier | Arm | Trials | Timeouts | Success | Valid Surface | Single CLI Cmd | Score | Input Tok | Cached Tok | Cache Create Tok | Output Tok | Total Tok | Tool Calls | Turns | Time |
+|------|------|-----|--------|----------|---------|---------------|----------------|-------|-----------|------------|------------------|------------|-----------|------------|-------|------|
+| tier2_issue_create | 2 | skill | 5 | 0 | 100% | 100% | 100% | 1.0 | 561 | 45498 | 7282 | 419 | 53760 | 2.0 | 5.2 | 13.0s |
+| tier2_issue_create | 2 | mcp | 5 | 0 | 100% | 100% | 100% | 1.0 | 561 | 33882 | 6296 | 431 | 41169 | 2.0 | 5.8 | 10.6s |
 
 ## Per-Tier Summary
 
@@ -30,6 +32,7 @@ Per-tier comparison restricted to **valid-surface trials only**. Turns is a prox
 | Tier | Turns (Skill) | Turns (MCP) | Total Tok (Skill) | Total Tok (MCP) | Tok Skill/MCP | Success (Skill) | Success (MCP) | MCP ≥ Skill (success)? |
 |------|---------------|-------------|-------------------|-----------------|---------------|-----------------|---------------|------------------------|
 | 2 | 5.2 | 5.8 | 53760 | 41169 | 1.31× | 100% | 100% | Yes |
+
 ## Narrative
 
 **Run config.** N=5, skill and mcp arms only, github-rw experiment. Designed as a clean apples-to-apples single-primitive write comparison — `gh issue create` on the skill side, `issue_write` (create variant) on the MCP side. No baseline arm because we already know baseline is 0/N on off-host state.

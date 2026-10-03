@@ -1,6 +1,6 @@
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
 import { readFile } from 'node:fs/promises';
-import { join, normalize, sep, extname } from 'node:path';
+import { resolve as resolvePath, sep, extname } from 'node:path';
 
 const MIME: Record<string, string> = {
   '.html': 'text/html; charset=utf-8',
@@ -29,11 +29,7 @@ export interface FixtureServer {
  * returns true the request was handled (response written). If false, the
  * server tries to serve a matching file under `rootDir`.
  */
-export type FixtureRenderer = (
-  req: IncomingMessage,
-  res: ServerResponse,
-  body: Buffer,
-) => Promise<boolean> | boolean;
+export type FixtureRenderer = (req: IncomingMessage, res: ServerResponse, body: Buffer) => Promise<boolean> | boolean;
 
 const MAX_BODY_BYTES = 1_000_000;
 
@@ -57,19 +53,16 @@ async function readBody(req: IncomingMessage): Promise<Buffer> {
  * dynamic content can be served from process memory without ever writing it
  * to disk — closing the filesystem-side cheat path for baseline.
  */
-export async function startFixtureServer(
-  rootDir: string,
-  renderer?: FixtureRenderer,
-): Promise<FixtureServer> {
-  const normalizedRoot = normalize(rootDir);
+export async function startFixtureServer(rootDir: string, renderer?: FixtureRenderer): Promise<FixtureServer> {
+  const root = resolvePath(rootDir);
 
   const server: Server = createServer(async (req, res) => {
     let body: Buffer;
     try {
       body = await readBody(req);
-    } catch (err) {
+    } catch {
       res.writeHead(413, { 'Content-Type': 'text/plain' });
-      res.end(String(err));
+      res.end('request body too large');
       return;
     }
 
@@ -77,10 +70,11 @@ export async function startFixtureServer(
       try {
         const handled = await renderer(req, res, body);
         if (handled) return;
-      } catch (err) {
+      } catch {
+        // Error details stay server-side; the agent only sees a generic 500.
         if (!res.writableEnded) {
           res.writeHead(500, { 'Content-Type': 'text/plain' });
-          res.end(String(err));
+          res.end('internal error');
         }
         return;
       }
@@ -99,8 +93,9 @@ export async function startFixtureServer(
       let urlPath = decodeURIComponent(queryStart >= 0 ? rawUrl.slice(0, queryStart) : rawUrl);
       if (urlPath.endsWith('/')) urlPath += 'index.html';
 
-      const filePath = normalize(join(normalizedRoot, urlPath));
-      if (filePath !== normalizedRoot && !filePath.startsWith(normalizedRoot + sep)) {
+      // Resolve against the root and require the result to stay under it.
+      const filePath = resolvePath(root, '.' + urlPath);
+      if (!filePath.startsWith(root + sep)) {
         res.writeHead(403, { 'Content-Type': 'text/plain' });
         res.end('forbidden');
         return;
@@ -117,7 +112,7 @@ export async function startFixtureServer(
         res.end('not found');
       } else {
         res.writeHead(500, { 'Content-Type': 'text/plain' });
-        res.end(String(err));
+        res.end('internal error');
       }
     }
   });
@@ -135,8 +130,9 @@ export async function startFixtureServer(
   return {
     port: addr.port,
     url: `http://localhost:${addr.port}`,
-    close: () => new Promise<void>((resolve, reject) => {
-      server.close(err => (err ? reject(err) : resolve()));
-    }),
+    close: () =>
+      new Promise<void>((resolve, reject) => {
+        server.close(err => (err ? reject(err) : resolve()));
+      }),
   };
 }

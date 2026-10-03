@@ -8,10 +8,10 @@
   "timestamp": "2026-05-17T15:50:03.691Z",
   "seed": "b332cc70cef5652d",
   "metrics": {
-    "inputTokens": 0,
-    "outputTokens": 0,
-    "cachedInputTokens": 0,
-    "cacheCreationInputTokens": 0,
+    "inputTokens": 1294,
+    "outputTokens": 726,
+    "cachedInputTokens": 827488,
+    "cacheCreationInputTokens": 39795,
     "toolCalls": [
       {
         "name": "ToolSearch",
@@ -156,8 +156,7 @@
     ],
     "toolCallCount": 35,
     "turns": 63,
-    "numTurns": 0,
-    "wallClockMs": 0,
+    "wallClockMs": 240000,
     "contextWindowPeak": 47288,
     "totalCostUsd": 0,
     "modelsUsed": [],
@@ -166,7 +165,9 @@
     "escapeToolUsed": false,
     "escapeToolCalls": [],
     "singleCliCommandPerToolCall": true,
-    "cliCommandGranularityViolations": []
+    "cliCommandGranularityViolations": [],
+    "incomplete": true,
+    "tokensEstimated": true
   },
   "success": {
     "pass": false,

@@ -8,10 +8,10 @@
   "timestamp": "2026-05-16T20:16:49.309Z",
   "seed": "40686185ecfeb352",
   "metrics": {
-    "inputTokens": 0,
-    "outputTokens": 0,
-    "cachedInputTokens": 0,
-    "cacheCreationInputTokens": 0,
+    "inputTokens": 37,
+    "outputTokens": 127,
+    "cachedInputTokens": 437086,
+    "cacheCreationInputTokens": 42209,
     "toolCalls": [
       {
         "name": "ToolSearch",
@@ -108,8 +108,7 @@
     ],
     "toolCallCount": 23,
     "turns": 49,
-    "numTurns": 0,
-    "wallClockMs": 0,
+    "wallClockMs": 240000,
     "contextWindowPeak": 49704,
     "totalCostUsd": 0,
     "modelsUsed": [],
@@ -118,12 +117,14 @@
     "escapeToolUsed": false,
     "escapeToolCalls": [],
     "singleCliCommandPerToolCall": true,
-    "cliCommandGranularityViolations": []
+    "cliCommandGranularityViolations": [],
+    "incomplete": true,
+    "tokensEstimated": true
   },
   "success": {
     "pass": false,
     "score": 0,
-    "notes": "missing or invalid JSON at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/n5/results/baseline/tier1_repo_inventory/1/repo_inventory.json"
+    "notes": "missing or invalid JSON at ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/n5/results/baseline/tier1_repo_inventory/1/repo_inventory.json"
   },
   "error": "claude timed out after 240000ms"
 }

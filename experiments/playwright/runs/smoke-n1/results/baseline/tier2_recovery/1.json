@@ -8,10 +8,10 @@
   "timestamp": "2026-05-15T04:53:21.813Z",
   "seed": "921e27ae2dffbad5",
   "metrics": {
-    "inputTokens": 0,
-    "outputTokens": 0,
-    "cachedInputTokens": 0,
-    "cacheCreationInputTokens": 0,
+    "inputTokens": 51,
+    "outputTokens": 661,
+    "cachedInputTokens": 1011272,
+    "cacheCreationInputTokens": 64840,
     "toolCalls": [
       {
         "name": "ToolSearch",
@@ -152,8 +152,7 @@
     ],
     "toolCallCount": 34,
     "turns": 67,
-    "numTurns": 0,
-    "wallClockMs": 0,
+    "wallClockMs": 180000,
     "contextWindowPeak": 72333,
     "totalCostUsd": 0,
     "modelsUsed": [],
@@ -162,12 +161,14 @@
     "escapeToolUsed": false,
     "escapeToolCalls": [],
     "singleCliCommandPerToolCall": true,
-    "cliCommandGranularityViolations": []
+    "cliCommandGranularityViolations": [],
+    "incomplete": true,
+    "tokensEstimated": true
   },
   "success": {
     "pass": false,
     "score": 0,
-    "notes": "missing /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/smoke-n1/results/baseline/tier2_recovery/1/recovery_token.txt",
+    "notes": "missing ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/smoke-n1/results/baseline/tier2_recovery/1/recovery_token.txt",
     "extras": {
       "recovery_attempts": 0,
       "sessions_seen": 0

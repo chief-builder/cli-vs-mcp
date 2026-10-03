@@ -1,0 +1,55 @@
+{
+  "experiment": "github",
+  "runName": "n5-v2",
+  "arm": "mcp",
+  "taskId": "tier1_pr_diff_answer",
+  "tier": 1,
+  "trialN": 2,
+  "timestamp": "2026-10-03T00:34:23.287Z",
+  "seed": "c17752b0dd50b7c6",
+  "metrics": {
+    "inputTokens": 8,
+    "outputTokens": 493,
+    "cachedInputTokens": 31424,
+    "cacheCreationInputTokens": 6917,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "mcp__github__pull_request_read",
+        "turnIndex": 5
+      },
+      {
+        "name": "Write",
+        "turnIndex": 6
+      }
+    ],
+    "toolCallCount": 3,
+    "turns": 7,
+    "wallClockMs": 26266,
+    "contextWindowPeak": 10148,
+    "totalCostUsd": 0.058348199999999996,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "PR diff answers match",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier1-pr-diff-answer-c17752b0",
+      "expectedFn": "fn_90249a"
+    }
+  }
+}

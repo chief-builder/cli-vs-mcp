@@ -1,0 +1,85 @@
+{
+  "experiment": "github",
+  "runName": "n5-v2",
+  "arm": "skill",
+  "taskId": "tier1_repo_inventory",
+  "tier": 1,
+  "trialN": 5,
+  "timestamp": "2026-10-03T00:21:02.854Z",
+  "seed": "ad983e5c37742b6d",
+  "metrics": {
+    "inputTokens": 9,
+    "outputTokens": 876,
+    "cachedInputTokens": 73305,
+    "cacheCreationInputTokens": 11393,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 3
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "gh repo view chief-builder-lab/clivsmcp-tier1-repo-inventory-ad983e5c --json description,topics,defaultBranchRef"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 7,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier1-repo-inventory-ad983e5c/contents/README.md --jq '.content' | base64 -d"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 8,
+        "command": "gh repo view chief-builder-lab/clivsmcp-tier1-repo-inventory-ad983e5c --json description,repositoryTopics,defaultBranchRef"
+      },
+      {
+        "name": "Write",
+        "turnIndex": 10
+      }
+    ],
+    "toolCallCount": 5,
+    "turns": 11,
+    "wallClockMs": 15596,
+    "contextWindowPeak": 17963,
+    "totalCostUsd": 0.1035165,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": false,
+    "escapeToolUsed": true,
+    "escapeToolCalls": [
+      {
+        "name": "Bash",
+        "turnIndex": 7,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier1-repo-inventory-ad983e5c/contents/README.md --jq '.content' | base64 -d",
+        "reason": "non-gh Bash segment: base64 -d"
+      }
+    ],
+    "singleCliCommandPerToolCall": false,
+    "cliCommandGranularityViolations": [
+      {
+        "name": "Bash",
+        "turnIndex": 7,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier1-repo-inventory-ad983e5c/contents/README.md --jq '.content' | base64 -d",
+        "reason": "non-gh Bash segment: base64 -d"
+      }
+    ],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "all repo facts match",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier1-repo-inventory-ad983e5c",
+      "expectedDescription": "cli-vs-mcp sandbox repo (ad983e)",
+      "expectedTopics": [
+        "topic-e50b",
+        "topic-a4a4",
+        "cli-vs-mcp"
+      ]
+    }
+  }
+}

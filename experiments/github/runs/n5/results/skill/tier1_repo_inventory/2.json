@@ -34,7 +34,6 @@
     ],
     "toolCallCount": 4,
     "turns": 10,
-    "numTurns": 6,
     "wallClockMs": 14583,
     "contextWindowPeak": 18812,
     "totalCostUsd": 0.0606483,
@@ -61,7 +60,9 @@
         "command": "gh api repos/chief-builder-lab/clivsmcp-tier1-repo-inventory-84c73880/contents/README.md --jq '.content' | base64 -d",
         "reason": "non-gh Bash segment: base64 -d"
       }
-    ]
+    ],
+    "incomplete": false,
+    "tokensEstimated": false
   },
   "success": {
     "pass": true,

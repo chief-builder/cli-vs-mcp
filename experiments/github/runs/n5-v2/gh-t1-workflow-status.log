@@ -1,0 +1,27 @@
+lane=gh-t1 (tier1_workflow_status re-run after controller gained Actions: read) started=2026-10-03T00:45:51Z
+claude=2.1.288 (Claude Code) node=v24.15.0 model=claude-sonnet-4-6 harness commit=8a6cc40
+→ github/n5-v2  tier1_workflow_status  arm=skill  trial=1/5
+  ✓ score=1.00  INVALID  tokens_in=10 turns=12 time=148.0s
+→ github/n5-v2  tier1_workflow_status  arm=skill  trial=2/5
+  ✓ score=1.00  valid  tokens_in=8 turns=9 time=17.3s
+→ github/n5-v2  tier1_workflow_status  arm=skill  trial=3/5
+  ✓ score=1.00  valid  tokens_in=8 turns=9 time=14.3s
+→ github/n5-v2  tier1_workflow_status  arm=skill  trial=4/5
+  ✓ score=1.00  INVALID  tokens_in=8 turns=9 time=15.6s
+→ github/n5-v2  tier1_workflow_status  arm=skill  trial=5/5
+  ✓ score=1.00  valid  tokens_in=8 turns=8 time=9.4s
+→ github/n5-v2  tier1_workflow_status  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=8 turns=8 time=15.5s
+→ github/n5-v2  tier1_workflow_status  arm=mcp  trial=2/5
+  ✓ score=1.00  valid  tokens_in=8 turns=8 time=11.9s
+→ github/n5-v2  tier1_workflow_status  arm=mcp  trial=3/5
+  ✓ score=1.00  valid  tokens_in=8 turns=8 time=11.8s
+→ github/n5-v2  tier1_workflow_status  arm=mcp  trial=4/5
+  ✓ score=1.00  valid  tokens_in=8 turns=8 time=13.9s
+→ github/n5-v2  tier1_workflow_status  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=8 turns=7 time=10.9s
+→ github/n5-v2  tier1_workflow_status  arm=baseline  trial=1/2
+  ✗ score=0.00  valid  tokens_in=4 turns=5 time=16.9s
+→ github/n5-v2  tier1_workflow_status  arm=baseline  trial=2/2
+  ✗ score=0.00  valid  tokens_in=4 turns=5 time=13.0s
+finished=2026-10-03T00:54:36Z

@@ -1,0 +1,43 @@
+{
+  "experiment": "github",
+  "runName": "n5-v2",
+  "arm": "baseline",
+  "taskId": "tier1_repo_inventory",
+  "tier": 1,
+  "trialN": 2,
+  "timestamp": "2026-10-03T00:23:08.305Z",
+  "seed": "362b4f2fe8311494",
+  "metrics": {
+    "inputTokens": 4,
+    "outputTokens": 736,
+    "cachedInputTokens": 14396,
+    "cacheCreationInputTokens": 4963,
+    "toolCalls": [
+      {
+        "name": "Glob",
+        "turnIndex": 3
+      }
+    ],
+    "toolCallCount": 1,
+    "turns": 5,
+    "wallClockMs": 12025,
+    "contextWindowPeak": 9800,
+    "totalCostUsd": 0.0451488,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "missing or invalid JSON at ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/n5-v2/results/baseline/tier1_repo_inventory/2/repo_inventory.json"
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "experiment": "github",
+  "runName": "n5-v2",
+  "arm": "skill",
+  "taskId": "tier2_issue_workflow",
+  "tier": 2,
+  "trialN": 2,
+  "timestamp": "2026-10-03T00:20:03.083Z",
+  "seed": "732be0159b08fdd0",
+  "metrics": {
+    "inputTokens": 9,
+    "outputTokens": 692,
+    "cachedInputTokens": 88693,
+    "cacheCreationInputTokens": 10692,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 3
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "gh issue list --repo chief-builder-lab/clivsmcp-tier2-issue-workflow-732be015 --state open --json number,title --jq '.[] | select(.title | contains(\"72503C46\"))'"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 8,
+        "command": "gh issue edit 2 --repo chief-builder-lab/clivsmcp-tier2-issue-workflow-732be015 --add-label \"priority-high\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "gh issue comment 2 --repo chief-builder-lab/clivsmcp-tier2-issue-workflow-732be015 --body \"triaged-72503C46\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "gh issue close 2 --repo chief-builder-lab/clivsmcp-tier2-issue-workflow-732be015"
+      }
+    ],
+    "toolCallCount": 5,
+    "turns": 11,
+    "wallClockMs": 16661,
+    "contextWindowPeak": 17262,
+    "totalCostUsd": 0.1011669,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "all workflow steps applied to target only",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-issue-workflow-732be015",
+      "targetIssueNumber": 2,
+      "expectedLabel": "priority-high",
+      "expectedCommentPhrase": "triaged-72503C46"
+    }
+  }
+}

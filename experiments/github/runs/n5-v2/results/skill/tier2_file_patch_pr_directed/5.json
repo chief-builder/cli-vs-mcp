@@ -1,0 +1,63 @@
+{
+  "experiment": "github",
+  "runName": "n5-v2",
+  "arm": "skill",
+  "taskId": "tier2_file_patch_pr_directed",
+  "tier": 2,
+  "trialN": 5,
+  "timestamp": "2026-10-03T00:50:21.219Z",
+  "seed": "039639dc810c814f",
+  "metrics": {
+    "inputTokens": 6,
+    "outputTokens": 45,
+    "cachedInputTokens": 55065,
+    "cacheCreationInputTokens": 10792,
+    "toolCalls": [
+      {
+        "name": "Bash",
+        "turnIndex": 3,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-039639dc/contents/src/widget.ts"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 6,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-039639dc/git/ref/heads/main"
+      },
+      {
+        "name": "Write",
+        "turnIndex": 9
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-039639dc/git/refs --input /private/var/folders/h7/mhpz888d6xzcm62796jyks1c0000gn/T/clivsmcp-github-skill-tier2_file_patch_pr_directed-L3YuXo/create-branch.json"
+      }
+    ],
+    "toolCallCount": 4,
+    "turns": 10,
+    "wallClockMs": 240000,
+    "contextWindowPeak": 17362,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": true,
+    "tokensEstimated": true
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "title=false body=false fn-present=false fn-returns-expected=false only-target-file=false",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-file-patch-pr-directed-039639dc",
+      "prNumber": null,
+      "expectedFunctionName": "solve_38CD437F",
+      "expectedPrTitle": "Fix MARKER-38CD437F"
+    }
+  },
+  "error": "claude timed out after 240000ms"
+}

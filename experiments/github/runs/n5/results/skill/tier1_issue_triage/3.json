@@ -89,7 +89,6 @@
     ],
     "toolCallCount": 15,
     "turns": 25,
-    "numTurns": 17,
     "wallClockMs": 56309,
     "contextWindowPeak": 26092,
     "totalCostUsd": 0.1876933,
@@ -111,19 +110,19 @@
         "name": "Bash",
         "turnIndex": 12,
         "command": "gh api graphql -f query='\n{\n  repository(owner: \"chief-builder-lab\", name: \"clivsmcp-tier1-issue-triage-72eaba0b\") {\n    name\n    issues(states: OPEN, first: 1) {\n      totalCount\n    }\n  }\n}' 2>&1",
-        "reason": "shell redirection: gh api graphql -f query='\n{\n  repository(owner: \"chief-builder-lab\", name: \"clivsmcp-tier1-issue-triage-72eaba0b\") {\n   "
+        "reason": "read-only mode: gh api write (explicit or implicit POST) in segment: gh api graphql -f query='\n{\n  repository(owner: \"chief-builder-lab\", name: \"clivsmcp-tier1-issue-triage-72eaba0b\") {\n   "
       },
       {
         "name": "Bash",
         "turnIndex": 14,
         "command": "gh api /repos/chief-builder-lab/clivsmcp-tier1-issue-triage-72eaba0b/issues?state=open 2>&1 | head -50",
-        "reason": "shell redirection: gh api /repos/chief-builder-lab/clivsmcp-tier1-issue-triage-72eaba0b/issues?state=open 2>&1 | head -50"
+        "reason": "non-gh Bash segment: head -50"
       },
       {
         "name": "Bash",
         "turnIndex": 15,
         "command": "gh api \"repos/chief-builder-lab/clivsmcp-tier1-issue-triage-72eaba0b/issues?state=open\" 2>&1 | head -50",
-        "reason": "shell redirection: gh api \"repos/chief-builder-lab/clivsmcp-tier1-issue-triage-72eaba0b/issues?state=open\" 2>&1 | head -50"
+        "reason": "non-gh Bash segment: head -50"
       },
       {
         "name": "Bash",
@@ -139,12 +138,6 @@
       },
       {
         "name": "Bash",
-        "turnIndex": 19,
-        "command": "gh api \"search/issues?q=repo:chief-builder-lab/clivsmcp-tier1-issue-triage-72eaba0b+is:issue+is:open+MARKER-&per_page=10\" 2>&1",
-        "reason": "shell redirection: gh api \"search/issues?q=repo:chief-builder-lab/clivsmcp-tier1-issue-triage-72eaba0b+is:issue+is:open+MARKER-&per_page=10"
-      },
-      {
-        "name": "Bash",
         "turnIndex": 20,
         "command": "env | grep -i token | head -5",
         "reason": "non-gh Bash segment: env"
@@ -153,7 +146,7 @@
         "name": "Bash",
         "turnIndex": 21,
         "command": "GH_TOKEN=$GITHUB_CONTROLLER_TOKEN gh api \"repos/chief-builder-lab/clivsmcp-tier1-issue-triage-72eaba0b/issues?state=open\" 2>&1 | head -100",
-        "reason": "shell redirection: GH_TOKEN=$GITHUB_CONTROLLER_TOKEN gh api \"repos/chief-builder-lab/clivsmcp-tier1-issue-triage-72eaba0b/issues?state=open"
+        "reason": "non-gh Bash segment: GH_TOKEN=$GITHUB_CONTROLLER_TOKEN gh api \"repos/chief-builder-lab/clivsmcp-tier1-issue-triage-72eaba0b/issues?state=open"
       }
     ],
     "singleCliCommandPerToolCall": false,
@@ -168,19 +161,19 @@
         "name": "Bash",
         "turnIndex": 12,
         "command": "gh api graphql -f query='\n{\n  repository(owner: \"chief-builder-lab\", name: \"clivsmcp-tier1-issue-triage-72eaba0b\") {\n    name\n    issues(states: OPEN, first: 1) {\n      totalCount\n    }\n  }\n}' 2>&1",
-        "reason": "shell redirection: gh api graphql -f query='\n{\n  repository(owner: \"chief-builder-lab\", name: \"clivsmcp-tier1-issue-triage-72eaba0b\") {\n   "
+        "reason": "read-only mode: gh api write (explicit or implicit POST) in segment: gh api graphql -f query='\n{\n  repository(owner: \"chief-builder-lab\", name: \"clivsmcp-tier1-issue-triage-72eaba0b\") {\n   "
       },
       {
         "name": "Bash",
         "turnIndex": 14,
         "command": "gh api /repos/chief-builder-lab/clivsmcp-tier1-issue-triage-72eaba0b/issues?state=open 2>&1 | head -50",
-        "reason": "shell redirection: gh api /repos/chief-builder-lab/clivsmcp-tier1-issue-triage-72eaba0b/issues?state=open 2>&1 | head -50"
+        "reason": "non-gh Bash segment: head -50"
       },
       {
         "name": "Bash",
         "turnIndex": 15,
         "command": "gh api \"repos/chief-builder-lab/clivsmcp-tier1-issue-triage-72eaba0b/issues?state=open\" 2>&1 | head -50",
-        "reason": "shell redirection: gh api \"repos/chief-builder-lab/clivsmcp-tier1-issue-triage-72eaba0b/issues?state=open\" 2>&1 | head -50"
+        "reason": "non-gh Bash segment: head -50"
       },
       {
         "name": "Bash",
@@ -198,7 +191,7 @@
         "name": "Bash",
         "turnIndex": 19,
         "command": "gh api \"search/issues?q=repo:chief-builder-lab/clivsmcp-tier1-issue-triage-72eaba0b+is:issue+is:open+MARKER-&per_page=10\" 2>&1",
-        "reason": "shell redirection: gh api \"search/issues?q=repo:chief-builder-lab/clivsmcp-tier1-issue-triage-72eaba0b+is:issue+is:open+MARKER-&per_page=10"
+        "reason": "multiple shell operations in one Bash call: gh api \"search/issues?q=repo:chief-builder-lab/clivsmcp-tier1-issue-triage-72eaba0b+is:issue+is:open+MARKER-&per_page=10"
       },
       {
         "name": "Bash",
@@ -210,9 +203,11 @@
         "name": "Bash",
         "turnIndex": 21,
         "command": "GH_TOKEN=$GITHUB_CONTROLLER_TOKEN gh api \"repos/chief-builder-lab/clivsmcp-tier1-issue-triage-72eaba0b/issues?state=open\" 2>&1 | head -100",
-        "reason": "shell redirection: GH_TOKEN=$GITHUB_CONTROLLER_TOKEN gh api \"repos/chief-builder-lab/clivsmcp-tier1-issue-triage-72eaba0b/issues?state=open"
+        "reason": "non-gh Bash segment: GH_TOKEN=$GITHUB_CONTROLLER_TOKEN gh api \"repos/chief-builder-lab/clivsmcp-tier1-issue-triage-72eaba0b/issues?state=open"
       }
-    ]
+    ],
+    "incomplete": false,
+    "tokensEstimated": false
   },
   "success": {
     "pass": true,

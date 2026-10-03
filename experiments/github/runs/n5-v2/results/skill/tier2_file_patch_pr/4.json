@@ -1,0 +1,134 @@
+{
+  "experiment": "github",
+  "runName": "n5-v2",
+  "arm": "skill",
+  "taskId": "tier2_file_patch_pr",
+  "tier": 2,
+  "trialN": 4,
+  "timestamp": "2026-10-03T00:27:32.506Z",
+  "seed": "27d5f2f50afb3778",
+  "metrics": {
+    "inputTokens": 12,
+    "outputTokens": 1844,
+    "cachedInputTokens": 144164,
+    "cacheCreationInputTokens": 12260,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-27d5f2f5/contents/src/widget.ts --jq '.content' | base64 -d"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 8,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-27d5f2f5/contents/src/widget.ts --jq '.sha'"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-27d5f2f5/git/refs/heads/main --jq '.object.sha'"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 10,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-27d5f2f5/git/refs \\\n  -X POST \\\n  -f ref=\"refs/heads/fix-MARKER-46C7DBF5\" \\\n  -f sha=\"81dc4e7d6e53efc8ff220a57d25d282d38c05108\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 11,
+        "command": "NEW_CONTENT=\"// Widget module.\n\nexport function describe(): string {\n  return 'widget';\n}\n\nexport function solve_46C7DBF5(): string { return \\\"done-46C7DBF5\\\"; }\n\"\nENCODED=$(printf '%s' \"$NEW_CONTENT\" | base64)\n\ngh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-27d5f2f5/contents/src/widget.ts \\\n  -X PUT \\\n  -f message=\"Fix MARKER-46C7DBF5\" \\\n  -f content=\"$ENCODED\" \\\n  -f sha=\"77af9a6817f8e090dcac813789e4cb802b510ebb\" \\\n  -f branch=\"fix-MARKER-46C7DBF5\" \\\n  --jq '.commit.sha'"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 12,
+        "command": "gh pr create \\\n  --repo chief-builder-lab/clivsmcp-tier2-file-patch-pr-27d5f2f5 \\\n  --title \"Fix MARKER-46C7DBF5\" \\\n  --body \"$(cat <<'EOF'\naddresses-46C7DBF5\n\nReplaces the TODO comment for MARKER-46C7DBF5 with an exported `solve_46C7DBF5` function that returns the literal string `\"done-46C7DBF5\"`.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\nEOF\n)\" \\\n  --base main \\\n  --head fix-MARKER-46C7DBF5"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 13,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-27d5f2f5/pulls \\\n  -X POST \\\n  -f title=\"Fix MARKER-46C7DBF5\" \\\n  -f body=\"addresses-46C7DBF5\n\nReplaces the TODO comment for MARKER-46C7DBF5 with an exported \\`solve_46C7DBF5\\` function that returns the literal string \\`\\\"done-46C7DBF5\\\"\\`.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\" \\\n  -f base=\"main\" \\\n  -f head=\"fix-MARKER-46C7DBF5\" \\\n  --jq '.html_url'"
+      }
+    ],
+    "toolCallCount": 8,
+    "turns": 14,
+    "wallClockMs": 35699,
+    "contextWindowPeak": 18830,
+    "totalCostUsd": 0.1445052,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": false,
+    "escapeToolUsed": true,
+    "escapeToolCalls": [
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-27d5f2f5/contents/src/widget.ts --jq '.content' | base64 -d",
+        "reason": "non-gh Bash segment: base64 -d"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 11,
+        "command": "NEW_CONTENT=\"// Widget module.\n\nexport function describe(): string {\n  return 'widget';\n}\n\nexport function solve_46C7DBF5(): string { return \\\"done-46C7DBF5\\\"; }\n\"\nENCODED=$(printf '%s' \"$NEW_CONTENT\" | base64)\n\ngh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-27d5f2f5/contents/src/widget.ts \\\n  -X PUT \\\n  -f message=\"Fix MARKER-46C7DBF5\" \\\n  -f content=\"$ENCODED\" \\\n  -f sha=\"77af9a6817f8e090dcac813789e4cb802b510ebb\" \\\n  -f branch=\"fix-MARKER-46C7DBF5\" \\\n  --jq '.commit.sha'",
+        "reason": "non-gh Bash segment: NEW_CONTENT=\"// Widget module.\n\nexport function describe(): string {\n  return 'widget';\n}\n\nexport function solve_46C7DBF"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 12,
+        "command": "gh pr create \\\n  --repo chief-builder-lab/clivsmcp-tier2-file-patch-pr-27d5f2f5 \\\n  --title \"Fix MARKER-46C7DBF5\" \\\n  --body \"$(cat <<'EOF'\naddresses-46C7DBF5\n\nReplaces the TODO comment for MARKER-46C7DBF5 with an exported `solve_46C7DBF5` function that returns the literal string `\"done-46C7DBF5\"`.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\nEOF\n)\" \\\n  --base main \\\n  --head fix-MARKER-46C7DBF5",
+        "reason": "command substitution in segment: gh pr create \\\n  --repo chief-builder-lab/clivsmcp-tier2-file-patch-pr-27d5f2f5 \\\n  --title \"Fix MARKER-46C7DBF5\" \\\n  --"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 13,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-27d5f2f5/pulls \\\n  -X POST \\\n  -f title=\"Fix MARKER-46C7DBF5\" \\\n  -f body=\"addresses-46C7DBF5\n\nReplaces the TODO comment for MARKER-46C7DBF5 with an exported \\`solve_46C7DBF5\\` function that returns the literal string \\`\\\"done-46C7DBF5\\\"\\`.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\" \\\n  -f base=\"main\" \\\n  -f head=\"fix-MARKER-46C7DBF5\" \\\n  --jq '.html_url'",
+        "reason": "command substitution in segment: gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-27d5f2f5/pulls \\\n  -X POST \\\n  -f title=\"Fix MARKER-46C7DBF5"
+      }
+    ],
+    "singleCliCommandPerToolCall": false,
+    "cliCommandGranularityViolations": [
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-27d5f2f5/contents/src/widget.ts --jq '.content' | base64 -d",
+        "reason": "non-gh Bash segment: base64 -d"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 11,
+        "command": "NEW_CONTENT=\"// Widget module.\n\nexport function describe(): string {\n  return 'widget';\n}\n\nexport function solve_46C7DBF5(): string { return \\\"done-46C7DBF5\\\"; }\n\"\nENCODED=$(printf '%s' \"$NEW_CONTENT\" | base64)\n\ngh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-27d5f2f5/contents/src/widget.ts \\\n  -X PUT \\\n  -f message=\"Fix MARKER-46C7DBF5\" \\\n  -f content=\"$ENCODED\" \\\n  -f sha=\"77af9a6817f8e090dcac813789e4cb802b510ebb\" \\\n  -f branch=\"fix-MARKER-46C7DBF5\" \\\n  --jq '.commit.sha'",
+        "reason": "non-gh Bash segment: NEW_CONTENT=\"// Widget module.\n\nexport function describe(): string {\n  return 'widget';\n}\n\nexport function solve_46C7DBF"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 12,
+        "command": "gh pr create \\\n  --repo chief-builder-lab/clivsmcp-tier2-file-patch-pr-27d5f2f5 \\\n  --title \"Fix MARKER-46C7DBF5\" \\\n  --body \"$(cat <<'EOF'\naddresses-46C7DBF5\n\nReplaces the TODO comment for MARKER-46C7DBF5 with an exported `solve_46C7DBF5` function that returns the literal string `\"done-46C7DBF5\"`.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\nEOF\n)\" \\\n  --base main \\\n  --head fix-MARKER-46C7DBF5",
+        "reason": "command substitution in segment: gh pr create \\\n  --repo chief-builder-lab/clivsmcp-tier2-file-patch-pr-27d5f2f5 \\\n  --title \"Fix MARKER-46C7DBF5\" \\\n  --"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 13,
+        "command": "gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-27d5f2f5/pulls \\\n  -X POST \\\n  -f title=\"Fix MARKER-46C7DBF5\" \\\n  -f body=\"addresses-46C7DBF5\n\nReplaces the TODO comment for MARKER-46C7DBF5 with an exported \\`solve_46C7DBF5\\` function that returns the literal string \\`\\\"done-46C7DBF5\\\"\\`.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\" \\\n  -f base=\"main\" \\\n  -f head=\"fix-MARKER-46C7DBF5\" \\\n  --jq '.html_url'",
+        "reason": "command substitution in segment: gh api repos/chief-builder-lab/clivsmcp-tier2-file-patch-pr-27d5f2f5/pulls \\\n  -X POST \\\n  -f title=\"Fix MARKER-46C7DBF5"
+      }
+    ],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "PR + branch file content + scope all match",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-file-patch-pr-27d5f2f5",
+      "prNumber": 1,
+      "expectedFunctionName": "solve_46C7DBF5",
+      "expectedPrTitle": "Fix MARKER-46C7DBF5"
+    }
+  }
+}

@@ -44,7 +44,6 @@
     ],
     "toolCallCount": 7,
     "turns": 16,
-    "numTurns": 8,
     "wallClockMs": 18328,
     "contextWindowPeak": 17117,
     "totalCostUsd": 0.07745025,
@@ -57,11 +56,13 @@
     "escapeToolUsed": false,
     "escapeToolCalls": [],
     "singleCliCommandPerToolCall": true,
-    "cliCommandGranularityViolations": []
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
   },
   "success": {
     "pass": false,
     "score": 0,
-    "notes": "missing or invalid JSON at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/n5/results/baseline/tier1_pr_diff_answer/4/pr_diff.json"
+    "notes": "missing or invalid JSON at ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/n5/results/baseline/tier1_pr_diff_answer/4/pr_diff.json"
   }
 }

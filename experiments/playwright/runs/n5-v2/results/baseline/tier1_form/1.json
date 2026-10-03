@@ -1,0 +1,186 @@
+{
+  "experiment": "playwright",
+  "runName": "n5-v2",
+  "arm": "baseline",
+  "taskId": "tier1_form",
+  "tier": 1,
+  "trialN": 1,
+  "timestamp": "2026-10-03T00:36:14.569Z",
+  "seed": "2d1edb43cebd3ce8",
+  "metrics": {
+    "inputTokens": 26,
+    "outputTokens": 198,
+    "cachedInputTokens": 858894,
+    "cacheCreationInputTokens": 58353,
+    "toolCalls": [
+      {
+        "name": "Glob",
+        "turnIndex": 3
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 6
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 7
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 10
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 13
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 14
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 17
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 18
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 21
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 22
+      },
+      {
+        "name": "Read",
+        "turnIndex": 25
+      },
+      {
+        "name": "Read",
+        "turnIndex": 28
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 31
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 32
+      },
+      {
+        "name": "Read",
+        "turnIndex": 35
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 38
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 39
+      },
+      {
+        "name": "Read",
+        "turnIndex": 42
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 43
+      },
+      {
+        "name": "Read",
+        "turnIndex": 46
+      },
+      {
+        "name": "Read",
+        "turnIndex": 49
+      },
+      {
+        "name": "Read",
+        "turnIndex": 52
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 53
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 56
+      },
+      {
+        "name": "Read",
+        "turnIndex": 59
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 60
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 63
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 66
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 67
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 69
+      },
+      {
+        "name": "Read",
+        "turnIndex": 72
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 75
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 76
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 79
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 80
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 83
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 84
+      }
+    ],
+    "toolCallCount": 37,
+    "turns": 84,
+    "wallClockMs": 240000,
+    "contextWindowPeak": 63190,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": true,
+    "tokensEstimated": true
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "missing ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5-v2/results/baseline/tier1_form/1/form_result.txt"
+  },
+  "error": "claude timed out after 240000ms"
+}

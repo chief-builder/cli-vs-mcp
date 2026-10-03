@@ -273,7 +273,6 @@
       <a href="cli_mcp_experiments_v2.html">Visual Guide</a>
       <a href="playwright_experiment_v2.html">Playwright V2</a>
       <a class="active" href="github_experiment_v2.html">GitHub V2</a>
-      <a href="github_experiment.html">Full GitHub</a>
     </nav>
   </div>
 </header>
@@ -286,22 +285,22 @@
       <p class="lede">
         The GitHub runs are less about whether the agent can reach the answer, and more about what it reaches through to get there.
       </p>
-      <p class="meta">N=5 · private sandbox repos · read-only and read-write runs · 240 s wall budget</p>
+      <p class="meta">Run n5-v2 · N=5 (baseline N=2) · private sandbox repos · read-only (Tier 1) and read-write (Tier 2) agent tokens · 240 s wall budget · Claude Code 2.1.288, <code>claude-sonnet-4-6</code>, <code>github-mcp-server</code> v1.0.4</p>
       <div class="metric-grid">
         <div class="metric">
-          <div class="value">15/15 raw</div>
-          <div class="label">Across 3 tasks, skill succeeds on every trial even when the classifier rejects the route.</div>
+          <div class="value">10/10 raw</div>
+          <div class="label">Across 2 tasks, skill succeeds on every trial even when the classifier rejects the route.</div>
         </div>
         <div class="metric">
           <div class="value">0/5 valid</div>
-          <div class="label">Three skill task groups show deterministic off-surface behavior.</div>
+          <div class="label">Both of those skill task groups show deterministic off-surface behavior.</div>
         </div>
         <div class="metric">
-          <div class="value">0/5</div>
-          <div class="label">MCP issue triage timed out at the 240 s wall.</div>
+          <div class="value">7/7 tasks</div>
+          <div class="label">MCP passed and stayed in surface 5/5 on every GitHub task.</div>
         </div>
         <div class="metric">
-          <div class="value">1.13x-1.38x</div>
+          <div class="value">1.52x-1.77x</div>
           <div class="label">MCP token advantage on clean apples-to-apples GitHub tasks.</div>
         </div>
       </div>
@@ -319,20 +318,27 @@
         </div>
         <div class="image-callout">
           <strong>MCP Path</strong>
-          Typed tools stay inside the intended surface.
+          Typed tools, no Bash.
         </div>
       </div>
       <p class="caption">
-        Route map, not result chart: controller access seeds the repos; the agent reaches GitHub through either a CLI path that can escape surface or an MCP path that stays typed but can fan out.
+        Route map, not result chart: controller access seeds the repos; the agent reaches GitHub through either a CLI path that can escape surface or an MCP path of typed tools.
       </p>
     </div>
   </section>
+
+  <div class="callout">
+    <p><strong>First run (May 2026):</strong> this page now shows the n5-v2 run. The first run, n5, used looser isolation and a mis-scoped agent token; see the <a href="cli_mcp_experiments_v2.html#first-run">first-run note</a>.</p>
+  </div>
 
   <section>
     <div class="narrow">
       <h2>The Token Boundary</h2>
       <p>
-        The controller creates and verifies private repositories. The agent receives only the narrower per-arm credential.
+        The controller creates and verifies private repositories. The agent is meant to receive only the narrower per-arm credential.
+      </p>
+      <p>
+        In this run, inherited <code>GH_</code>/<code>GITHUB_</code> variables are removed, each arm gets a positive <code>--tools</code> list, file tools are denied under <code>~</code> and the repo, the skill arm's Bash runs inside Claude Code's OS sandbox (keychain and <code>$HOME</code> blocked), and each trial gets an empty <code>GH_CONFIG_DIR</code>. Tier 1 used a read-only agent token (Contents, Issues, PRs, and Actions read); Tier 2 used a separate read-write one with no admin. All tokens are owned by the same GitHub user. The first run didn't hold this boundary; see the <a href="cli_mcp_experiments_v2.html#first-run">first-run note</a>.
       </p>
     </div>
     <div class="panel">
@@ -353,13 +359,13 @@
     <div class="narrow">
       <h2>Where Success Misleads</h2>
       <p>
-        Three GitHub task groups have the same shape: the skill arm produces the right end state, but every trial uses shell behavior outside the intended <code>gh</code> surface.
+        Two GitHub task groups have the same shape: the skill arm produces the right end state, but every trial uses shell behavior outside the intended <code>gh</code> surface.
       </p>
     </div>
     <div class="panel-grid panel">
       <div>
-        <img class="panel-image" src="assets/github-validity.png" alt="Abstract GitHub result divergence showing CLI boundary escape and MCP fanout">
-        <p class="caption">Route shape: CLI can reach the result while leaving the boundary; typed tools stay contained but may fan out.</p>
+        <img class="panel-image" src="assets/github-validity.png" alt="Abstract GitHub result divergence showing CLI boundary escape and a typed-tool MCP route">
+        <p class="caption">Route shape: CLI can reach the result while leaving the boundary; the MCP route goes through typed tool calls.</p>
       </div>
       <div>
         <table class="table">
@@ -367,38 +373,42 @@
             <tr><th>Skill task</th><th class="num">Raw success</th><th class="num">Valid surface</th><th>Escape pattern</th></tr>
           </thead>
           <tbody>
-            <tr><td><code>repo_inventory</code></td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill bad">0/5</span></td><td><code>base64</code> decode outside <code>gh</code>.</td></tr>
-            <tr><td><code>issue_triage</code></td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill bad">0/5</span></td><td>Env probe plus token-lift attempt.</td></tr>
-            <tr><td><code>file_patch_pr</code></td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill bad">0/5</span></td><td>Shell variable for file payload.</td></tr>
+            <tr><td><code>repo_inventory</code></td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill bad">0/5</span></td><td><code>gh api … | base64 -d</code> in all five trials.</td></tr>
+            <tr><td><code>file_patch_pr</code></td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill bad">0/5</span></td><td><code>base64 -d</code> on read, plus shell variable assignment and <code>$(…)</code> command substitution to build the PUT body.</td></tr>
           </tbody>
         </table>
       </div>
     </div>
     <div class="callout">
       <p>
-        The pattern is not random. When <code>gh</code> lacks a high-level workflow primitive, the agent glues raw API calls together with shell text. That can be effective, but it is no longer the intended CLI-only surface.
+        For <code>repo_inventory</code> and <code>file_patch_pr</code> the pattern is not random. When <code>gh</code> lacks a high-level workflow primitive, the agent glues raw API calls together with shell text. That can be effective, but it is no longer the intended CLI-only surface.
       </p>
     </div>
   </section>
 
   <section>
     <div class="narrow">
-      <h2>Where MCP Misleads</h2>
+      <h2>Every Task, Both Arms</h2>
       <p>
-        MCP stays contained, but it can burn the budget when the expected primitive is missing, misnamed, or hard to discover.
+        MCP passed and stayed in surface 5/5 on all seven GitHub tasks. <code>issue_triage</code> is now a valid comparison: with a read-only agent token that can read issues, both arms passed 5/5 in surface.
       </p>
     </div>
     <div class="panel">
       <table class="table">
         <thead>
-          <tr><th>MCP case</th><th class="num">Trials passed</th><th class="num">Turns</th><th class="num">Wall</th><th>Failure shape</th></tr>
+          <tr><th>Task</th><th class="num">MCP pass + valid</th><th class="num">Skill pass + valid</th><th class="num">Skill/MCP tokens</th></tr>
         </thead>
         <tbody>
-          <tr><td><code>issue_triage</code></td><td class="num"><span class="pill bad">0/5</span></td><td class="num">75+</td><td class="num">240 s</td><td>Fanout across issue listing, search, and per-issue reads.</td></tr>
-          <tr><td>Workflow status before Actions toolset</td><td class="num"><span class="pill good">1/1</span></td><td class="num">60</td><td class="num">169.7 s</td><td>ToolSearch probes, then reconstruction through adjacent APIs. (From an earlier run, see <a href="github_experiment.html">full writeup</a>.)</td></tr>
-          <tr><td>Workflow status after Actions toolset</td><td class="num"><span class="pill good">5/5</span></td><td class="num">8</td><td class="num">15.4 s</td><td>One direct <code>actions_list</code> path.</td></tr>
+          <tr><td><code>issue_triage</code></td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill good">5/5</span></td><td class="num">1.67x</td></tr>
+          <tr><td><code>pr_diff_answer</code></td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill good">5/5</span></td><td class="num">1.71x</td></tr>
+          <tr><td><code>workflow_status</code></td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill good">5/5</span></td><td class="num">1.52x</td></tr>
+          <tr><td><code>repo_inventory</code></td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill bad">0/5</span></td><td class="num">no clean skill trials</td></tr>
+          <tr><td><code>issue_workflow</code></td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill good">5/5</span></td><td class="num">1.77x</td></tr>
+          <tr><td><code>issue_create</code></td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill warn">4/5</span></td><td class="num">1.69x</td></tr>
+          <tr><td><code>file_patch_pr</code></td><td class="num"><span class="pill good">5/5</span></td><td class="num"><span class="pill bad">0/5</span></td><td class="num">no clean skill trials</td></tr>
         </tbody>
       </table>
+      <p class="caption">The <code>issue_create</code> skill failure is a checker false negative: the agent created the issue with the exact title, body, and labels, but the check's 3 s list window missed it. The window has since been widened; the trial is kept as recorded.</p>
     </div>
   </section>
 
@@ -406,7 +416,7 @@
     <div class="narrow">
       <h2>The Clean Cost Comparison</h2>
       <p>
-        Some GitHub tasks are clean apples-to-apples: both arms succeed, both stay valid, and the token columns mean the same thing on both sides.
+        Five GitHub tasks are clean apples-to-apples: both arms succeed, both stay valid, and the token columns mean the same thing on both sides. MCP used fewer tokens on every one, and turn counts stayed within about 3 (issue workflow: 10.2 skill vs 13.2 MCP).
       </p>
     </div>
     <div class="panel">
@@ -416,27 +426,32 @@
       </div>
       <div class="chart">
         <div class="bar-row">
+          <div class="bar-label">Issue triage</div>
+          <div class="bars"><span class="bar skill" style="width: 67%"></span><span class="bar mcp" style="width: 40%"></span></div>
+          <div class="bar-value">1.67x</div>
+        </div>
+        <div class="bar-row">
           <div class="bar-label">PR diff answer</div>
-          <div class="bars"><span class="bar skill" style="width: 68%"></span><span class="bar mcp" style="width: 52%"></span></div>
-          <div class="bar-value">1.32x</div>
+          <div class="bars"><span class="bar skill" style="width: 66%"></span><span class="bar mcp" style="width: 39%"></span></div>
+          <div class="bar-value">1.71x</div>
         </div>
         <div class="bar-row">
           <div class="bar-label">Workflow status</div>
-          <div class="bars"><span class="bar skill" style="width: 72%"></span><span class="bar mcp" style="width: 64%"></span></div>
-          <div class="bar-value">1.13x</div>
+          <div class="bars"><span class="bar skill" style="width: 77%"></span><span class="bar mcp" style="width: 51%"></span></div>
+          <div class="bar-value">1.52x</div>
         </div>
         <div class="bar-row">
           <div class="bar-label">Issue workflow</div>
-          <div class="bars"><span class="bar skill" style="width: 100%"></span><span class="bar mcp" style="width: 73%"></span></div>
-          <div class="bar-value">1.38x</div>
+          <div class="bars"><span class="bar skill" style="width: 100%"></span><span class="bar mcp" style="width: 56%"></span></div>
+          <div class="bar-value">1.77x</div>
         </div>
         <div class="bar-row">
           <div class="bar-label">Issue create</div>
-          <div class="bars"><span class="bar skill" style="width: 50%"></span><span class="bar mcp" style="width: 39%"></span></div>
-          <div class="bar-value">1.31x</div>
+          <div class="bars"><span class="bar skill" style="width: 48%"></span><span class="bar mcp" style="width: 29%"></span></div>
+          <div class="bar-value">1.69x</div>
         </div>
       </div>
-      <p class="caption">Widths are normalized to issue workflow skill tokens, 106,912 total tokens.</p>
+      <p class="caption">Widths are normalized to issue workflow skill tokens, 100,251 total tokens. Issue create skill averages its 4 clean trials. <code>repo_inventory</code> and <code>file_patch_pr</code> have no clean skill trials, so they have no bars.</p>
     </div>
   </section>
 
@@ -444,7 +459,7 @@
     <div class="narrow">
       <h2>Prompting The Skill Back Into Surface</h2>
       <p>
-        A directed prompt for <code>file_patch_pr</code> named the in-surface workaround: write request bodies to files, then pass them to <code>gh api --input</code>. It improved validity, but at a large cost and without full reliability.
+        A directed prompt for <code>file_patch_pr</code> named the in-surface workaround: write request bodies to files, then pass them to <code>gh api --input</code>. More trials stayed in surface, but none of those finished, and no trial both passed and stayed valid.
       </p>
     </div>
     <div class="panel">
@@ -453,22 +468,22 @@
           <tr><th>Metric</th><th class="num">Original prompt</th><th class="num">Directed prompt</th></tr>
         </thead>
         <tbody>
-          <tr><td>Pass success</td><td class="num">5/5</td><td class="num">3/5</td></tr>
-          <tr><td>Valid surface</td><td class="num">0/5</td><td class="num">2/5</td></tr>
-          <tr><td>Avg turns, passing</td><td class="num">~13</td><td class="num">~30</td></tr>
-          <tr><td>Avg tokens, passing</td><td class="num">~144k</td><td class="num">~353k</td></tr>
-          <tr><td>Avg wall, passing</td><td class="num">~35 s</td><td class="num">~108 s</td></tr>
+          <tr><td>Pass success</td><td class="num">5/5</td><td class="num">2/5</td></tr>
+          <tr><td>Valid surface</td><td class="num">0/5</td><td class="num">3/5</td></tr>
+          <tr><td>Pass and valid</td><td class="num">0/5</td><td class="num">0/5</td></tr>
+          <tr><td>Avg tokens, passing</td><td class="num">153,022</td><td class="num">401,861</td></tr>
         </tbody>
       </table>
+      <p class="caption">Passing directed trials averaged 401,861 tokens, 2.63x the original 153,022, and both were invalid.</p>
     </div>
     <div class="split">
       <div class="box">
         <h3>What improved</h3>
-        <p>The agent sometimes followed the file-backed <code>gh api --input</code> route and avoided shell variable assignment.</p>
+        <p>Validity: three of five trials stayed in surface, up from none with the original prompt.</p>
       </div>
       <div class="box">
         <h3>What did not</h3>
-        <p>Some trials still escaped on the read side, and the valid route expanded into low-level Git data API endpoints (blobs, trees, refs).</p>
+        <p>The three valid trials all timed out at 240 s after 10–13 turns; their transcripts end in extended thinking with no further tool calls. The two passing trials both escaped, one with <code>$(…)</code> in <code>gh pr create</code> and one with <code>base64 -d</code>. No trial both passed and stayed in surface.</p>
       </div>
     </div>
   </section>
@@ -476,10 +491,10 @@
   <section class="narrow">
     <h2>Takeaway</h2>
     <p>
-      GitHub shows both failure shapes clearly. CLI skill fails containment when the CLI lacks the workflow primitive. MCP fails convergence when the server does not expose the primitive the agent expects. Success rate alone hides the difference.
+      GitHub shows why success rate needs a validity check. CLI skill fails containment when the CLI lacks the workflow primitive, and prompting it back into surface cost it the passes. MCP was clean on every task and cheaper on every clean comparison, 1.52x–1.77x. Success rate alone hides the containment failures.
     </p>
     <p>
-      Read the <a href="github_experiment.html">full GitHub writeup</a>, the <a href="playwright_experiment_v2.html">Playwright visual brief</a>, or the <a href="cli_mcp_experiments_v2.html">cross-experiment visual guide</a>.
+      Read the <a href="playwright_experiment_v2.html">Playwright visual brief</a> or the <a href="cli_mcp_experiments_v2.html">cross-experiment visual guide</a>.
     </p>
   </section>
 </main>
@@ -487,7 +502,7 @@
 <footer class="site">
   <div class="inner">
     <span>cli-vs-mcp · GitHub visual brief</span>
-    <span><a href="github_experiment.html">Full GitHub</a> · <a href="playwright_experiment_v2.html">Playwright V2</a></span>
+    <span><a href="cli_mcp_experiments_v2.html">Visual Guide</a> · <a href="playwright_experiment_v2.html">Playwright V2</a></span>
   </div>
 </footer>
 

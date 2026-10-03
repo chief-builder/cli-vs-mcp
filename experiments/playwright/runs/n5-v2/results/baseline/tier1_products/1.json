@@ -1,0 +1,218 @@
+{
+  "experiment": "playwright",
+  "runName": "n5-v2",
+  "arm": "baseline",
+  "taskId": "tier1_products",
+  "tier": 1,
+  "trialN": 1,
+  "timestamp": "2026-10-03T00:51:16.257Z",
+  "seed": "900cf4dd49a02ae6",
+  "metrics": {
+    "inputTokens": 34,
+    "outputTokens": 421,
+    "cachedInputTokens": 1815095,
+    "cacheCreationInputTokens": 101416,
+    "toolCalls": [
+      {
+        "name": "Read",
+        "turnIndex": 3
+      },
+      {
+        "name": "Read",
+        "turnIndex": 4
+      },
+      {
+        "name": "Read",
+        "turnIndex": 5
+      },
+      {
+        "name": "Read",
+        "turnIndex": 6
+      },
+      {
+        "name": "Read",
+        "turnIndex": 7
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 9
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 12
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 13
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 16
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 17
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 20
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 23
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 24
+      },
+      {
+        "name": "Read",
+        "turnIndex": 27
+      },
+      {
+        "name": "Read",
+        "turnIndex": 30
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 33
+      },
+      {
+        "name": "Read",
+        "turnIndex": 36
+      },
+      {
+        "name": "Read",
+        "turnIndex": 37
+      },
+      {
+        "name": "Read",
+        "turnIndex": 40
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 43
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 44
+      },
+      {
+        "name": "Read",
+        "turnIndex": 45
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 48
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 49
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 50
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 53
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 54
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 57
+      },
+      {
+        "name": "Read",
+        "turnIndex": 58
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 61
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 62
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 63
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 64
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 65
+      },
+      {
+        "name": "Read",
+        "turnIndex": 66
+      },
+      {
+        "name": "Read",
+        "turnIndex": 69
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 72
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 74
+      },
+      {
+        "name": "Read",
+        "turnIndex": 75
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 78
+      },
+      {
+        "name": "Read",
+        "turnIndex": 79
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 82
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 84
+      },
+      {
+        "name": "Read",
+        "turnIndex": 87
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 88
+      }
+    ],
+    "toolCallCount": 45,
+    "turns": 88,
+    "wallClockMs": 240000,
+    "contextWindowPeak": 106253,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": true,
+    "tokensEstimated": true
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "missing or invalid JSON at ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5-v2/results/baseline/tier1_products/1/products.json"
+  },
+  "error": "claude timed out after 240000ms"
+}

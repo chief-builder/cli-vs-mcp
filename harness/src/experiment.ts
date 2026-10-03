@@ -1,36 +1,37 @@
 import { z } from 'zod';
-import type { Task } from './tasks.js';
 
 export const ArmSchema = z.enum(['baseline', 'skill', 'mcp']);
 export type Arm = z.infer<typeof ArmSchema>;
+export const ARMS: readonly Arm[] = ArmSchema.options;
 
 /**
- * Per-arm tool isolation: which MCP config to point Claude Code at, the
- * positive allow-list of tools, and the negative deny-list. Plus an
- * `extraEnv` map for env vars the arm needs in the child process
- * (e.g. GITHUB_TOKEN for the skill arm, GITHUB_PERSONAL_ACCESS_TOKEN for
- * the mcp arm).
- */
-export const ArmConfigSchema = z.object({
-  id: ArmSchema,
-  description: z.string(),
-  mcpConfig: z.string(),
-  allowedTools: z.array(z.string()).optional(),
-  disallowedTools: z.array(z.string()),
-  extraFlags: z.array(z.string()),
-  extraEnv: z.record(z.string(), z.string()).optional(),
-});
-export type ArmConfig = z.infer<typeof ArmConfigSchema>;
-
-/**
- * Per-experiment classifier rules. The transcript classifier in metrics.ts
- * is hard-wired to nothing — it takes its rules from the active experiment's
- * spec so adding a new experiment doesn't require editing the harness core.
+ * Per-arm tool isolation.
  *
- * `classifyShellCommand` is called for every Bash tool call in the skill arm.
- * Return surfaceReason !== null to flag the call as out-of-surface; return
- * granularityReason !== null to flag it as multi-command (matters for
- * research-single mode).
+ * `tools` is passed to `claude --tools` and is the positive list of built-in
+ * tools the agent gets. MCP tools come only from `mcpConfig`. The classifier
+ * treats the same list as the arm's surface, so configuration and validity
+ * scoring can't drift apart.
+ *
+ * `sandboxNetwork`, when set, runs Bash inside Claude Code's OS sandbox with no
+ * unsandboxed fallback. Reads under the home directory are denied, and only the
+ * listed hosts are on the allow-list. Use it for arms whose shell must not reach
+ * the developer's own credentials (for example, the gh keyring login).
+ */
+export interface ArmConfig {
+  id: Arm;
+  description: string;
+  /** Inline JSON or a path relative to the repo root. */
+  mcpConfig: string;
+  tools: readonly string[];
+  extraEnv?: Record<string, string>;
+  sandboxNetwork?: readonly string[];
+}
+
+/**
+ * Per-experiment classifier rules. metrics.ts calls `classifyShellCommand` for
+ * every Bash call in the skill arm. Return surfaceReason !== null to flag the
+ * call as out-of-surface; return granularityReason !== null to flag it as
+ * multi-command (which matters in research-single mode).
  */
 export interface ExperimentClassifier {
   intendedMcpPrefix: string;
@@ -40,29 +41,22 @@ export interface ExperimentClassifier {
 }
 
 export interface ExperimentSpec {
+  /** Storage name: results go under experiments/<name>/runs/. */
   name: string;
   description: string;
   arms: Record<Arm, ArmConfig>;
   classifier: ExperimentClassifier;
   /**
-   * Optional pre-flight check run once before the first trial of a given run.
-   * Use it to assert credentials, container images, or external services are
-   * reachable. Throwing aborts the run.
+   * Optional check run once before the first trial. Assert credentials,
+   * container images, or external services here. Throwing aborts the run.
    */
   preflight?: () => Promise<void>;
-  /**
-   * Loaded lazily by the runner — keeps the experiment registry decoupled
-   * from per-experiment task definitions.
-   */
+  /** Module exporting `tasks: Task[]`, relative to the repo root. Loaded lazily. */
   tasksPath: string;
   /**
-   * Per-arm runtime env vars injected into the child claude process. Called
-   * once per trial after the GITHUB_* env scrub. Use this to read tokens
-   * from the parent process env and forward them under the right key for
-   * each arm (e.g., GH_TOKEN for skill, GITHUB_PERSONAL_ACCESS_TOKEN for
-   * mcp).
+   * Per-arm env vars injected into the child `claude` process after the GH_* /
+   * GITHUB_* scrub. Used to forward the agent token under the key each arm
+   * expects.
    */
   buildAgentEnv?: (arm: Arm) => Record<string, string>;
 }
-
-export type LoadedExperiment = ExperimentSpec & { tasks: Task[] };

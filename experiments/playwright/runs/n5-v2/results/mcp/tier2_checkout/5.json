@@ -1,0 +1,99 @@
+{
+  "experiment": "playwright",
+  "runName": "n5-v2",
+  "arm": "mcp",
+  "taskId": "tier2_checkout",
+  "tier": 2,
+  "trialN": 5,
+  "timestamp": "2026-10-03T01:05:09.802Z",
+  "seed": "1570c93cfaa29c03",
+  "metrics": {
+    "inputTokens": 21,
+    "outputTokens": 1273,
+    "cachedInputTokens": 153663,
+    "cacheCreationInputTokens": 9706,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 5
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 6
+      },
+      {
+        "name": "ToolSearch",
+        "turnIndex": 9
+      },
+      {
+        "name": "mcp__playwright__browser_click",
+        "turnIndex": 10
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 12
+      },
+      {
+        "name": "mcp__playwright__browser_click",
+        "turnIndex": 13
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 14
+      },
+      {
+        "name": "mcp__playwright__browser_fill_form",
+        "turnIndex": 15
+      },
+      {
+        "name": "mcp__playwright__browser_click",
+        "turnIndex": 16
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 17
+      },
+      {
+        "name": "mcp__playwright__browser_click",
+        "turnIndex": 18
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 19
+      },
+      {
+        "name": "Write",
+        "turnIndex": 21
+      }
+    ],
+    "toolCallCount": 14,
+    "turns": 22,
+    "wallClockMs": 32918,
+    "contextWindowPeak": 12937,
+    "totalCostUsd": 0.1234929,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "order placed with target product",
+    "extras": {
+      "orders_placed": 1,
+      "sessions_seen": 1
+    }
+  }
+}

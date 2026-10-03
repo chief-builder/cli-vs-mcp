@@ -8,10 +8,10 @@
   "timestamp": "2026-05-16T17:39:22.399Z",
   "seed": "5453181b024a994b",
   "metrics": {
-    "inputTokens": 0,
-    "outputTokens": 0,
-    "cachedInputTokens": 0,
-    "cacheCreationInputTokens": 0,
+    "inputTokens": 49,
+    "outputTokens": 775,
+    "cachedInputTokens": 1023813,
+    "cacheCreationInputTokens": 60418,
     "toolCalls": [
       {
         "name": "ToolSearch",
@@ -160,8 +160,7 @@
     ],
     "toolCallCount": 36,
     "turns": 64,
-    "numTurns": 0,
-    "wallClockMs": 0,
+    "wallClockMs": 240000,
     "contextWindowPeak": 67911,
     "totalCostUsd": 0,
     "modelsUsed": [],
@@ -170,12 +169,14 @@
     "escapeToolUsed": false,
     "escapeToolCalls": [],
     "singleCliCommandPerToolCall": true,
-    "cliCommandGranularityViolations": []
+    "cliCommandGranularityViolations": [],
+    "incomplete": true,
+    "tokensEstimated": true
   },
   "success": {
     "pass": false,
     "score": 0,
-    "notes": "missing /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/baseline/tier2_recovery/3/recovery_token.txt",
+    "notes": "missing ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/baseline/tier2_recovery/3/recovery_token.txt",
     "extras": {
       "recovery_attempts": 0,
       "sessions_seen": 0

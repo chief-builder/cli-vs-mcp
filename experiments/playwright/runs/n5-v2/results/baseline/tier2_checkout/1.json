@@ -1,0 +1,154 @@
+{
+  "experiment": "playwright",
+  "runName": "n5-v2",
+  "arm": "baseline",
+  "taskId": "tier2_checkout",
+  "tier": 2,
+  "trialN": 1,
+  "timestamp": "2026-10-03T01:05:48.430Z",
+  "seed": "40aad04224edeedc",
+  "metrics": {
+    "inputTokens": 21,
+    "outputTokens": 204,
+    "cachedInputTokens": 529467,
+    "cacheCreationInputTokens": 74597,
+    "toolCalls": [
+      {
+        "name": "Read",
+        "turnIndex": 3
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 5
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 8
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 9
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 11
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 12
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 14
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 15
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 17
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 18
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 20
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 21
+      },
+      {
+        "name": "Read",
+        "turnIndex": 24
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 27
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 30
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 31
+      },
+      {
+        "name": "Read",
+        "turnIndex": 34
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 37
+      },
+      {
+        "name": "Read",
+        "turnIndex": 38
+      },
+      {
+        "name": "Read",
+        "turnIndex": 39
+      },
+      {
+        "name": "Read",
+        "turnIndex": 42
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 45
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 46
+      },
+      {
+        "name": "Read",
+        "turnIndex": 49
+      },
+      {
+        "name": "Read",
+        "turnIndex": 52
+      },
+      {
+        "name": "Read",
+        "turnIndex": 53
+      },
+      {
+        "name": "Read",
+        "turnIndex": 54
+      },
+      {
+        "name": "Read",
+        "turnIndex": 55
+      }
+    ],
+    "toolCallCount": 28,
+    "turns": 55,
+    "wallClockMs": 240000,
+    "contextWindowPeak": 79434,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": true,
+    "tokensEstimated": true
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "missing ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5-v2/results/baseline/tier2_checkout/1/order_id.txt",
+    "extras": {
+      "orders_placed": 0,
+      "sessions_seen": 0
+    }
+  },
+  "error": "claude timed out after 240000ms"
+}

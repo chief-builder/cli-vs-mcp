@@ -1,0 +1,99 @@
+{
+  "experiment": "playwright",
+  "runName": "n5-v2",
+  "arm": "mcp",
+  "taskId": "tier1_products",
+  "tier": 1,
+  "trialN": 2,
+  "timestamp": "2026-10-03T00:48:52.870Z",
+  "seed": "e345c92bc40aff01",
+  "metrics": {
+    "inputTokens": 19,
+    "outputTokens": 1772,
+    "cachedInputTokens": 150212,
+    "cacheCreationInputTokens": 9264,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 5
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 6
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 7
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 10
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 11
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 14
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 15
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 16
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 17
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 18
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 19
+      },
+      {
+        "name": "mcp__playwright__browser_navigate",
+        "turnIndex": 20
+      },
+      {
+        "name": "mcp__playwright__browser_snapshot",
+        "turnIndex": 21
+      },
+      {
+        "name": "Write",
+        "turnIndex": 23
+      }
+    ],
+    "toolCallCount": 15,
+    "turns": 24,
+    "wallClockMs": 33246,
+    "contextWindowPeak": 12495,
+    "totalCostUsd": 0.12728460000000003,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "all 5 products match"
+  }
+}

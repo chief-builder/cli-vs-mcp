@@ -8,10 +8,10 @@
   "timestamp": "2026-05-15T04:18:36.469Z",
   "seed": "921e27ae2dffbad5",
   "metrics": {
-    "inputTokens": 0,
-    "outputTokens": 0,
-    "cachedInputTokens": 0,
-    "cacheCreationInputTokens": 0,
+    "inputTokens": 14,
+    "outputTokens": 298,
+    "cachedInputTokens": 196533,
+    "cacheCreationInputTokens": 11273,
     "toolCalls": [
       {
         "name": "Skill",
@@ -64,8 +64,7 @@
     ],
     "toolCallCount": 10,
     "turns": 17,
-    "numTurns": 0,
-    "wallClockMs": 0,
+    "wallClockMs": 180000,
     "contextWindowPeak": 22237,
     "totalCostUsd": 0,
     "modelsUsed": [],
@@ -87,7 +86,9 @@
         "command": "playwright-cli fill e9 \"73dcdf8e\" && playwright-cli click e10",
         "reason": "multiple shell operations in one Bash call: playwright-cli fill e9 \"73dcdf8e\" && playwright-cli click e10"
       }
-    ]
+    ],
+    "incomplete": true,
+    "tokensEstimated": true
   },
   "success": {
     "pass": true,

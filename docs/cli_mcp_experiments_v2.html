@@ -429,6 +429,8 @@
     margin: 22px 0;
   }
   .callout p:last-child { margin-bottom: 0; }
+  .callout ul { margin: 0; padding-left: 20px; }
+  .callout li { margin-bottom: 6px; }
   .sequence {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -539,10 +541,9 @@
 
 <header class="site">
   <div class="inner">
-    <a class="brand" href="cli_mcp_experiments.html">cli-vs-mcp</a>
+    <a class="brand" href="cli_mcp_experiments_v2.html">cli-vs-mcp</a>
     <nav>
       <a class="active" href="cli_mcp_experiments_v2.html">Visual Guide</a>
-      <a href="cli_mcp_experiments.html">Full Note</a>
       <a href="playwright_experiment_v2.html">Playwright V2</a>
       <a href="github_experiment_v2.html">GitHub V2</a>
     </nav>
@@ -558,21 +559,21 @@
         The same agent, prompt, model, and task can behave very differently depending on whether it reaches through a CLI skill or a typed MCP server.
       </p>
       <p class="meta">
-        N=5 per task. Two domains: Playwright and GitHub. Exact numbers come from the checked-in run artifacts; visuals here are explanatory anchors, not data sources.
+        Run n5-v2, October 2026: Claude Code 2.1.288, <code>claude-sonnet-4-6</code>, pinned subjects (<code>@playwright/cli</code> 0.1.13, <code>@playwright/mcp</code> 0.0.75, <code>github-mcp-server</code> v1.0.4). N=5 per task for skill and MCP, N=2 for baseline; 161 trials. Two domains: Playwright and GitHub. Exact numbers come from the checked-in run artifacts; visuals here are explanatory anchors, not data sources.
       </p>
       <div class="thesis">
         <div class="thesis-item">
           <span class="qualifier">Token ratio</span>
-          <strong>1.13x-1.42x</strong>
-          <span>MCP is usually cheaper when both surfaces expose the task primitive cleanly.</span>
+          <strong>1.5x-2.1x</strong>
+          <span>MCP used fewer tokens on every task in both experiments. Playwright form is the outlier at 2.67x.</span>
         </div>
         <div class="thesis-item">
-          <strong>15/25</strong>
-          <span>GitHub skill trials succeeded by stepping outside the intended <code>gh</code>-only surface.</span>
+          <strong>0/10 valid</strong>
+          <span>GitHub skill trials on <code>repo_inventory</code> and <code>file_patch_pr</code> all passed, every one by stepping outside the intended <code>gh</code>-only surface.</span>
         </div>
         <div class="thesis-item">
-          <strong>60 -> 8</strong>
-          <span>MCP workflow-status turns dropped after the right Actions primitive was exposed.</span>
+          <strong>13/13 tasks</strong>
+          <span>MCP passed and stayed in surface 5/5 on every task: 6 Playwright, 7 GitHub.</span>
         </div>
       </div>
     </div>
@@ -597,7 +598,7 @@
         <div class="lane skill">
           <div class="name">skill</div>
           <div class="path" aria-label="CLI through Bash"></div>
-          <div class="dest">Skill docs plus narrow <code>Bash(gh:*)</code> or <code>Bash(playwright-cli:*)</code>.</div>
+          <div class="dest">Skill docs plus Bash for <code>gh</code> or <code>playwright-cli</code>.</div>
         </div>
         <div class="lane mcp">
           <div class="name">mcp</div>
@@ -605,6 +606,9 @@
           <div class="dest">Structured server tools over stdio. No Bash.</div>
         </div>
       </div>
+      <p class="caption">
+        How isolation works in this run: each arm gets a positive <code>--tools</code> list; file tools are denied under <code>~</code> and the repo; the GitHub skill arm's Bash runs inside Claude Code's OS sandbox (keychain and <code>$HOME</code> blocked); each trial gets an empty <code>GH_CONFIG_DIR</code>, and inherited <code>GH_</code>/<code>GITHUB_</code> variables are removed. GitHub Tier 1 uses a read-only agent token, Tier 2 a separate read-write one (no admin); both are owned by the same GitHub user. The first run had looser isolation; see <a href="#first-run">First run (May 2026)</a>.
+      </p>
     </div>
 
     <div class="score-grid">
@@ -626,7 +630,7 @@
       <div class="score">
         <div class="label">Shape</div>
         <div class="value">turns</div>
-        <div class="note">How many agent/tool loops the workflow needed.</div>
+        <div class="note">Assistant messages in the transcript; a rough proxy for loops, higher than API round-trips.</div>
       </div>
       <div class="score">
         <div class="label">Budget</div>
@@ -640,7 +644,7 @@
     <div class="narrow">
       <h2>Finding 1: When Primitives Match, MCP Costs Less</h2>
       <p>
-        In the clean comparisons where both arms passed and stayed valid, turn counts are nearly the same. The cost gap mostly comes from per-turn payload: MCP tool results carry less text than shell round-trips.
+        In the clean comparisons where both arms passed and stayed valid, MCP used fewer tokens on every task in both experiments: skill/MCP was 1.5x-2.1x everywhere except Playwright form at 2.67x. Turn counts are within about 3 on the GitHub tasks but not on all Playwright tasks: form took 18.8 skill vs 13.6 MCP turns, products 17.4 vs 21.4. The form gap comes from per-field <code>fill</code> calls versus one batched <code>browser_fill_form</code>.
       </p>
     </div>
 
@@ -654,68 +658,76 @@
           <div class="bar-label">Playwright login</div>
           <div class="bars">
             <span class="bar skill" style="width: 62%"></span>
-            <span class="bar mcp" style="width: 44%"></span>
+            <span class="bar mcp" style="width: 30%"></span>
           </div>
-          <div class="bar-value">1.42x</div>
+          <div class="bar-value">2.07x</div>
         </div>
         <div class="bar-row">
           <div class="bar-label">Playwright scrape</div>
           <div class="bars">
-            <span class="bar skill" style="width: 34%"></span>
-            <span class="bar mcp" style="width: 26%"></span>
+            <span class="bar skill" style="width: 31%"></span>
+            <span class="bar mcp" style="width: 20%"></span>
           </div>
-          <div class="bar-value">1.33x</div>
+          <div class="bar-value">1.54x</div>
         </div>
         <div class="bar-row">
           <div class="bar-label">Playwright form</div>
           <div class="bars">
-            <span class="bar skill" style="width: 96%"></span>
-            <span class="bar mcp" style="width: 38%"></span>
+            <span class="bar skill" style="width: 91%"></span>
+            <span class="bar mcp" style="width: 34%"></span>
           </div>
-          <div class="bar-value">2.51x</div>
+          <div class="bar-value">2.67x</div>
         </div>
         <div class="bar-row">
           <div class="bar-label">Playwright checkout</div>
           <div class="bars">
             <span class="bar skill" style="width: 100%"></span>
-            <span class="bar mcp" style="width: 78%"></span>
+            <span class="bar mcp" style="width: 59%"></span>
           </div>
-          <div class="bar-value">1.29x</div>
+          <div class="bar-value">1.68x</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">GitHub issue triage</div>
+          <div class="bars">
+            <span class="bar skill" style="width: 25%"></span>
+            <span class="bar mcp" style="width: 15%"></span>
+          </div>
+          <div class="bar-value">1.67x</div>
         </div>
         <div class="bar-row">
           <div class="bar-label">GitHub PR diff</div>
           <div class="bars">
-            <span class="bar skill" style="width: 24%"></span>
-            <span class="bar mcp" style="width: 18%"></span>
+            <span class="bar skill" style="width: 25%"></span>
+            <span class="bar mcp" style="width: 15%"></span>
           </div>
-          <div class="bar-value">1.32x</div>
+          <div class="bar-value">1.71x</div>
         </div>
         <div class="bar-row">
           <div class="bar-label">GitHub issue workflow</div>
           <div class="bars">
-            <span class="bar skill" style="width: 35%"></span>
-            <span class="bar mcp" style="width: 26%"></span>
+            <span class="bar skill" style="width: 38%"></span>
+            <span class="bar mcp" style="width: 21%"></span>
           </div>
-          <div class="bar-value">1.38x</div>
+          <div class="bar-value">1.77x</div>
         </div>
         <div class="bar-row">
           <div class="bar-label">GitHub issue create</div>
           <div class="bars">
             <span class="bar skill" style="width: 18%"></span>
-            <span class="bar mcp" style="width: 14%"></span>
+            <span class="bar mcp" style="width: 11%"></span>
           </div>
-          <div class="bar-value">1.31x</div>
+          <div class="bar-value">1.69x</div>
         </div>
         <div class="bar-row">
           <div class="bar-label">GitHub workflow status</div>
           <div class="bars">
-            <span class="bar skill" style="width: 25%"></span>
-            <span class="bar mcp" style="width: 22%"></span>
+            <span class="bar skill" style="width: 29%"></span>
+            <span class="bar mcp" style="width: 19%"></span>
           </div>
-          <div class="bar-value">1.13x</div>
+          <div class="bar-value">1.52x</div>
         </div>
       </div>
-      <p class="caption">Widths are normalized to the largest clean-token task, Playwright checkout at 304,195 skill tokens. Ratios use total tokens.</p>
+      <p class="caption">Widths are normalized to the largest clean-token task, Playwright checkout at 266,073 skill tokens. Ratios use total tokens, averaged over trials that passed and stayed valid. GitHub <code>repo_inventory</code> and <code>file_patch_pr</code> have no clean skill trials, so they have no bars.</p>
     </div>
   </section>
 
@@ -723,15 +735,11 @@
     <div class="narrow">
       <h2>Finding 2: Success Alone Tells The Wrong Story</h2>
       <p>
-        The GitHub skill arm often got the right answer by using shell behavior outside the intended <code>gh</code> surface. The classifier is what makes that visible.
+        On two GitHub tasks the skill arm got the right answer in every trial by using shell behavior outside the intended <code>gh</code> surface. The classifier is what makes that visible.
       </p>
     </div>
 
-    <div class="panel-grid visual-panel">
-      <div>
-        <img src="assets/surface-escape.png" alt="Abstract command-line path escaping a boundary beside a contained typed-tool path">
-        <p class="caption">Generated image used as an editorial anchor. Exact validity numbers are rendered in the table.</p>
-      </div>
+    <div class="visual-panel">
       <div>
         <table class="mini-table">
           <thead>
@@ -750,7 +758,7 @@
             <tr>
               <td><code>issue_triage</code></td>
               <td class="num"><span class="pill good">5/5</span></td>
-              <td class="num"><span class="pill bad">0/5</span></td>
+              <td class="num"><span class="pill good">5/5</span></td>
             </tr>
             <tr>
               <td><code>file_patch_pr</code></td>
@@ -761,7 +769,7 @@
         </table>
         <div class="callout">
           <p>
-            Success-only view: skill looks dominant. Validity-aware view: those same trials expose missing CLI affordances and one attempted token-lift path that the harness later fixed.
+            Success-only view: skill looks fine. Validity-aware view: on <code>repo_inventory</code> all five trials decoded with <code>gh api … | base64 -d</code>; on <code>file_patch_pr</code> all five used <code>base64 -d</code> on read, plus shell variable assignment and <code>$(…)</code> command substitution to build the PUT body. <code>issue_triage</code> is now a valid comparison: both arms passed 5/5 in surface, and skill used 1.67x MCP's tokens.
           </p>
         </div>
       </div>
@@ -770,42 +778,43 @@
 
   <section>
     <div class="narrow">
-      <h2>Finding 3: Missing MCP Primitives Burn Budget</h2>
+      <h2>Finding 3: MCP Was Clean On Every Task</h2>
       <p>
-        MCP fails differently. It cannot fall back to shell helpers, so when the needed tool is missing or hard to discover, the agent fans out across adjacent tools.
+        MCP passed and stayed in surface 5/5 on all 13 tasks, 6 Playwright and 7 GitHub. That includes the two cases the first run couldn't settle: GitHub <code>issue_triage</code>, now run with a read-only agent token that can read issues, and Playwright <code>tier2_recovery</code>.
       </p>
     </div>
 
     <div class="panel-grid visual-panel">
       <div>
-        <img src="assets/mcp-fanout.png" alt="Abstract workflow branching into many tool probes with one direct path highlighted">
+        <img src="assets/mcp-fanout.png" alt="Abstract command-line path escaping a boundary beside a fenced typed-tool path">
       </div>
       <div>
         <table class="mini-table">
           <thead>
-            <tr><th>Case</th><th class="num">Turns</th><th class="num">Wall</th><th>Interpretation</th></tr>
+            <tr><th>Case</th><th class="num">MCP</th><th class="num">Skill</th><th class="num">Skill/MCP tokens</th></tr>
           </thead>
           <tbody>
             <tr>
-              <td><code>issue_triage</code></td>
-              <td class="num">75+</td>
-              <td class="num">240 s timeout</td>
-              <td>Repeated probes across issue tools; no convergence in N=5.</td>
+              <td>GitHub <code>issue_triage</code></td>
+              <td class="num"><span class="pill good">5/5</span></td>
+              <td class="num"><span class="pill good">5/5</span></td>
+              <td class="num">1.67x</td>
             </tr>
             <tr>
-              <td>Workflow status, before Actions</td>
-              <td class="num">60</td>
-              <td class="num">169.7 s</td>
-              <td>ToolSearch fanout and reconstruction from side paths. (From an earlier run, see <a href="cli_mcp_experiments.html">full note</a>.)</td>
+              <td>Playwright <code>tier2_recovery</code></td>
+              <td class="num"><span class="pill good">5/5</span></td>
+              <td class="num"><span class="pill good">5/5</span></td>
+              <td class="num">2.06x</td>
             </tr>
             <tr>
-              <td>Workflow status, after Actions</td>
-              <td class="num">8</td>
-              <td class="num">15.4 s</td>
-              <td>One direct primitive exists: <code>actions_list</code>.</td>
+              <td>GitHub workflow status</td>
+              <td class="num"><span class="pill good">5/5</span></td>
+              <td class="num"><span class="pill good">5/5</span></td>
+              <td class="num">1.52x</td>
             </tr>
           </tbody>
         </table>
+        <p class="caption">Counts are trials that passed and stayed in surface, out of 5.</p>
       </div>
     </div>
   </section>
@@ -814,7 +823,7 @@
     <div class="narrow">
       <h2>Finding 4: Prompting Can Shift An Affordance Gap, Not Erase It</h2>
       <p>
-        A directed prompt told the skill arm exactly how to stay in surface for file patching: use <code>Write</code> files and pass them to <code>gh api --input</code>. It helped, but the workaround was slower and still not reliable.
+        A directed prompt told the skill arm exactly how to stay in surface for file patching: use <code>Write</code> files and pass them to <code>gh api --input</code>. More trials stayed in surface, but none of those finished, and no trial both passed and stayed valid.
       </p>
     </div>
 
@@ -828,13 +837,13 @@
             <tr><th>Metric</th><th class="num">Original</th><th class="num">Directed</th></tr>
           </thead>
           <tbody>
-            <tr><td>Pass success</td><td class="num">5/5</td><td class="num">3/5</td></tr>
-            <tr><td>Valid surface</td><td class="num">0/5</td><td class="num">2/5</td></tr>
-            <tr><td>Avg turns, passing</td><td class="num">~13</td><td class="num">~30</td></tr>
-            <tr><td>Avg tokens, passing</td><td class="num">~144k</td><td class="num">~353k</td></tr>
-            <tr><td>Avg wall, passing</td><td class="num">~35 s</td><td class="num">~108 s</td></tr>
+            <tr><td>Pass success</td><td class="num">5/5</td><td class="num">2/5</td></tr>
+            <tr><td>Valid surface</td><td class="num">0/5</td><td class="num">3/5</td></tr>
+            <tr><td>Pass and valid</td><td class="num">0/5</td><td class="num">0/5</td></tr>
+            <tr><td>Avg tokens, passing</td><td class="num">153,022</td><td class="num">401,861</td></tr>
           </tbody>
         </table>
+        <p class="caption">Both passing directed trials escaped: one with <code>$(…)</code> in <code>gh pr create</code>, one with <code>base64 -d</code>. They averaged 2.63x the original's tokens. The three valid trials timed out at 240 s after 10–13 turns; their transcripts end in extended thinking with no further tool calls.</p>
       </div>
     </div>
 
@@ -851,10 +860,10 @@
       <div class="seq">
         <h3>Skill file patch PR</h3>
         <ol>
-          <li>Read file through raw REST</li>
+          <li class="bad-line">Read file through raw REST, decoded with <code>base64 -d</code></li>
           <li>Get main HEAD SHA</li>
           <li>Create branch through raw REST</li>
-          <li class="bad-line">Stage file content with shell text</li>
+          <li class="bad-line">Build the PUT body with shell variables and <code>$(…)</code></li>
           <li>Write file through raw REST</li>
           <li>Create pull request</li>
         </ol>
@@ -866,7 +875,7 @@
     <div class="narrow">
       <h2>How To Choose</h2>
       <p>
-        The practical rule: pick the surface whose primitives already match the workflow. If neither does, expect either shell escapes or MCP fanout and measure before standardizing.
+        The practical rule: pick the surface whose primitives already match the workflow. If neither does, expect shell escapes on the CLI side, and measure both before standardizing.
       </p>
     </div>
 
@@ -883,7 +892,7 @@
         </div>
         <div class="matrix-row">
           <strong>Some extra token cost is acceptable.</strong>
-          <span>In clean tasks, skill often costs about 1.1x-1.4x MCP, with bigger gaps on chatty workflows.</span>
+          <span>In this run's clean tasks, skill cost 1.5x-2.1x MCP, 2.67x on the Playwright form task. The multiple depends on the harness setup; the direction held in both runs.</span>
         </div>
       </div>
       <div class="matrix-col">
@@ -898,7 +907,7 @@
         </div>
         <div class="matrix-row">
           <strong>Agents will run this at volume.</strong>
-          <span>Lower per-turn payload becomes meaningful when workflows repeat often.</span>
+          <span>Lower token cost per task adds up when workflows repeat often.</span>
         </div>
       </div>
     </div>
@@ -906,7 +915,7 @@
     <div class="decision-strip">
       <div class="decision">
         <strong>If both fit</strong>
-        <span>MCP is usually cheaper.</span>
+        <span>MCP was cheaper on every clean task in both runs.</span>
       </div>
       <div class="decision">
         <strong>If CLI lacks a primitive</strong>
@@ -914,7 +923,7 @@
       </div>
       <div class="decision">
         <strong>If MCP lacks a primitive</strong>
-        <span>Expect fanout and timeouts.</span>
+        <span>Check the server's tool catalog first; this study has no recorded case that sizes the cost.</span>
       </div>
       <div class="decision">
         <strong>If the stakes are high</strong>
@@ -923,17 +932,36 @@
     </div>
   </section>
 
+  <section id="first-run">
+    <div class="narrow">
+      <h2>First Run (May 2026)</h2>
+      <p>
+        The first full run, n5, is kept as history. Its numbers differ from the ones above, and the reasons are worth keeping next to them.
+      </p>
+    </div>
+    <div class="callout" id="corrections">
+      <p><strong>What n5 showed, and why it differs</strong></p>
+      <ul>
+        <li>Setup: Claude Code 2.1.142–2.1.143 with looser isolation. <code>--allowed-tools</code> did not restrict tools, and the runner's env scrub didn't apply. The results have been re-classified with the current classifier.</li>
+        <li><code>issue_triage</code> was invalid: the agent token was mis-scoped and lacked Issues read, and the skill arm's passes used escalated credentials.</li>
+        <li>Figures: Playwright Tier 1 1.64x and Tier 2 1.86x skill/MCP (1.52x on completed trials); Playwright clean tasks 1.29x–1.42x, form 2.51x; MCP <code>tier2_recovery</code> 2/5; GitHub clean tasks 1.13x–1.38x; directed prompt 1/5 pass and valid.</li>
+        <li>Why the ratios rose in n5-v2 (an observation, not a proven cause): MCP got cheaper by more than skill did (e.g. <code>pr_diff_answer</code> MCP 55,534 → 38,840 tokens, skill 73,146 → 66,564). At the same time the fixed first-turn context per arm shrank: MCP ~12.3k → ~8.3k (Playwright) and ~8.8k (GitHub), skill ~16.6k → ~13.0k and ~15.1k, baseline ~12.1k → ~9.6k. The skill arm keeps a larger fixed context, the loaded skill text.</li>
+        <li>Two things changed together: the tool restriction (<code>--tools</code>, from ~22–24 built-in tools to 2–5) and the Claude Code upgrade from 2.1.143 to 2.1.288. This run can't separate them. The multiple depends on the harness setup; the direction (MCP cheaper) held in both runs.</li>
+      </ul>
+    </div>
+  </section>
+
   <section>
     <div class="narrow">
       <h2>What This Version Leaves Out</h2>
       <p>
-        This page is the short version. The full note keeps the trial JSON example, Bash classifier phases, flag-by-flag runner explanation, caveats, and quick start commands.
+        This page is the short version. The trial JSON, Bash classifier, runner flags, and quick start commands live in the repo under <code>harness/src/</code> and <code>experiments/</code>.
       </p>
       <p>
-        Keep three caveats attached to the visuals: N=5 is directional rather than benchmark-grade; the validity classifier is a witness, not a sandbox; MCP tool catalogs change between server versions; verify names against the version you're running.
+        Keep three caveats attached to the visuals: N=5 (N=2 for baseline, which passed 0/26) is directional rather than benchmark-grade; the validity classifier is a witness, not a sandbox; MCP tool catalogs change between server versions; verify names against the version you're running.
       </p>
       <p>
-        Continue with the <a href="cli_mcp_experiments.html">full overview</a>, the <a href="playwright_experiment_v2.html">Playwright visual brief</a>, or the <a href="github_experiment_v2.html">GitHub visual brief</a>.
+        Continue with the <a href="playwright_experiment_v2.html">Playwright visual brief</a> or the <a href="github_experiment_v2.html">GitHub visual brief</a>.
       </p>
     </div>
   </section>
@@ -942,7 +970,7 @@
 <footer class="site">
   <div class="inner">
     <span>cli-vs-mcp · visual guide</span>
-    <span><a href="cli_mcp_experiments.html">Full note</a> · <a href="playwright_experiment_v2.html">Playwright V2</a> · <a href="github_experiment_v2.html">GitHub V2</a></span>
+    <span><a href="playwright_experiment_v2.html">Playwright V2</a> · <a href="github_experiment_v2.html">GitHub V2</a></span>
   </div>
 </footer>
 

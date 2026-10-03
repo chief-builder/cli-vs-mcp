@@ -8,10 +8,10 @@
   "timestamp": "2026-05-17T03:46:23.025Z",
   "seed": "21251841a9961e1b",
   "metrics": {
-    "inputTokens": 0,
-    "outputTokens": 0,
-    "cachedInputTokens": 0,
-    "cacheCreationInputTokens": 0,
+    "inputTokens": 39,
+    "outputTokens": 314,
+    "cachedInputTokens": 531429,
+    "cacheCreationInputTokens": 29796,
     "toolCalls": [
       {
         "name": "ToolSearch",
@@ -112,22 +112,75 @@
     ],
     "toolCallCount": 24,
     "turns": 58,
-    "numTurns": 0,
-    "wallClockMs": 0,
+    "wallClockMs": 240000,
     "contextWindowPeak": 37289,
     "totalCostUsd": 0,
     "modelsUsed": [],
     "usedIntendedTool": true,
-    "validToolSurface": true,
-    "escapeToolUsed": false,
-    "escapeToolCalls": [],
-    "singleCliCommandPerToolCall": true,
-    "cliCommandGranularityViolations": []
+    "validToolSurface": false,
+    "escapeToolUsed": true,
+    "escapeToolCalls": [
+      {
+        "name": "Grep",
+        "turnIndex": 33,
+        "reason": "Grep is not allowed in the mcp arm"
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 35,
+        "reason": "Grep is not allowed in the mcp arm"
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 43,
+        "reason": "Grep is not allowed in the mcp arm"
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 46,
+        "reason": "Grep is not allowed in the mcp arm"
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 48,
+        "reason": "Grep is not allowed in the mcp arm"
+      }
+    ],
+    "singleCliCommandPerToolCall": false,
+    "cliCommandGranularityViolations": [
+      {
+        "name": "Grep",
+        "turnIndex": 33,
+        "reason": "Grep is not allowed in the mcp arm"
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 35,
+        "reason": "Grep is not allowed in the mcp arm"
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 43,
+        "reason": "Grep is not allowed in the mcp arm"
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 46,
+        "reason": "Grep is not allowed in the mcp arm"
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 48,
+        "reason": "Grep is not allowed in the mcp arm"
+      }
+    ],
+    "incomplete": true,
+    "tokensEstimated": true
   },
   "success": {
     "pass": false,
     "score": 0,
-    "notes": "missing or invalid JSON at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/n5/results/mcp/tier1_issue_triage/1/issue_triage.json"
+    "notes": "missing or invalid JSON at ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/n5/results/mcp/tier1_issue_triage/1/issue_triage.json"
   },
   "error": "claude timed out after 240000ms"
 }

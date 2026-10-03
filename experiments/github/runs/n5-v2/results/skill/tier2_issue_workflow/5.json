@@ -1,0 +1,69 @@
+{
+  "experiment": "github",
+  "runName": "n5-v2",
+  "arm": "skill",
+  "taskId": "tier2_issue_workflow",
+  "tier": 2,
+  "trialN": 5,
+  "timestamp": "2026-10-03T00:21:24.109Z",
+  "seed": "8a31e8944202f0d1",
+  "metrics": {
+    "inputTokens": 9,
+    "outputTokens": 686,
+    "cachedInputTokens": 88684,
+    "cacheCreationInputTokens": 10701,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "gh issue list --repo chief-builder-lab/clivsmcp-tier2-issue-workflow-8a31e894 --state open --json number,title --jq '.[] | select(.title | contains(\"B52C366C\"))'"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 7,
+        "command": "gh issue edit 2 --repo chief-builder-lab/clivsmcp-tier2-issue-workflow-8a31e894 --add-label \"priority-high\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 8,
+        "command": "gh issue comment 2 --repo chief-builder-lab/clivsmcp-tier2-issue-workflow-8a31e894 --body \"triaged-B52C366C\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "gh issue close 2 --repo chief-builder-lab/clivsmcp-tier2-issue-workflow-8a31e894"
+      }
+    ],
+    "toolCallCount": 5,
+    "turns": 10,
+    "wallClockMs": 17749,
+    "contextWindowPeak": 17271,
+    "totalCostUsd": 0.1011282,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "all workflow steps applied to target only",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-issue-workflow-8a31e894",
+      "targetIssueNumber": 2,
+      "expectedLabel": "priority-high",
+      "expectedCommentPhrase": "triaged-B52C366C"
+    }
+  }
+}

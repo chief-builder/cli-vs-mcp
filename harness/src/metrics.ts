@@ -1,5 +1,5 @@
-import type { Arm } from './experiment.js';
-import type { ExperimentClassifier } from './experiment.js';
+import type { Arm, ExperimentClassifier } from './experiment.js';
+import { ALWAYS_BLOCKED_TOOLS, PLANNING_TOOLS } from './config.js';
 
 export interface ToolCallRecord {
   name: string;
@@ -38,11 +38,26 @@ export interface Metrics {
    */
   singleCliCommandPerToolCall: boolean;
   cliCommandGranularityViolations: EscapeToolCallRecord[];
+  /**
+   * True when the transcript has no final `result` event (the trial was killed
+   * on timeout or crashed). Token counts are then summed from per-message usage
+   * and are a lower bound; see `tokensEstimated`.
+   */
+  incomplete: boolean;
+  tokensEstimated: boolean;
+}
+
+export interface ParseOptions {
+  /** Built-in tools the arm was given (`ArmConfig.tools`). Anything else is out of surface. */
+  armTools: readonly string[];
+  /** Used for wallClockMs when the transcript has no `result` event. */
+  fallbackWallClockMs?: number;
 }
 
 interface AssistantEvent {
   type: 'assistant';
   message: {
+    id?: string;
     content: Array<
       | { type: 'text'; text: string }
       | { type: 'thinking'; thinking: string }
@@ -82,6 +97,28 @@ interface ResultEvent {
 
 type StreamEvent = AssistantEvent | ResultEvent | { type: string };
 
+/**
+ * Claude Code sometimes records a tool call's input as
+ * `{ "__unparsedToolInput": { "raw": "<json>" } }` (seen with 2.1.288). Recover the real
+ * input so the classifier sees the actual command instead of an empty one.
+ */
+export function normalizeToolInput(input: unknown): unknown {
+  if (!input || typeof input !== 'object') return input;
+  const raw = (input as { __unparsedToolInput?: { raw?: unknown } }).__unparsedToolInput?.raw;
+  if (typeof raw !== 'string') return input;
+  try {
+    return JSON.parse(raw) as unknown;
+  } catch {
+    // Truncated JSON: pull out the string fields the classifier needs.
+    const out: Record<string, string> = {};
+    for (const key of ['command', 'skill']) {
+      const m = new RegExp(`"${key}"\\s*:\\s*("(?:\\\\.|[^"\\\\])*")`).exec(raw);
+      if (m) out[key] = JSON.parse(m[1]!) as string;
+    }
+    return out;
+  }
+}
+
 function getSkillName(input: unknown): string | null {
   if (!input || typeof input !== 'object') return null;
   const skill = (input as { skill?: unknown }).skill;
@@ -94,67 +131,55 @@ function getBashCommand(input: unknown): string | undefined {
   return typeof command === 'string' ? command : undefined;
 }
 
-const ALWAYS_BLOCKED_NAMES = new Set(['WebFetch', 'WebSearch', 'Monitor', 'CronCreate', 'RemoteTrigger']);
+const ALWAYS_BLOCKED = new Set<string>(ALWAYS_BLOCKED_TOOLS);
+const PLANNING = new Set<string>(PLANNING_TOOLS);
+/** MCP's own resource tools read from the configured MCP server, so they count as MCP surface. */
+const MCP_RESOURCE_TOOLS = new Set(['ListMcpResourcesTool', 'ReadMcpResourceTool']);
 
-function classifyToolUse(
-  arm: Arm | undefined,
+type Verdict = { surfaceReason: string | null; granularityReason: string | null };
+const OK: Verdict = { surfaceReason: null, granularityReason: null };
+const violation = (reason: string): Verdict => ({ surfaceReason: reason, granularityReason: reason });
+
+/**
+ * Allow-list classification: a call is in surface only if the arm was given the
+ * tool (or it is a planning tool), with extra checks for Skill and Bash in the
+ * skill arm and for the MCP prefix in the mcp arm.
+ */
+export function classifyToolUse(
+  arm: Arm,
   classifier: ExperimentClassifier,
+  armTools: readonly string[],
   name: string,
   input: unknown,
-): { surfaceReason: string | null; granularityReason: string | null } {
-  if (!arm) return { surfaceReason: null, granularityReason: null };
+): Verdict {
+  if (ALWAYS_BLOCKED.has(name)) return violation(`${name} is an out-of-band execution or fetch path`);
+  if (PLANNING.has(name)) return OK;
 
-  if (ALWAYS_BLOCKED_NAMES.has(name)) {
-    const reason = `${name} is an out-of-band execution or fetch path`;
-    return { surfaceReason: reason, granularityReason: reason };
+  if (name.startsWith('mcp__') || MCP_RESOURCE_TOOLS.has(name)) {
+    const intended = arm === 'mcp' && (name.startsWith(classifier.intendedMcpPrefix) || MCP_RESOURCE_TOOLS.has(name));
+    return intended ? OK : violation(`${name} is not allowed in the ${arm} arm`);
   }
 
-  const isIntendedMcpTool = name.startsWith(classifier.intendedMcpPrefix);
+  if (!armTools.includes(name)) return violation(`${name} is not allowed in the ${arm} arm`);
 
-  if (arm === 'baseline') {
-    if (name === 'Bash' || name === 'Skill' || name === 'Task' || name === 'Agent' || isIntendedMcpTool) {
-      const reason = `${name} is not allowed in the baseline arm`;
-      return { surfaceReason: reason, granularityReason: reason };
-    }
-    return { surfaceReason: null, granularityReason: null };
+  if (name === 'Skill') {
+    const skill = getSkillName(input);
+    return skill === classifier.intendedSkillName ? OK : violation(`unexpected skill ${skill ?? '(unknown)'}`);
   }
-
-  if (arm === 'mcp') {
-    if (name === 'Bash' || name === 'Skill' || name === 'Task' || name === 'Agent') {
-      const reason = `${name} is not allowed in the mcp arm`;
-      return { surfaceReason: reason, granularityReason: reason };
-    }
-    return { surfaceReason: null, granularityReason: null };
+  if (name === 'Bash') {
+    const command = getBashCommand(input);
+    if (!command) return violation('Bash command missing command text');
+    return classifier.classifyShellCommand(command);
   }
-
-  if (arm === 'skill') {
-    if (name === 'Task' || name === 'Agent' || isIntendedMcpTool) {
-      const reason = `${name} is not allowed in the skill arm`;
-      return { surfaceReason: reason, granularityReason: reason };
-    }
-    if (name === 'Skill') {
-      const skill = getSkillName(input);
-      const reason = skill === classifier.intendedSkillName
-        ? null
-        : `unexpected skill ${skill ?? '(unknown)'}`;
-      return { surfaceReason: reason, granularityReason: reason };
-    }
-    if (name === 'Bash') {
-      const command = getBashCommand(input);
-      if (!command) {
-        return {
-          surfaceReason: 'Bash command missing command text',
-          granularityReason: 'Bash command missing command text',
-        };
-      }
-      return classifier.classifyShellCommand(command);
-    }
-  }
-
-  return { surfaceReason: null, granularityReason: null };
+  return OK;
 }
 
-export function parseTranscript(rawLines: string[], arm: Arm | undefined, classifier: ExperimentClassifier): Metrics {
+export function parseTranscript(
+  rawLines: string[],
+  arm: Arm,
+  classifier: ExperimentClassifier,
+  opts: ParseOptions,
+): Metrics {
   const events: StreamEvent[] = [];
   for (const line of rawLines) {
     const trimmed = line.trim();
@@ -184,9 +209,14 @@ export function parseTranscript(rawLines: string[], arm: Arm | undefined, classi
     escapeToolCalls: [],
     singleCliCommandPerToolCall: true,
     cliCommandGranularityViolations: [],
+    incomplete: true,
+    tokensEstimated: false,
   };
 
   let turnIndex = 0;
+  // Last usage seen per API message. Claude Code emits one assistant event per
+  // content block, each repeating its message's usage.
+  const usageByMessage = new Map<string, NonNullable<AssistantEvent['message']['usage']>>();
 
   for (const event of events) {
     if (event.type === 'assistant') {
@@ -196,15 +226,16 @@ export function parseTranscript(rawLines: string[], arm: Arm | undefined, classi
 
       const usage = e.message.usage;
       if (usage) {
-        const tokensInContext = (usage.input_tokens ?? 0)
-          + (usage.cache_read_input_tokens ?? 0)
-          + (usage.cache_creation_input_tokens ?? 0);
+        usageByMessage.set(e.message.id ?? `turn-${turnIndex}`, usage);
+        const tokensInContext =
+          (usage.input_tokens ?? 0) + (usage.cache_read_input_tokens ?? 0) + (usage.cache_creation_input_tokens ?? 0);
         if (tokensInContext > metrics.contextWindowPeak) {
           metrics.contextWindowPeak = tokensInContext;
         }
       }
 
-      for (const block of e.message.content) {
+      for (const raw of e.message.content) {
+        const block = raw.type === 'tool_use' ? { ...raw, input: normalizeToolInput(raw.input) } : raw;
         if (block.type === 'tool_use') {
           const command = block.name === 'Bash' ? getBashCommand(block.input) : undefined;
           const record: ToolCallRecord = {
@@ -222,7 +253,13 @@ export function parseTranscript(rawLines: string[], arm: Arm | undefined, classi
             }
           }
 
-          const { surfaceReason, granularityReason } = classifyToolUse(arm, classifier, block.name, block.input);
+          const { surfaceReason, granularityReason } = classifyToolUse(
+            arm,
+            classifier,
+            opts.armTools,
+            block.name,
+            block.input,
+          );
           if (surfaceReason) {
             metrics.validToolSurface = false;
             metrics.escapeToolUsed = true;
@@ -238,6 +275,7 @@ export function parseTranscript(rawLines: string[], arm: Arm | undefined, classi
 
     if (event.type === 'result') {
       const e = event as ResultEvent;
+      metrics.incomplete = false;
       metrics.wallClockMs = e.duration_ms ?? 0;
       metrics.totalCostUsd = e.total_cost_usd ?? 0;
 
@@ -256,6 +294,20 @@ export function parseTranscript(rawLines: string[], arm: Arm | undefined, classi
         metrics.cacheCreationInputTokens = e.usage.cache_creation_input_tokens ?? 0;
       }
     }
+  }
+
+  if (metrics.incomplete) {
+    // No final totals. Sum what each API message reported. Output tokens in
+    // streamed usage are partial and side-model calls are missing, so this is
+    // a lower bound rather than the true cost.
+    for (const u of usageByMessage.values()) {
+      metrics.inputTokens += u.input_tokens ?? 0;
+      metrics.outputTokens += u.output_tokens ?? 0;
+      metrics.cachedInputTokens += u.cache_read_input_tokens ?? 0;
+      metrics.cacheCreationInputTokens += u.cache_creation_input_tokens ?? 0;
+    }
+    metrics.tokensEstimated = usageByMessage.size > 0;
+    metrics.wallClockMs = opts.fallbackWallClockMs ?? 0;
   }
 
   return metrics;

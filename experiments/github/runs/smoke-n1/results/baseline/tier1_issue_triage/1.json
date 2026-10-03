@@ -8,10 +8,10 @@
   "timestamp": "2026-05-15T12:33:48.705Z",
   "seed": "1b62716398809ef6",
   "metrics": {
-    "inputTokens": 0,
-    "outputTokens": 0,
-    "cachedInputTokens": 0,
-    "cacheCreationInputTokens": 0,
+    "inputTokens": 34,
+    "outputTokens": 156,
+    "cachedInputTokens": 300733,
+    "cacheCreationInputTokens": 27989,
     "toolCalls": [
       {
         "name": "ToolSearch",
@@ -92,8 +92,7 @@
     ],
     "toolCallCount": 19,
     "turns": 42,
-    "numTurns": 0,
-    "wallClockMs": 0,
+    "wallClockMs": 180000,
     "contextWindowPeak": 35482,
     "totalCostUsd": 0,
     "modelsUsed": [],
@@ -102,12 +101,14 @@
     "escapeToolUsed": false,
     "escapeToolCalls": [],
     "singleCliCommandPerToolCall": true,
-    "cliCommandGranularityViolations": []
+    "cliCommandGranularityViolations": [],
+    "incomplete": true,
+    "tokensEstimated": true
   },
   "success": {
     "pass": false,
     "score": 0,
-    "notes": "missing or invalid JSON at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/smoke-n1/results/baseline/tier1_issue_triage/1/issue_triage.json"
+    "notes": "missing or invalid JSON at ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/smoke-n1/results/baseline/tier1_issue_triage/1/issue_triage.json"
   },
   "error": "claude timed out after 180000ms"
 }

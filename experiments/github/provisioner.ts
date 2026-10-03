@@ -1,4 +1,5 @@
 import { Buffer } from 'node:buffer';
+import { loadGithubConfig } from '../../harness/src/config.js';
 
 /**
  * Minimal GitHub REST client used by Tier 1 provisioners. Holds the controller
@@ -14,16 +15,9 @@ export interface GhConfig {
   host: string;
 }
 
-export function ghConfigFromEnv(): GhConfig {
-  const controllerToken = process.env.GITHUB_CONTROLLER_TOKEN;
-  const sandboxOwner = process.env.GITHUB_SANDBOX_OWNER;
-  if (!controllerToken) throw new Error('GITHUB_CONTROLLER_TOKEN not set');
-  if (!sandboxOwner) throw new Error('GITHUB_SANDBOX_OWNER not set');
-  return {
-    controllerToken,
-    sandboxOwner,
-    host: process.env.GITHUB_HOST ?? 'api.github.com',
-  };
+export function ghConfigFromEnv(env: NodeJS.ProcessEnv = process.env): GhConfig {
+  const cfg = loadGithubConfig(env);
+  return { controllerToken: cfg.controllerToken, sandboxOwner: cfg.sandboxOwner, host: cfg.apiHost };
 }
 
 interface GhRequest {
@@ -64,7 +58,24 @@ async function ghRequest<T = unknown>(cfg: GhConfig, req: GhRequest): Promise<T 
     throw new Error(`GitHub API ${req.method} ${req.path} -> ${res.status}: ${text.slice(0, 500)}`);
   }
   if (res.status === 204) return null;
-  return await res.json() as T;
+  return (await res.json()) as T;
+}
+
+/**
+ * Runs `fn` after a repo has been created and deletes the repo if `fn` throws, so a
+ * failed setup never leaves a sandbox repo behind (the runner only calls
+ * Task.cleanup once setup has returned state).
+ */
+export async function deleteOnFailure<T>(
+  repo: { cleanupHandle: () => Promise<void> },
+  fn: () => Promise<T>,
+): Promise<T> {
+  try {
+    return await fn();
+  } catch (err) {
+    await repo.cleanupHandle().catch(() => undefined);
+    throw err;
+  }
 }
 
 export interface ProvisionedRepo {
@@ -101,16 +112,10 @@ export interface RepoSeed {
  * before returning. Caller is responsible for calling cleanupHandle() in
  * finally — typically by passing it to Task.cleanup.
  */
-export async function provisionRepo(
-  cfg: GhConfig,
-  repoName: string,
-  seed: RepoSeed,
-): Promise<ProvisionedRepo> {
+export async function provisionRepo(cfg: GhConfig, repoName: string, seed: RepoSeed): Promise<ProvisionedRepo> {
   const isOrg = await isOrganization(cfg, cfg.sandboxOwner);
 
-  const createPath = isOrg
-    ? `/orgs/${cfg.sandboxOwner}/repos`
-    : `/user/repos`;
+  const createPath = isOrg ? `/orgs/${cfg.sandboxOwner}/repos` : `/user/repos`;
   await ghRequest(cfg, {
     method: 'POST',
     path: createPath,
@@ -123,67 +128,71 @@ export async function provisionRepo(
   });
 
   const fullName = `${cfg.sandboxOwner}/${repoName}`;
-
-  await waitForRepoReady(cfg, fullName);
-
-  if (seed.topics && seed.topics.length > 0) {
-    await ghRequest(cfg, {
-      method: 'PUT',
-      path: `/repos/${fullName}/topics`,
-      body: { names: seed.topics },
-    });
-  }
-
-  for (const file of seed.files) {
-    await ghRequest(cfg, {
-      method: 'PUT',
-      path: `/repos/${fullName}/contents/${encodeURI(file.path)}`,
-      body: {
-        message: `seed ${file.path}`,
-        content: Buffer.from(file.content, 'utf-8').toString('base64'),
-      },
-    });
-  }
-
-  if (seed.labels) {
-    for (const label of seed.labels) {
-      await ghRequest(cfg, {
-        method: 'POST',
-        path: `/repos/${fullName}/labels`,
-        body: { name: label.name, color: label.color },
-        acceptConflict: true,
-      });
-    }
-  }
-
-  if (seed.issues) {
-    for (const issue of seed.issues) {
-      const created = await ghRequest<{ number: number }>(cfg, {
-        method: 'POST',
-        path: `/repos/${fullName}/issues`,
-        body: {
-          title: issue.title,
-          body: issue.body,
-          ...(issue.labels ? { labels: issue.labels } : {}),
-        },
-      });
-      if (issue.closeAfter && created) {
-        await ghRequest(cfg, {
-          method: 'PATCH',
-          path: `/repos/${fullName}/issues/${created.number}`,
-          body: { state: 'closed' },
-        });
-      }
-    }
-  }
-
-  return {
+  const repo: ProvisionedRepo = {
     owner: cfg.sandboxOwner,
     name: repoName,
     fullName,
     htmlUrl: `https://github.com/${fullName}`,
     cleanupHandle: () => deleteRepo(cfg, fullName),
   };
+
+  // Seed inside deleteOnFailure so a failure partway through doesn't leak the repo.
+  return deleteOnFailure(repo, async () => {
+    await waitForRepoReady(cfg, fullName);
+
+    if (seed.topics && seed.topics.length > 0) {
+      await ghRequest(cfg, {
+        method: 'PUT',
+        path: `/repos/${fullName}/topics`,
+        body: { names: seed.topics },
+      });
+    }
+
+    for (const file of seed.files) {
+      await ghRequest(cfg, {
+        method: 'PUT',
+        path: `/repos/${fullName}/contents/${encodeURI(file.path)}`,
+        body: {
+          message: `seed ${file.path}`,
+          content: Buffer.from(file.content, 'utf-8').toString('base64'),
+        },
+      });
+    }
+
+    if (seed.labels) {
+      for (const label of seed.labels) {
+        await ghRequest(cfg, {
+          method: 'POST',
+          path: `/repos/${fullName}/labels`,
+          body: { name: label.name, color: label.color },
+          acceptConflict: true,
+        });
+      }
+    }
+
+    if (seed.issues) {
+      for (const issue of seed.issues) {
+        const created = await ghRequest<{ number: number }>(cfg, {
+          method: 'POST',
+          path: `/repos/${fullName}/issues`,
+          body: {
+            title: issue.title,
+            body: issue.body,
+            ...(issue.labels ? { labels: issue.labels } : {}),
+          },
+        });
+        if (issue.closeAfter && created) {
+          await ghRequest(cfg, {
+            method: 'PATCH',
+            path: `/repos/${fullName}/issues/${created.number}`,
+            body: { state: 'closed' },
+          });
+        }
+      }
+    }
+
+    return repo;
+  });
 }
 
 async function isOrganization(cfg: GhConfig, owner: string): Promise<boolean> {

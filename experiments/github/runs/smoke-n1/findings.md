@@ -42,6 +42,8 @@
 
 ## Comparison to Playwright
 
+> **Correction (2026-10-02).** The Playwright cost-mechanism explanation in the comparison table below did not hold up at N=5; see `../../../playwright/runs/n5/findings.md`.
+
 | Surface | Skill/MCP token ratio (Tier 1) | Notes |
 |---|---|---|
 | Playwright | **1.82×** (skill heavier) | Each Skill step is two tool calls (action + explicit snapshot); MCP bundles the post-action snapshot inline. |

@@ -1,0 +1,79 @@
+{
+  "experiment": "github",
+  "runName": "n5-v2",
+  "arm": "baseline",
+  "taskId": "tier1_pr_diff_answer",
+  "tier": 1,
+  "trialN": 1,
+  "timestamp": "2026-10-03T00:35:50.306Z",
+  "seed": "958fee5d8f1471d6",
+  "metrics": {
+    "inputTokens": 10,
+    "outputTokens": 5231,
+    "cachedInputTokens": 119969,
+    "cacheCreationInputTokens": 18550,
+    "toolCalls": [
+      {
+        "name": "Glob",
+        "turnIndex": 3
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 5
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 8
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 11
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 12
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 15
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 18
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 19
+      },
+      {
+        "name": "Read",
+        "turnIndex": 22
+      },
+      {
+        "name": "Read",
+        "turnIndex": 23
+      }
+    ],
+    "toolCallCount": 10,
+    "turns": 25,
+    "wallClockMs": 87936,
+    "contextWindowPeak": 23387,
+    "totalCostUsd": 0.2257857,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "missing or invalid JSON at ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/n5-v2/results/baseline/tier1_pr_diff_answer/1/pr_diff.json"
+  }
+}

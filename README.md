@@ -1,298 +1,264 @@
 # cli-vs-mcp
 
-A harness for comparing **Claude Code**'s behavior across three tool surfaces on the same task:
+[![CI](https://github.com/chief-builder/cli-vs-mcp/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/chief-builder/cli-vs-mcp/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-- **`baseline`** — no execution surface (the reasoning floor)
-- **`skill`** — a Claude Code Skill that wraps a CLI binary
-- **`mcp`** — an MCP server that exposes structured tools
+A TypeScript harness that runs the same task many times through **Claude Code** under three tool surfaces and measures
+what changes: a **baseline** with no execution tools, a **skill** arm where Claude Code drives a CLI (`playwright-cli`,
+`gh`) through a Skill, and an **mcp** arm where it uses an MCP server (`@playwright/mcp`, `github-mcp-server`). Each
+trial runs `claude -p` in a fresh temp directory against per-trial synthetic state. The harness records the transcript,
+token and time cost, and a success score. It also classifies every tool call as inside or outside the arm's intended
+surface, so a trial that "passed" by escaping its tools is not counted as a clean pass.
 
-Two experiments are wired up:
+Write-up and charts: <https://chief-builder.github.io/cli-vs-mcp/>
 
-| Experiment | Skill arm | MCP arm |
-|---|---|---|
-| `playwright` | `playwright-cli` skill + `Bash(playwright-cli:*)` | `@playwright/mcp@0.0.75` via stdio |
-| `github`     | `github-cli` skill + `Bash(gh:*)`                   | `ghcr.io/github/github-mcp-server` (digest-pinned) via docker stdio |
+## Why it matters
 
-Same prompts run through every arm, in fresh per-trial tempdirs, with tightly curated allow/deny lists. We record tokens, turns, wall-clock time, success score, and tool-surface validity.
+"Should I wrap this tool as a CLI skill or an MCP server?" is usually argued from intuition. This harness turns it
+into a controlled comparison: same prompt, same per-trial state, same model, with only the tool surface changing.
+It reports both **cost** (tokens, turns, time) and **validity** (did the agent stay on the surface it was given). The
+second turned out to matter as much as the first. CLI arms frequently reached the right answer through shell escapes
+such as `base64 -d`, ad-hoc variables, and in one task borrowed credentials, which a success-only benchmark would
+have counted as wins.
 
-## Approach
+## Architecture
 
-Each trial isolates one variable — the tool surface — and holds everything else equal:
-
-1. A **paired seed** `hash(experiment, runName, taskId, trialN)` drives all per-trial state, so all three arms attempting `tier1_scrape` trial 3 see the same randomized table.
-2. **Per-trial answers stay off disk.** Playwright fixtures are HTML templates rendered dynamically by an in-process HTTP server; GitHub state lives in a private sandbox repo provisioned by a controller token the agent never sees.
-3. The agent runs in a **fresh tempdir** with `--strict-mcp-config`, a positive `--allowed-tools` list, an explicit deny list, and `--setting-sources project,local` (so the developer's `~/.claude` skills don't leak in).
-4. Always blocked across every arm — five Claude Code tools that would otherwise be available to `claude -p` by default, each a different escape an agent could reach for when `Bash` is constrained: `WebFetch` and `WebSearch` (network fetch), `Monitor` (background-process listener that streams stdout into the conversation), `CronCreate` (in-session scheduled prompts), and `RemoteTrigger` (Routines on claude.ai that run on Anthropic-managed infrastructure independently of the session).
-
-The result of each trial is one JSON file containing the measurements, plus the full stream-json transcript.
-
-## Repo layout
-
-```
-cli-vs-mcp/
-├── harness/src/
-│   ├── cli.ts                           # commander entry: run / report / verify-arms / recompute-metrics
-│   ├── runner.ts                        # per-trial: tempdir, fixture server, claude exec, env scrub
-│   ├── metrics.ts                       # stream-json transcript parser + classifier dispatch
-│   ├── experiment.ts                    # ExperimentSpec interface
-│   ├── experiments/
-│   │   ├── playwright.ts
-│   │   ├── github.ts                    # registers `github` (ro) and `github-rw` (rw)
-│   │   └── index.ts                     # registry
-│   ├── shell.ts                         # top-level shell-segment parser
-│   ├── fixtureServer.ts                 # per-trial HTTP server for Playwright fixtures
-│   ├── trialState.ts                    # paired-seed RNG + per-task state generators
-│   ├── tasks.ts                         # Task + TaskContext types
-│   └── report.ts                        # markdown report generator
-├── experiments/
-│   ├── playwright/
-│   │   ├── tasks/                       # tier1.ts (4 tasks), tier2.ts (2 tasks), index.ts
-│   │   ├── fixtures/                    # HTML templates (no per-trial answers on disk)
-│   │   └── runs/<run-name>/             # results, transcripts, findings
-│   └── github/
-│       ├── tasks/                       # tier1.ts (3 tasks), index.ts
-│       ├── provisioner.ts               # controller-side GitHub REST helpers
-│       └── runs/<run-name>/
-├── .claude/skills/
-│   ├── playwright-cli/                  # copied into trial tempdirs on `--arm skill`
-│   └── github-cli/
-├── .mcp.playwright.json                 # @playwright/mcp@0.0.75
-├── .mcp.github.ro.json                  # github-mcp-server --read-only
-├── .mcp.github.rw.json                  # github-mcp-server read-write
-└── CLAUDE.md                            # project instructions for the agent
+```mermaid
+flowchart LR
+  CLI["pnpm harness run<br/>harness/src/cli.ts"] --> Runner["runTrial<br/>harness/src/runner.ts"]
+  Runner -->|"task.setup(seed)"| State["per-trial state<br/>(in memory)"]
+  State --> FS["fixture server<br/>127.0.0.1, Playwright"]
+  State --> Prov["sandbox repo provisioner<br/>controller token, GitHub"]
+  Runner -->|"--tools, --settings, --mcp-config,<br/>scrubbed env, fresh tempdir"| Claude["claude -p<br/>(agent under test)"]
+  Claude -->|skill arm| CLIbin["playwright-cli / gh"]
+  Claude -->|mcp arm| MCP["@playwright/mcp / github-mcp-server"]
+  CLIbin --> FS & GH[(GitHub sandbox org)]
+  MCP --> FS & GH
+  Prov --> GH
+  Claude -->|stream-json| Redact["redact.ts"] --> Metrics["metrics.ts<br/>tokens + surface classifier"]
+  Metrics --> Result["runs/RUN/results/*.json"] --> Report["report.ts<br/>markdown tables"]
 ```
 
-## How a trial runs
+| Module | Responsibility |
+|---|---|
+| `harness/src/cli.ts` | Commands: `run`, `report`, `recompute-metrics`, `verify-arms`, `redact-artifacts`; argument validation |
+| `harness/src/runner.ts` | One trial: temp dir, setup, fixture server, `claude` child with isolation flags and scrubbed env, success check, guaranteed cleanup |
+| `harness/src/config.ts` | Defaults (model, timeout, tool lists) and validated GitHub configuration |
+| `harness/src/experiment.ts` | `ExperimentSpec` / `ArmConfig` interfaces |
+| `harness/src/experiments/{playwright,github}.ts` | Per-experiment arms, shell classifier, agent env, preflight |
+| `harness/src/metrics.ts` | Stream-json parser and allow-list tool classifier |
+| `harness/src/shell.ts` | Top-level shell segment parser used by the classifiers |
+| `harness/src/redact.ts` | Removes home paths and out-of-trial file reads from artifacts |
+| `harness/src/report.ts` | Aggregation and markdown report |
+| `harness/src/fixtureServer.ts`, `trialState.ts` | Loopback HTTP fixtures and seeded per-trial state |
+| `experiments/<name>/tasks/` | Task definitions (prompt, setup, success check, cleanup) |
+| `experiments/github/provisioner.ts` | Controller-side GitHub REST helpers |
 
-`harness/src/runner.ts:runTrial` performs, for each `(experiment, arm, task, trial)`:
+### How a trial is isolated
 
-1. Computes a paired seed `(experiment, runName, taskId, trialN) → 16 hex` via FNV-1a.
-2. Calls `task.setup(seed)` to materialize per-trial state in process memory.
-3. For Playwright: starts an HTTP fixture server on `127.0.0.1:<random-port>` that renders the per-trial state into HTML on demand. For GitHub: calls the provisioner to create a private sandbox repo seeded with deterministic content.
-4. Spawns `claude -p` in a fresh tempdir (`os.tmpdir() + clivsmcp-<experiment>-<arm>-<task>-<random>`) with:
-   - `--strict-mcp-config --mcp-config <experiment-specific config>`
-   - `--allowed-tools <per-arm positive list>`
-   - `--disallowed-tools <per-arm deny list>`
-   - `--setting-sources project,local`
-   - `--permission-mode bypassPermissions`
-   - `--model claude-sonnet-4-6` (configurable via `--model`)
-   - `--output-format stream-json`
-5. Captures stdout to `runs/<run>/transcripts/<arm>/<taskId>/<n>.jsonl`.
-6. Kills the child after **240 s** wall-clock if it hasn't returned (`runner.ts:TRIAL_TIMEOUT_MS`).
-7. Runs `task.successCheck(ctx)` against the trial's output dir, then `task.cleanup(state)`.
-8. Writes the result JSON.
+1. **Paired seed.** `sha256(experiment:run:task:trial)` (16 hex) drives all per-trial state, so every arm attempting
+   trial 3 of a task sees the same data.
+2. **Answers stay off disk.** Playwright pages are rendered from memory by a per-trial server on `127.0.0.1`. GitHub
+   state lives in a private repo created by a controller token the agent never sees, and is deleted on cleanup.
+3. **Positive tool list.** Each arm passes `claude --tools <list>`: baseline `Read Glob Grep Write ToolSearch`, skill
+   `Skill Bash Write ToolSearch`, mcp `Write ToolSearch`. MCP tools come only from `--strict-mcp-config --mcp-config`.
+   `WebFetch`, `WebSearch`, `Monitor`, `CronCreate` and `RemoteTrigger` are also on `--disallowed-tools`.
+4. **File-tool confinement.** A `--settings` deny rule blocks `Read`/`Edit` under `~` and the repo, so an agent can't
+   read the developer's files or other trials' results.
+5. **Credential isolation.** Every inherited `GH_*`/`GITHUB_*` variable is removed (`extendEnv: false`), `gh` gets an
+   empty per-trial `GH_CONFIG_DIR`, and the agent token is injected under the key each arm expects. The GitHub skill
+   arm's Bash runs in Claude Code's OS sandbox with no unsandboxed fallback, which blocks the developer's keyring login
+   and `$HOME` reads.
+6. **Classification.** Each tool call is checked against the same per-arm list; Bash calls in the skill arm must consist
+   only of the intended CLI (no pipes into helpers, no `$(...)`, no variable assignments).
 
-## Per-arm tool surfaces
+`pnpm harness verify-arms --experiment <name>` starts each arm exactly like a trial and prints the tool list Claude
+Code reports, and exits non-zero if anything outside the configured list is present.
 
-`pnpm harness verify-arms --experiment <name>` probes each arm by asking the agent which tools it can see. The verified surfaces:
+## Quickstart
 
-### Playwright
+Prerequisites:
 
-| Arm | Allowed | Notes |
+| Tool | Version | Needed for |
 |---|---|---|
-| `baseline` | `ToolSearch Read Glob Grep Write TodoWrite` | No execution channel. |
-| `skill` | `ToolSearch Skill Bash(playwright-cli:*) Write TodoWrite` | Skill bundled at `.claude/skills/playwright-cli/SKILL.md`, copied into the trial tempdir at run time. |
-| `mcp` | `ToolSearch Write TodoWrite` + 23 enumerated `mcp__playwright__*` tools | Tools enumerated rather than globbed so the allow-list survives any matcher changes. |
-
-### GitHub
-
-| Arm | Allowed | Notes |
-|---|---|---|
-| `baseline` | `ToolSearch Read Glob Grep Write TodoWrite` | Same as Playwright baseline. |
-| `skill` | `ToolSearch Skill Bash(gh:*) Write TodoWrite` | `Read/Glob/Grep` intentionally omitted; agent must source info from `gh`. |
-| `mcp` | `ToolSearch Write TodoWrite` + the `mcp__github__*` set from the running server | `.mcp.github.ro.json` for `--experiment github`; `.mcp.github.rw.json` for `--experiment github-rw`. |
-
-## What each task accomplishes
-
-### Playwright
-
-Fixtures are HTML templates served over HTTP by the per-trial fixture server. Per-trial state (city names, product titles, form nonces) is generated from the paired seed and lives only in process memory, so the agent cannot bypass the browser by reading the source HTML.
-
-**Tier 1 — read-only** (`experiments/playwright/tasks/tier1.ts`)
-
-| Task | Setup | Expected outcome |
-|---|---|---|
-| `tier1_login` | Login form with hardcoded user/pass | Sign in, screenshot the dashboard, save PNG ≥1 KB |
-| `tier1_scrape` | Page with a 5-row table; city/country names randomized per trial | Extract the rows into JSON |
-| `tier1_form` | Form whose submit nonce is regenerated per trial | Submit the form, capture the success token |
-| `tier1_products` | 5 product pages with seeded titles and prices | Visit each, write a JSON list of `{title, price}` |
-
-**Tier 2 — multi-step / mutation** (`experiments/playwright/tasks/tier2.ts`)
-
-| Task | Setup | Expected outcome |
-|---|---|---|
-| `tier2_checkout` | A storefront with multiple products; target identified by substring marker | Find the right product, add to cart, complete checkout |
-| `tier2_recovery` | Password-reset flow with an inline error code | Read the error code, resubmit with corrected payload, capture the recovery token |
-
-### GitHub
-
-Each task provisions a fresh private repo under `GITHUB_SANDBOX_OWNER` via the controller token, runs the trial against it, then deletes the repo on cleanup. Repo names follow `clivsmcp-<task>-<seed8>`.
-
-**Tier 1 — read-only** (`experiments/github/tasks/tier1.ts`)
-
-| Task | Setup | Expected outcome |
-|---|---|---|
-| `tier1_repo_inventory` | Private repo with seeded description, topics, and a README containing a hex marker | Report `description`, `topics`, `default_branch`, `readme_marker` as JSON |
-| `tier1_issue_triage` | Repo with 5 issues (1 target with a hidden marker in the body, 4 decoys) and a label palette | Find the target issue's number, title, labels, and marker |
-| `tier1_pr_diff_answer` | Repo with a feature branch and an open PR that adds one new function to `src/widget.ts` | Report PR number, changed file, and added function name |
-| `tier1_workflow_status` | Repo with a workflow `.yml` whose `name:` carries the per-trial marker; controller pushes it and polls until the run completes | Report `{workflow_name, conclusion, head_sha}` of the most recent run. Needs Actions:read on agent + Workflows:write on controller + `actions` in `GITHUB_TOOLSETS`. |
-
-**Tier 2 — mutation** (`experiments/github/tasks/tier2.ts`, selected via `--experiment github-rw`)
-
-| Task | Setup | Expected outcome |
-|---|---|---|
-| `tier2_issue_workflow` | Repo with 3 issues (1 target with marker in title, 2 decoys) + label palette including `priority-high` | Add `priority-high` label to target, post a comment containing `triaged-<marker>`, close it. Leave decoys untouched. |
-| `tier2_file_patch_pr` | Repo with `src/widget.ts` containing a TODO marker on main | Create a branch, replace the TODO with an exported function `solve_<marker>` returning `done-<marker>`, open a PR with marker phrases in title and body. |
-| `tier2_file_patch_pr_directed` | Same as `tier2_file_patch_pr` | Same expected outcome, but the prompt explicitly names the in-surface workaround (`gh api -F field=@file` / `--input file` + the `Write` tool). Designed to isolate prompt-knowledge gap from affordance gap. |
-| `tier2_issue_create` | Empty repo with seeded label palette | Create one issue with seeded title, body marker, and two labels. Single-primitive write — clean apples-to-apples. |
-
-Tier 2 requires the agent token to have Issues:write / Pull requests:write / Contents:write on the sandbox owner. `tier2_pr_review` is deferred — GitHub forbids `APPROVE`/`REQUEST_CHANGES` from the PR author, so the task needs a distinct PR-author identity. `tier2_release_create` was attempted and pulled — the github-mcp-server has no release write tool under any toolset config, so it isn't an apples-to-apples comparison.
-
-## Measurements captured
-
-Every result JSON at `runs/<run>/results/<arm>/<task>/<n>.json` contains:
-
-```
-experiment, runName, arm, taskId, tier, trialN, timestamp, seed
-metrics: {
-  inputTokens, outputTokens, cachedInputTokens, cacheCreationInputTokens
-  toolCalls[]                          # [{ name, turnIndex, command?, reason? }, …]
-  toolCallCount, turns, numTurns
-  wallClockMs, contextWindowPeak, totalCostUsd, modelsUsed[]
-  usedIntendedTool                     # at least one in-surface tool call
-  validToolSurface                     # *every* tool call in-surface
-  escapeToolUsed, escapeToolCalls[]    # which calls failed the classifier and why
-  singleCliCommandPerToolCall          # research-mode flag
-  cliCommandGranularityViolations[]
-}
-success: { pass, score, notes, extras? }
-error?                                 # set on timeout or process failure
-```
-
-These are the only fields populated by the parser (`harness/src/metrics.ts:parseTranscript`). Token columns and wall-clock are the cost signals. `validToolSurface` is the trust signal — a passing trial with `validToolSurface=false` succeeded by escaping the intended path, and the per-tier summary in reports filters it out.
-
-## Validity classifier
-
-`harness/src/metrics.ts:parseTranscript` reads the stream-json transcript and, for every `tool_use` event, asks the experiment's classifier whether the call is in-surface for the arm:
-
-- **baseline**: any execution or fetch tool is a violation.
-- **skill**: `Skill` must match `intendedSkillName`; `Bash` must satisfy `classifyShellCommand`.
-- **mcp**: only `Write`, `TodoWrite`, `ToolSearch`, and the intended `mcp__<prefix>__*` set are valid.
-
-`classifyShellCommand` parses the Bash command into top-level segments (respecting quotes, `;`, `&&`, `||`, `|`, and shell redirections). Each segment must start with the intended CLI binary (`playwright-cli` or `gh`). Segments may not contain backticks, `$(...)` command substitution, or shell helpers (`curl`, `wget`, `cat`, `python`, `sed`, `awk`, `head`, `tail`, `jq`, `base64`, etc.). Shell redirections (`>`, `>>`, `2>&1`) invalidate the segment in every mode — file output must go through the `Write` tool.
-
-### Run modes
-
-- **practical** (default): chained CLI segments in one Bash call are valid as long as every segment is the intended CLI.
-- **research-single** (`--single-cli-command` on `run` and `report`): each Bash call must be exactly one intended-CLI invocation. No chaining, no pipes. Stored results contain both flags; the report flag chooses which view to surface.
-
-## Running it
-
-### Setup
+| Node.js | 24 (see `.nvmrc`) | everything |
+| pnpm | 12 (`packageManager` in `package.json`; `corepack enable` or `npm i -g pnpm@12`) | everything |
+| Claude Code CLI | logged in (`claude` on `PATH`) | `run`, `verify-arms` (each trial is a paid model call) |
+| Docker | running | GitHub mcp arm |
+| `gh` | any recent | GitHub skill arm |
+| macOS or Linux (`bubblewrap` + `socat` on Linux) | | Claude Code's Bash sandbox (GitHub skill arm) |
 
 ```bash
+git clone https://github.com/chief-builder/cli-vs-mcp.git
+cd cli-vs-mcp
 pnpm install
-```
+pnpm test                                   # no network, no Claude calls
+pnpm exec playwright-cli install-browser    # first time on a machine
 
-Playwright is ready out of the box. GitHub additionally needs:
-
-```bash
-# Three tokens / vars in a gitignored .env at repo root:
-GITHUB_SANDBOX_OWNER=<org-or-user-slug>     # e.g. cli-vs-mcp-lab
-GITHUB_CONTROLLER_TOKEN=<fine-grained PAT>  # held by harness; needs Administration:write, Contents:write, Issues:write, Pull requests:write on the sandbox owner
-GITHUB_AGENT_TOKEN=<fine-grained PAT>       # what the agent process sees; read-only on the sandbox owner for Tier 1
-
-docker pull ghcr.io/github/github-mcp-server@sha256:e3816a476a977cfb836e7d221510011436c654d11861db66ecfd826601aba6a4
-```
-
-### Commands
-
-```bash
-# Probe arm isolation. Run this before any new experiment session.
+# Check arm isolation, then run one trial per arm (about 3 short Claude calls each)
 pnpm harness verify-arms --experiment playwright
-pnpm harness verify-arms --experiment github
-
-# Run trials. --trials N runs N seeds per task per arm.
-pnpm harness run --experiment playwright --run myrun --arm skill    --tier 1 --trials 5
-pnpm harness run --experiment playwright --run myrun --arm mcp      --tier 1 --trials 5
-pnpm harness run --experiment playwright --run myrun --arm baseline --tier 1 --trials 5
-# (repeat for --tier 2)
-
-# Run one specific task:
-pnpm harness run --experiment github --run myrun --arm mcp --task tier1_pr_diff_answer --trials 5
-
-# Generate the markdown report. --crossover-analysis adds a skill-vs-mcp table.
-pnpm harness report --experiment playwright --run myrun --all-tiers --crossover-analysis \
-  --output experiments/playwright/runs/myrun/findings.md
-
-# Re-parse existing transcripts after a classifier change (won't re-run claude):
-pnpm harness recompute-metrics --experiment github --run myrun --arm skill
+pnpm harness run --experiment playwright --run quickstart --arm skill --task tier1_scrape --trials 1
+pnpm harness run --experiment playwright --run quickstart --arm mcp --task tier1_scrape --trials 1
+pnpm harness report --experiment playwright --run quickstart
 ```
 
-CLI options (`pnpm harness <cmd> --help`):
+A full N=5 run of one experiment is several hundred `claude -p` calls. Budget accordingly.
+
+### GitHub experiment
+
+Create a dedicated sandbox org and three fine-grained PATs scoped to it, then put them in `.env` at the repo root
+(gitignored and loaded automatically by `pnpm harness`):
+
+```bash
+GITHUB_SANDBOX_OWNER=my-sandbox-org
+GITHUB_CONTROLLER_TOKEN=github_pat_...   # Administration, Contents, Issues, Pull requests, Workflows: write; Actions: read
+GITHUB_AGENT_TOKEN=github_pat_...        # Tier 1: Contents, Issues, Pull requests, Actions: read (nothing else)
+GITHUB_AGENT_TOKEN_RW=github_pat_...     # Tier 2: Contents, Issues, Pull requests: write; Actions: read; no Administration
+```
+
+```bash
+docker pull ghcr.io/github/github-mcp-server@sha256:e3816a476a977cfb836e7d221510011436c654d11861db66ecfd826601aba6a4
+pnpm harness verify-arms --experiment github
+pnpm harness run --experiment github    --run myrun --arm skill --tier 1 --trials 5
+# Tier 2 needs write access: override the agent token for that command only
+GITHUB_AGENT_TOKEN="$(grep '^GITHUB_AGENT_TOKEN_RW=' .env | cut -d= -f2-)" \
+  pnpm harness run --experiment github-rw --run myrun --arm mcp --tier 2 --trials 5
+```
+
+Every token needs resource owner = the sandbox org and repository access = all repositories (trials create new repos).
+A variable already set in the shell takes precedence over `.env`.
+
+Use a separate GitHub identity for the agent tokens if you can. Both committed runs used one user for all tokens.
+
+## Configuration
+
+| Setting | Where | Default | Notes |
+|---|---|---|---|
+| `GITHUB_SANDBOX_OWNER` | env / `.env` | required for GitHub | User or org that owns throwaway repos |
+| `GITHUB_CONTROLLER_TOKEN` | env / `.env` | required for GitHub | Provisions and deletes repos; never passed to the agent |
+| `GITHUB_AGENT_TOKEN` | env / `.env` | required for GitHub | Given to the agent as `GH_TOKEN`/`GITHUB_TOKEN` (skill) or `GITHUB_PERSONAL_ACCESS_TOKEN` (mcp). Read-only for Tier 1 |
+| `GITHUB_AGENT_TOKEN_RW` | `.env` | optional | Not read by the harness; pass it as `GITHUB_AGENT_TOKEN` for Tier 2 runs |
+| `GITHUB_HOST` | env / `.env` | `api.github.com` | API host for the provisioner; forwarded to the agent as `GH_HOST`/`GITHUB_HOST` |
+| `LOG_FORMAT` | env | human | `json` for one JSON object per log line |
+| `--model` | `run`, `verify-arms` | `claude-sonnet-4-6` | `DEFAULT_MODEL` in `harness/src/config.ts` |
+| Trial timeout | `harness/src/config.ts` | 240 s | `TRIAL_TIMEOUT_MS` |
+| Arm tool lists, sandbox hosts | `harness/src/experiments/*.ts` | see above | `ArmConfig.tools`, `sandboxNetwork` |
+| MCP servers | `.mcp.playwright.json`, `.mcp.github.{ro,rw}.json` | pinned versions | `@playwright/mcp@0.0.75`; `github-mcp-server` v1.0.4 by digest |
+
+Commands (`pnpm harness <cmd> --help` for details):
 
 | Command | Required | Optional |
 |---|---|---|
-| `run` | `--experiment --run --arm --trials` | `--tier <n>` or `--task <id>` (default: all tasks); `--model` (default `claude-sonnet-4-6`); `--single-cli-command` |
-| `report` | `--experiment --run` | `--tier <n>` or `--all-tiers`; `--crossover-analysis`; `--single-cli-command`; `--include-cost`; `--output <path>` |
-| `verify-arms` | `--experiment` | `--arm` (defaults to all arms) |
-| `recompute-metrics` | `--experiment --run` | `--arm` |
+| `run` | `--experiment --run --arm --trials` | `--tier <1-3>` or `--task <id>`; `--model`; `--single-cli-command` |
+| `report` | `--experiment --run` | `--tier` or `--all-tiers`; `--crossover-analysis`; `--single-cli-command`; `--include-cost`; `--output <path>` |
+| `verify-arms` | `--experiment` | `--arm`; `--model` |
+| `recompute-metrics` | `--experiment --run` | `--arm`; `--tier` (re-parses stored transcripts; use `github-rw --tier 2` for Tier 2 GitHub results) |
+| `redact-artifacts` | | `--experiment` |
 
-## Status (N=5 run)
+Results are written to `experiments/<exp>/runs/<run>/results/<arm>/<task>/<n>.json` with the transcript at
+`.../transcripts/<arm>/<task>/<n>.jsonl`. Result fields are defined by `TrialResult` (`harness/src/runner.ts`) and
+`Metrics` (`harness/src/metrics.ts`). A trial killed on timeout has `metrics.incomplete: true`, and its tokens are a
+lower-bound estimate (`tokensEstimated: true`).
 
-Latest run is `n5`: 5 trials per task per arm across both experiments.
+## Tasks
 
-**Playwright** (`experiments/playwright/runs/n5/findings.md`)
+**Playwright** (`experiments/playwright/tasks/`): `tier1_login` (sign in, screenshot ≥ 1 KB), `tier1_scrape` (5-row
+table to JSON), `tier1_form` (submit a form with a per-trial nonce), `tier1_products` (5 product pages to JSON),
+`tier2_checkout` (find a product by marker, check out), `tier2_recovery` (read an inline error code and resubmit).
 
-| Tier | baseline | skill | mcp | Skill/MCP tokens |
+**GitHub** (`experiments/github/tasks/`): Tier 1 read-only: `tier1_repo_inventory`, `tier1_issue_triage`,
+`tier1_pr_diff_answer`, `tier1_workflow_status`. Tier 2 (`--experiment github-rw`): `tier2_issue_workflow`,
+`tier2_file_patch_pr`, `tier2_file_patch_pr_directed`, `tier2_issue_create`.
+
+## Results
+
+### Current run: `n5-v2` (2026-10-03)
+
+N=5 per task for skill and mcp (baseline N=2), with Claude Code 2.1.288, `claude-sonnet-4-6`, the pinned tool versions
+above, and the isolation described in [How a trial is isolated](#how-a-trial-is-isolated). Full tables and narrative:
+[Playwright](experiments/playwright/runs/n5-v2/findings.md), [GitHub](experiments/github/runs/n5-v2/findings.md).
+Token figures are total tokens averaged over trials that passed and stayed in surface.
+
+- **MCP passed and stayed in surface on every task** (Playwright 30/30, GitHub 35/35).
+- **MCP used fewer tokens on every task.** Skill cost 1.5–2.1× as much, except `tier1_form` at 2.67×, where the skill
+  arm makes one `fill` call per field and MCP one `browser_fill_form`.
+- **The CLI arm escapes when `gh` lacks the primitive.** Skill passed `tier1_repo_inventory` and `tier2_file_patch_pr`
+  5/5 but stayed in surface **0/5** (`gh api … | base64 -d`; shell variables and `$(…)` to build the PUT body). It
+  stayed in surface on every other task.
+- **Naming the workaround in the prompt didn't fix it.** `tier2_file_patch_pr_directed`: 2/5 pass, 3/5 valid, **0/5
+  both**. Passing trials used 2.63× the tokens of the undirected run; the three valid trials timed out in extended
+  thinking.
+- **Baseline** (no execution tools): 0/26.
+
+| Playwright task | Skill/MCP tokens | | GitHub task (clean) | Skill/MCP tokens |
 |---|---|---|---|---|
-| 1 | 0/20 (timeouts) | **20/20** | **20/20** | 1.64× |
-| 2 | 0/10 (timeouts) | **10/10** | 7/10 (`tier2_recovery` 2/5) | 2.01× |
+| `tier1_login` | 2.07× | | `tier1_issue_triage` | 1.67× |
+| `tier1_scrape` | 1.54× | | `tier1_pr_diff_answer` | 1.71× |
+| `tier1_form` | 2.67× | | `tier1_workflow_status` | 1.52× |
+| `tier1_products` | 1.53× | | `tier2_issue_workflow` | 1.77× |
+| `tier2_checkout` | 1.68× | | `tier2_issue_create` | 1.69× |
+| `tier2_recovery` | 2.06× | | | |
 
-MCP is consistently cheaper (per-turn payload smaller — skill emits explicit `playwright-cli snapshot` after every action; MCP bundles it inline). At Tier 2, MCP develops a convergence failure mode on `tier2_recovery` that skill doesn't have at 240 s.
+One recorded skill failure on `tier2_issue_create` is a success-check false negative: the issue was created correctly,
+but the check's list window was too short. The window has been widened, and the trial is kept as recorded.
 
-**GitHub Tier 1** (`experiments/github/runs/n5/findings.md`)
+### First run: `n5` (May 2026)
 
-| Task | baseline | skill | mcp |
-|---|---|---|---|
-| `tier1_repo_inventory` | 0/5 | **5/5** | **5/5** |
-| `tier1_issue_triage` | 0/5 | **5/5** | **0/5** (all 240 s timeouts at 75+ turns) |
-| `tier1_pr_diff_answer` | 0/5 | **5/5** | **5/5** |
-| `tier1_workflow_status` | not run | **5/5** | **5/5** |
+The first N=5 run used Claude Code 2.1.142–2.1.143 and looser isolation. `--allowed-tools` did not restrict tools, and
+the environment scrub did not take effect. Its stored results were re-classified with the current classifier; see the
+[Playwright](experiments/playwright/runs/n5/findings.md) and [GitHub](experiments/github/runs/n5/findings.md) findings.
+How `n5-v2` differs:
 
-Two findings only visible from the validity classifier:
+- **`tier1_issue_triage` was not a valid comparison in `n5`.** The agent token lacked Issues read: MCP 0/5, and the skill
+  arm passed only by using the controller token or the developer's own `gh` login. With a correctly scoped token, both
+  arms solve it 5/5.
+- **MCP `tier2_recovery`** went from 2/5 to 5/5.
+- **Cost ratios rose.** They were 1.13–1.38× (GitHub) and 1.29–1.42× (Playwright, form 2.51×). Both arms got cheaper,
+  MCP more so: each turn's fixed context fell (mcp ~12k → ~8.5k tokens, skill ~16.6k → ~13–15k). The tool restriction
+  and the Claude Code upgrade changed at the same time, so treat the exact multiple as setup-specific. The direction (MCP
+  cheaper) held in both runs.
+- **Unchanged:** the `base64 -d` validity escapes on the same two tasks.
 
-1. **Skill arm escapes its surface on 2/3 GitHub tasks.** `tier1_repo_inventory` (5/5 invalid) all pipe `gh api ... | base64 -d` to decode README content. `tier1_issue_triage` (5/5 invalid) included one trial that ran `env | grep -i github` then `GH_TOKEN=$GITHUB_CONTROLLER_TOKEN gh api ...` to lift the controller's elevated token. The escalation path was open during the n5 run — the runner's scrub list didn't yet include the harness's own `GITHUB_CONTROLLER_TOKEN` / `GITHUB_AGENT_TOKEN` var names. Patched in `ef3fc97` and behaviorally verified in `experiments/github/runs/env-fix-verify`.
-2. **MCP `tier1_issue_triage` collapse.** All 5 MCP trials timed out at 75+ turns of fanout across `list_issues`, `search_issues`, `get_issue`. Skill solved the same task in ~23 turns with one `gh issue list --label "bug,priority-high" --json`. The MCP fanout shape is the failure mode, not the absence of capability.
+## Project status and limitations
 
-**GitHub Tier 2** (`experiments/github/runs/tier2-n5/findings.md`, `experiments/github/runs/issue-create-n5/findings.md`, `experiments/github/runs/directed-n5/findings.md`)
+This is a research harness, not a benchmark suite. Read the results with these limits in mind:
 
-| Task | baseline | skill (raw / valid) | mcp |
-|---|---|---|---|
-| `tier2_issue_workflow` | 0/5 | **5/5** / **5/5** | **5/5** |
-| `tier2_file_patch_pr` | 0/5 | **5/5** / **0/5** (all INVALID) | **5/5** |
-| `tier2_issue_create` | not run | **5/5** / **5/5** | **5/5** |
-| `tier2_file_patch_pr_directed` | not run | 3/5 / 2/5 (prompt rewrite shifts but doesn't close the escape) | not applicable |
+- **N=5 per cell.** Treat the ratios as directional rather than precise.
+- **Two runs, two setups.** `n5-v2` uses the current isolation; `n5` predates it (see Results). Cost multiples differ
+  between them; compare runs only with that in mind.
+- **Experiment subjects are pinned on purpose.** These are `@playwright/cli` 0.1.13, `@playwright/mcp` 0.0.75,
+  `github-mcp-server` v1.0.4 and model `claude-sonnet-4-6`. Newer versions exist, and upgrading them requires a new run.
+  Claude Code itself is not pinned; record `claude --version` with any new run.
+- **MCP protocol version.** The harness does not implement MCP; Claude Code is the client. The negotiated protocol
+  version is not recorded. The current specification revision is 2026-07-28.
+- **Same identity.** In both runs all GitHub tokens belonged to the same user. `n5-v2` used separate read-only (Tier 1)
+  and read-write (Tier 2) agent tokens.
+- **Sandbox coverage.** Only the GitHub skill arm runs Bash in the OS sandbox. The Playwright skill arm needs local
+  browsers and a loopback server, so it relies on the classifier and file-tool deny rules.
+- **File-tool reach.** Reads are denied under `~` and the repo, but not elsewhere (for example the user's `$TMPDIR`).
+  Answers are never on disk, and such reads are redacted from artifacts; full confinement needs a container.
+- **macOS sandbox setting.** The GitHub skill arm sets `enableWeakerNetworkIsolation` so `gh` can verify TLS (without
+  it every `gh` call fails with `x509: OSStatus -26276`). The keychain and `$HOME` stay blocked; this was tested.
+- **Timeouts.** Token counts for killed trials are lower bounds (streamed output tokens are partial and side-model calls
+  are missing).
 
-Both arms produce correct end state on `issue_workflow` and `issue_create`. The split shows up on `file_patch_pr`: **skill stays in surface where `gh` has first-class commands** (`gh issue edit/comment/close`, `gh issue create`) and **always escapes where it doesn't** — `file_patch_pr` needs create-branch-from-SHA and update-file-on-branch, neither of which has a high-level `gh` command, so the agent composes them out of `gh api` + shell variable assignment for the file content payload. All 5 trials hit the same escape. A directed-prompt variant (`tier2_file_patch_pr_directed`) that explicitly names the in-surface workaround halves the escape rate (2/5 valid) but doesn't close it and triples the cost.
+## Development
 
-**Clean apples-to-apples cost (4 GH tasks):** MCP is 1.13× cheaper on `tier1_workflow_status`, 1.32× on `tier1_pr_diff_answer`, 1.31× on `tier2_issue_create`, and 1.38× on `tier2_issue_workflow`. All four favor MCP; range 1.13×–1.38×. The tightest ratio (workflow_status, 1.13×) is the smallest-payload task — when the call shape and response size are nearly identical, the per-turn-payload gap nearly vanishes.
+```bash
+pnpm test            # vitest: unit + integration (fake claude), no network
+pnpm test:coverage   # with v8 coverage
+pnpm lint            # eslint
+pnpm format:check    # prettier
+pnpm typecheck       # tsc --noEmit
+pnpm check           # all of the above
+```
 
-## Known limits
+To add an experiment, create `harness/src/experiments/<name>.ts` exporting an `ExperimentSpec` (arms with `tools`,
+`mcpConfig`, optional `sandboxNetwork`/`extraEnv`; a classifier; `tasksPath`; optional `preflight`/`buildAgentEnv`),
+register it in `harness/src/experiments/index.ts`, add tasks under `experiments/<name>/tasks/`, bundle any skill under
+`.claude/skills/<skill>/`, and run `verify-arms`. The harness is shared; don't fork it per experiment. See
+[CONTRIBUTING.md](CONTRIBUTING.md).
 
-- **Same controller/agent identity in the n5 run.** Both `GITHUB_CONTROLLER_TOKEN` and `GITHUB_AGENT_TOKEN` resolved to user `chief-builder`. The plan was distinct identities; the n5 measurements still reflect the right tool surface but the env-grep escalation finding has to be read knowing the agent's PAT was the same identity as the controller's PAT.
-- **240 s wall budget hits MCP `tier1_issue_triage` hard.** A wider budget at higher N would distinguish "MCP cannot do this" from "MCP needs more time and turns". The current data says only that the failure mode exists and reproduces at N=5.
-- **Tempdir filesystem reach.** The trial tempdir is in the same user account as the runner. With `Read`/`Glob` allowed in the baseline arm, an agent could in principle walk `/Users/...`. Per-trial dynamic fixtures + sandbox repos keep answers off the local filesystem so this practical risk is minimal, but the v1 design accepts it.
+## License
 
-## Adding a new experiment
-
-1. Create `harness/src/experiments/<name>.ts` exporting an `ExperimentSpec`:
-   - `arms`: per-arm `mcpConfig`, `allowedTools`, `disallowedTools`, optional `extraEnv`
-   - `classifier`: `intendedMcpPrefix`, `intendedSkillName`, `intendedShellCommand`, `classifyShellCommand`
-   - `tasksPath`, and optional `preflight` / `buildAgentEnv` hooks
-2. Register it in `harness/src/experiments/index.ts`.
-3. Add tasks at `experiments/<name>/tasks/index.ts`.
-4. Bundle the skill at `.claude/skills/<skill-name>/SKILL.md` if the skill arm uses one.
-5. Run `pnpm harness verify-arms --experiment <name>` before any trials.
-
-All harness code is shared. Per the project rule in `CLAUDE.md`: never fork the harness per experiment.
+[MIT](LICENSE). `.claude/skills/playwright-cli/` is adapted from `@playwright/cli` (Apache-2.0); see [NOTICE](NOTICE).

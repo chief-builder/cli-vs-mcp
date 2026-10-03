@@ -1,0 +1,57 @@
+{
+  "experiment": "github",
+  "runName": "n5-v2",
+  "arm": "skill",
+  "taskId": "tier2_issue_create",
+  "tier": 2,
+  "trialN": 2,
+  "timestamp": "2026-10-03T00:32:27.565Z",
+  "seed": "74d4e9645994dfd0",
+  "metrics": {
+    "inputTokens": 6,
+    "outputTokens": 353,
+    "cachedInputTokens": 37966,
+    "cacheCreationInputTokens": 10088,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "gh issue create --repo chief-builder-lab/clivsmcp-tier2-issue-create-74d4e964 --title \"Investigate 8B33BCD7\" --body \"report-8B33BCD7\" --label \"bug,priority-high\""
+      }
+    ],
+    "toolCallCount": 2,
+    "turns": 6,
+    "wallClockMs": 8852,
+    "contextWindowPeak": 16658,
+    "totalCostUsd": 0.0772308,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "issue created with all expected fields",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-issue-create-74d4e964",
+      "issueNumber": 1,
+      "expectedTitle": "Investigate 8B33BCD7",
+      "expectedLabels": [
+        "bug",
+        "priority-high"
+      ]
+    }
+  }
+}

@@ -20,6 +20,8 @@
 
 ## What the numbers say
 
+> **Correction (2026-10-02).** The "action + explicit snapshot" cost model proposed here did not hold up at N=5. The n5 transcripts show the gap comes from per-field `fill` calls vs one batched `browser_fill_form` (see `../n5/findings.md`). Smoke timeouts also recorded 0 tokens before the 2026-10-02 accounting fix.
+
 **Tier 1 — read-only browser tasks (all four passed for both browser arms):**
 
 - Skill uses **1.82× the tokens** of MCP at the same success rate (232k vs 128k average per task). The reasonable model: each Skill step is two tool calls (action + explicit `playwright-cli snapshot`), while MCP bundles the post-action snapshot inline. This matches the prior methodology direction.

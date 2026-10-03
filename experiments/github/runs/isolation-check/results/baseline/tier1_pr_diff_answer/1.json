@@ -1,0 +1,166 @@
+{
+  "experiment": "github",
+  "runName": "isolation-check",
+  "arm": "baseline",
+  "taskId": "tier1_pr_diff_answer",
+  "tier": 1,
+  "trialN": 1,
+  "timestamp": "2026-10-03T00:09:43.278Z",
+  "seed": "36b5495161773d52",
+  "metrics": {
+    "inputTokens": 28,
+    "outputTokens": 383,
+    "cachedInputTokens": 976221,
+    "cacheCreationInputTokens": 71322,
+    "toolCalls": [
+      {
+        "name": "Glob",
+        "turnIndex": 3
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 6
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 9
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 10
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 13
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 14
+      },
+      {
+        "name": "Read",
+        "turnIndex": 16
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 19
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 20
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 21
+      },
+      {
+        "name": "Read",
+        "turnIndex": 22
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 25
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 26
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 27
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 28
+      },
+      {
+        "name": "Read",
+        "turnIndex": 29
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 32
+      },
+      {
+        "name": "Read",
+        "turnIndex": 34
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 37
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 38
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 39
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 40
+      },
+      {
+        "name": "Read",
+        "turnIndex": 41
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 44
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 45
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 48
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 49
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 52
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 53
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 54
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 57
+      },
+      {
+        "name": "Read",
+        "turnIndex": 60
+      }
+    ],
+    "toolCallCount": 32,
+    "turns": 61,
+    "wallClockMs": 240236.898791,
+    "contextWindowPeak": 72238,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": true,
+    "tokensEstimated": true
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "missing or invalid JSON at ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/isolation-check/results/baseline/tier1_pr_diff_answer/1/pr_diff.json"
+  },
+  "error": "claude timed out after 240000ms"
+}

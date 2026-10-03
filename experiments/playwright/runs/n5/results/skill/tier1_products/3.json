@@ -64,7 +64,6 @@
     ],
     "toolCallCount": 10,
     "turns": 18,
-    "numTurns": 12,
     "wallClockMs": 56517,
     "contextWindowPeak": 22549,
     "totalCostUsd": 0.13578535,
@@ -108,7 +107,9 @@
         "command": "playwright-cli goto http://localhost:61620/products/p5.html && playwright-cli --raw eval \"JSON.stringify({title: document.querySelector('.product-title').textContent.trim(), price: document.querySelector('.price').textContent.trim()})\"",
         "reason": "multiple shell operations in one Bash call: playwright-cli goto http://localhost:61620/products/p5.html && playwright-cli --raw eval \"JSON.stringify({title: documen"
       }
-    ]
+    ],
+    "incomplete": false,
+    "tokensEstimated": false
   },
   "success": {
     "pass": true,

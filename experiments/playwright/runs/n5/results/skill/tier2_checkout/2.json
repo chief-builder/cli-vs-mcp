@@ -79,7 +79,6 @@
     ],
     "toolCallCount": 13,
     "turns": 23,
-    "numTurns": 15,
     "wallClockMs": 44058,
     "contextWindowPeak": 23478,
     "totalCostUsd": 0.15679709999999997,
@@ -99,7 +98,9 @@
         "command": "playwright-cli fill e5 \"Test User\" && playwright-cli fill e7 \"123 Main St\" && playwright-cli fill e9 \"Springfield\" && playwright-cli fill e11 \"12345\"",
         "reason": "multiple shell operations in one Bash call: playwright-cli fill e5 \"Test User\" && playwright-cli fill e7 \"123 Main St\" && playwright-cli fill e9 \"Springfield\" && pl"
       }
-    ]
+    ],
+    "incomplete": false,
+    "tokensEstimated": false
   },
   "success": {
     "pass": true,

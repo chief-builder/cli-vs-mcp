@@ -1,0 +1,51 @@
+{
+  "experiment": "github",
+  "runName": "n5-v2",
+  "arm": "baseline",
+  "taskId": "tier2_issue_create",
+  "tier": 2,
+  "trialN": 2,
+  "timestamp": "2026-10-03T00:35:35.486Z",
+  "seed": "74d4e9645994dfd0",
+  "metrics": {
+    "inputTokens": 5,
+    "outputTokens": 1664,
+    "cachedInputTokens": 24108,
+    "cacheCreationInputTokens": 5119,
+    "toolCalls": [
+      {
+        "name": "Glob",
+        "turnIndex": 3
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 5
+      }
+    ],
+    "toolCallCount": 2,
+    "turns": 7,
+    "wallClockMs": 27987,
+    "contextWindowPeak": 9956,
+    "totalCostUsd": 0.0629214,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "no open issue found with title \"Investigate 8B33BCD7\" after 6 attempts",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-issue-create-74d4e964",
+      "expectedTitle": "Investigate 8B33BCD7"
+    }
+  }
+}

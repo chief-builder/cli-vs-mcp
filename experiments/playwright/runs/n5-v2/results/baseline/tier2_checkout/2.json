@@ -1,0 +1,230 @@
+{
+  "experiment": "playwright",
+  "runName": "n5-v2",
+  "arm": "baseline",
+  "taskId": "tier2_checkout",
+  "tier": 2,
+  "trialN": 2,
+  "timestamp": "2026-10-03T01:09:48.785Z",
+  "seed": "dd92a2a445208d7d",
+  "metrics": {
+    "inputTokens": 35,
+    "outputTokens": 436,
+    "cachedInputTokens": 1077017,
+    "cacheCreationInputTokens": 74111,
+    "toolCalls": [
+      {
+        "name": "Read",
+        "turnIndex": 3
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 4
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 7
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 8
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 11
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 12
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 15
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 16
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 18
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 19
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 22
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 23
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 24
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 25
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 27
+      },
+      {
+        "name": "Read",
+        "turnIndex": 28
+      },
+      {
+        "name": "Read",
+        "turnIndex": 30
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 33
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 34
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 36
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 37
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 38
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 41
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 42
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 43
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 45
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 46
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 49
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 52
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 55
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 56
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 59
+      },
+      {
+        "name": "Read",
+        "turnIndex": 62
+      },
+      {
+        "name": "Read",
+        "turnIndex": 63
+      },
+      {
+        "name": "Read",
+        "turnIndex": 66
+      },
+      {
+        "name": "Read",
+        "turnIndex": 67
+      },
+      {
+        "name": "Read",
+        "turnIndex": 69
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 70
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 71
+      },
+      {
+        "name": "Read",
+        "turnIndex": 72
+      },
+      {
+        "name": "Glob",
+        "turnIndex": 75
+      },
+      {
+        "name": "Read",
+        "turnIndex": 76
+      },
+      {
+        "name": "Read",
+        "turnIndex": 79
+      },
+      {
+        "name": "Read",
+        "turnIndex": 82
+      },
+      {
+        "name": "Read",
+        "turnIndex": 85
+      },
+      {
+        "name": "Read",
+        "turnIndex": 86
+      },
+      {
+        "name": "Read",
+        "turnIndex": 89
+      }
+    ],
+    "toolCallCount": 47,
+    "turns": 89,
+    "wallClockMs": 240000,
+    "contextWindowPeak": 78948,
+    "totalCostUsd": 0,
+    "modelsUsed": [],
+    "usedIntendedTool": false,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": true,
+    "tokensEstimated": true
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "missing ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5-v2/results/baseline/tier2_checkout/2/order_id.txt",
+    "extras": {
+      "orders_placed": 0,
+      "sessions_seen": 0
+    }
+  },
+  "error": "claude timed out after 240000ms"
+}

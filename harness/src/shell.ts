@@ -72,6 +72,38 @@ export function hasShellAccountingSyntax(command: string): boolean {
   return splitTopLevelShellSegments(command).length !== 1 || /(^|\s)\d?[<>]/.test(command);
 }
 
-export function hasShellRedirection(command: string): boolean {
-  return /(^|\s)\d?[<>]/.test(command);
+/**
+ * Shell helpers that turn a CLI call into general-purpose scripting. A segment
+ * that uses one is out of surface.
+ */
+export const SHELL_HELPERS = [
+  'curl',
+  'wget',
+  'cat',
+  'ls',
+  'python',
+  'python3',
+  'node',
+  'npm',
+  'npx',
+  'sh',
+  'bash',
+  'zsh',
+  'jq',
+  'sed',
+  'awk',
+  'grep',
+  'head',
+  'tail',
+  'base64',
+] as const;
+
+/**
+ * Builds a regex that matches any of `names` as a standalone shell word:
+ * preceded by start-of-string or whitespace and followed by a word boundary.
+ * The whitespace anchor keeps flag values and paths from matching, so
+ * `gh api --jq .x` and `playwright-cli open http://x/cat` are fine.
+ */
+export function standaloneWordPattern(names: readonly string[]): RegExp {
+  return new RegExp(`(?:^|\\s)(${names.join('|')})\\b`);
 }

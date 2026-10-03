@@ -1,0 +1,64 @@
+{
+  "experiment": "github",
+  "runName": "n5-v2",
+  "arm": "mcp",
+  "taskId": "tier1_repo_inventory",
+  "tier": 1,
+  "trialN": 2,
+  "timestamp": "2026-10-03T00:21:40.569Z",
+  "seed": "362b4f2fe8311494",
+  "metrics": {
+    "inputTokens": 8,
+    "outputTokens": 612,
+    "cachedInputTokens": 34035,
+    "cacheCreationInputTokens": 9639,
+    "toolCalls": [
+      {
+        "name": "ToolSearch",
+        "turnIndex": 3
+      },
+      {
+        "name": "mcp__github__search_repositories",
+        "turnIndex": 6
+      },
+      {
+        "name": "mcp__github__get_file_contents",
+        "turnIndex": 7
+      },
+      {
+        "name": "Write",
+        "turnIndex": 9
+      }
+    ],
+    "toolCallCount": 4,
+    "turns": 10,
+    "wallClockMs": 10536,
+    "contextWindowPeak": 12870,
+    "totalCostUsd": 0.0772485,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "all repo facts match",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier1-repo-inventory-362b4f2f",
+      "expectedDescription": "cli-vs-mcp sandbox repo (362b4f)",
+      "expectedTopics": [
+        "topic-0d03",
+        "topic-9cb1",
+        "cli-vs-mcp"
+      ]
+    }
+  }
+}

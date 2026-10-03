@@ -1,0 +1,106 @@
+lane=gh-t1 experiment=github run=n5-v2 started=2026-10-03T00:19:34Z
+claude=2.1.288 (Claude Code) node=v24.15.0 model=claude-sonnet-4-6
+playwright-cli=0.1.13 playwright-mcp=@playwright/mcp@0.0.75 github-mcp-server=v1.0.4(digest)
+harness commit=29b7e6a
+→ github/n5-v2  tier1_repo_inventory  arm=skill  trial=1/5
+  ✓ score=1.00  INVALID  tokens_in=9 turns=13 time=14.4s
+→ github/n5-v2  tier1_repo_inventory  arm=skill  trial=2/5
+  ✓ score=1.00  INVALID  tokens_in=9 turns=14 time=24.6s
+→ github/n5-v2  tier1_repo_inventory  arm=skill  trial=3/5
+  ✓ score=1.00  INVALID  tokens_in=9 turns=11 time=14.6s
+→ github/n5-v2  tier1_repo_inventory  arm=skill  trial=4/5
+  ✓ score=1.00  INVALID  tokens_in=8 turns=10 time=10.4s
+→ github/n5-v2  tier1_repo_inventory  arm=skill  trial=5/5
+  ✓ score=1.00  INVALID  tokens_in=9 turns=11 time=15.6s
+→ github/n5-v2  tier1_repo_inventory  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=8 turns=10 time=10.6s
+→ github/n5-v2  tier1_repo_inventory  arm=mcp  trial=2/5
+  ✓ score=1.00  valid  tokens_in=8 turns=10 time=10.5s
+→ github/n5-v2  tier1_repo_inventory  arm=mcp  trial=3/5
+  ✓ score=1.00  valid  tokens_in=8 turns=10 time=13.2s
+→ github/n5-v2  tier1_repo_inventory  arm=mcp  trial=4/5
+  ✓ score=1.00  valid  tokens_in=8 turns=9 time=10.1s
+→ github/n5-v2  tier1_repo_inventory  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=8 turns=10 time=12.5s
+→ github/n5-v2  tier1_repo_inventory  arm=baseline  trial=1/2
+  ✗ score=0.00  valid  tokens_in=5 turns=7 time=13.5s
+→ github/n5-v2  tier1_repo_inventory  arm=baseline  trial=2/2
+  ✗ score=0.00  valid  tokens_in=4 turns=5 time=12.0s
+→ github/n5-v2  tier1_issue_triage  arm=skill  trial=1/5
+  ✓ score=1.00  valid  tokens_in=7 turns=9 time=26.9s
+→ github/n5-v2  tier1_issue_triage  arm=skill  trial=2/5
+  ✓ score=1.00  valid  tokens_in=7 turns=8 time=9.7s
+→ github/n5-v2  tier1_issue_triage  arm=skill  trial=3/5
+  ✓ score=1.00  valid  tokens_in=7 turns=8 time=10.6s
+→ github/n5-v2  tier1_issue_triage  arm=skill  trial=4/5
+  ✓ score=1.00  valid  tokens_in=8 turns=9 time=10.6s
+→ github/n5-v2  tier1_issue_triage  arm=skill  trial=5/5
+  ✓ score=1.00  valid  tokens_in=8 turns=9 time=11.0s
+→ github/n5-v2  tier1_issue_triage  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=8 turns=8 time=7.6s
+→ github/n5-v2  tier1_issue_triage  arm=mcp  trial=2/5
+  ✓ score=1.00  valid  tokens_in=8 turns=8 time=9.8s
+→ github/n5-v2  tier1_issue_triage  arm=mcp  trial=3/5
+  ✓ score=1.00  valid  tokens_in=8 turns=8 time=7.7s
+→ github/n5-v2  tier1_issue_triage  arm=mcp  trial=4/5
+  ✓ score=1.00  valid  tokens_in=8 turns=8 time=10.9s
+→ github/n5-v2  tier1_issue_triage  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=8 turns=8 time=8.8s
+→ github/n5-v2  tier1_issue_triage  arm=baseline  trial=1/2
+  ✗ score=0.00  valid  tokens_in=20 turns=65 time=240.2s
+  trial error  error=claude timed out after 240000ms
+→ github/n5-v2  tier1_issue_triage  arm=baseline  trial=2/2
+  ✗ score=0.00  valid  tokens_in=8 turns=21 time=57.6s
+→ github/n5-v2  tier1_pr_diff_answer  arm=skill  trial=1/5
+  ✓ score=1.00  valid  tokens_in=8 turns=8 time=8.9s
+→ github/n5-v2  tier1_pr_diff_answer  arm=skill  trial=2/5
+  ✓ score=1.00  valid  tokens_in=8 turns=8 time=10.9s
+→ github/n5-v2  tier1_pr_diff_answer  arm=skill  trial=3/5
+  ✓ score=1.00  valid  tokens_in=8 turns=6 time=11.4s
+→ github/n5-v2  tier1_pr_diff_answer  arm=skill  trial=4/5
+  ✓ score=1.00  valid  tokens_in=8 turns=8 time=12.6s
+→ github/n5-v2  tier1_pr_diff_answer  arm=skill  trial=5/5
+  ✓ score=1.00  valid  tokens_in=8 turns=8 time=9.1s
+→ github/n5-v2  tier1_pr_diff_answer  arm=mcp  trial=1/5
+  ✓ score=1.00  valid  tokens_in=8 turns=8 time=9.6s
+→ github/n5-v2  tier1_pr_diff_answer  arm=mcp  trial=2/5
+  ✓ score=1.00  valid  tokens_in=8 turns=7 time=26.3s
+→ github/n5-v2  tier1_pr_diff_answer  arm=mcp  trial=3/5
+  ✓ score=1.00  valid  tokens_in=8 turns=8 time=9.1s
+→ github/n5-v2  tier1_pr_diff_answer  arm=mcp  trial=4/5
+  ✓ score=1.00  valid  tokens_in=8 turns=7 time=7.9s
+→ github/n5-v2  tier1_pr_diff_answer  arm=mcp  trial=5/5
+  ✓ score=1.00  valid  tokens_in=8 turns=8 time=8.0s
+→ github/n5-v2  tier1_pr_diff_answer  arm=baseline  trial=1/2
+  ✗ score=0.00  valid  tokens_in=10 turns=25 time=87.9s
+→ github/n5-v2  tier1_pr_diff_answer  arm=baseline  trial=2/2
+  ✗ score=0.00  valid  tokens_in=25 turns=67 time=240.3s
+  trial error  error=claude timed out after 240000ms
+→ github/n5-v2  tier1_workflow_status  arm=skill  trial=1/5
+  trial 1 threw  error=GET /repos/chief-builder-lab/clivsmcp-tier1-workflow-status-8516c73b/actions/runs?per_page=5 -> 403: {"message":"Resource not accessible by personal access token","documentation_url":"https://docs.github.com/rest/actions/workflow-runs#list-workflow-runs-for-a-repository","status":"403"}
+→ github/n5-v2  tier1_workflow_status  arm=skill  trial=2/5
+  trial 2 threw  error=GET /repos/chief-builder-lab/clivsmcp-tier1-workflow-status-326cf3f3/actions/runs?per_page=5 -> 403: {"message":"Resource not accessible by personal access token","documentation_url":"https://docs.github.com/rest/actions/workflow-runs#list-workflow-runs-for-a-repository","status":"403"}
+→ github/n5-v2  tier1_workflow_status  arm=skill  trial=3/5
+  trial 3 threw  error=GET /repos/chief-builder-lab/clivsmcp-tier1-workflow-status-0d862a50/actions/runs?per_page=5 -> 403: {"message":"Resource not accessible by personal access token","documentation_url":"https://docs.github.com/rest/actions/workflow-runs#list-workflow-runs-for-a-repository","status":"403"}
+→ github/n5-v2  tier1_workflow_status  arm=skill  trial=4/5
+  trial 4 threw  error=GET /repos/chief-builder-lab/clivsmcp-tier1-workflow-status-330973db/actions/runs?per_page=5 -> 403: {"message":"Resource not accessible by personal access token","documentation_url":"https://docs.github.com/rest/actions/workflow-runs#list-workflow-runs-for-a-repository","status":"403"}
+→ github/n5-v2  tier1_workflow_status  arm=skill  trial=5/5
+  trial 5 threw  error=GET /repos/chief-builder-lab/clivsmcp-tier1-workflow-status-2a5924a2/actions/runs?per_page=5 -> 403: {"message":"Resource not accessible by personal access token","documentation_url":"https://docs.github.com/rest/actions/workflow-runs#list-workflow-runs-for-a-repository","status":"403"}
+[ELIFECYCLE] Command failed with exit code 1.
+→ github/n5-v2  tier1_workflow_status  arm=mcp  trial=1/5
+  trial 1 threw  error=GitHub API POST /orgs/chief-builder-lab/repos -> 422: {"message":"Repository creation failed.","errors":[{"resource":"Repository","code":"custom","field":"name","message":"name already exists on this account"}],"documentation_url":"https://docs.github.com/rest/repos/repos#create-an-organization-repository","status":"422"}
+→ github/n5-v2  tier1_workflow_status  arm=mcp  trial=2/5
+  trial 2 threw  error=GitHub API POST /orgs/chief-builder-lab/repos -> 422: {"message":"Repository creation failed.","errors":[{"resource":"Repository","code":"custom","field":"name","message":"name already exists on this account"}],"documentation_url":"https://docs.github.com/rest/repos/repos#create-an-organization-repository","status":"422"}
+→ github/n5-v2  tier1_workflow_status  arm=mcp  trial=3/5
+  trial 3 threw  error=GitHub API POST /orgs/chief-builder-lab/repos -> 422: {"message":"Repository creation failed.","errors":[{"resource":"Repository","code":"custom","field":"name","message":"name already exists on this account"}],"documentation_url":"https://docs.github.com/rest/repos/repos#create-an-organization-repository","status":"422"}
+→ github/n5-v2  tier1_workflow_status  arm=mcp  trial=4/5
+  trial 4 threw  error=GitHub API POST /orgs/chief-builder-lab/repos -> 422: {"message":"Repository creation failed.","errors":[{"resource":"Repository","code":"custom","field":"name","message":"name already exists on this account"}],"documentation_url":"https://docs.github.com/rest/repos/repos#create-an-organization-repository","status":"422"}
+→ github/n5-v2  tier1_workflow_status  arm=mcp  trial=5/5
+  trial 5 threw  error=GitHub API POST /orgs/chief-builder-lab/repos -> 422: {"message":"Repository creation failed.","errors":[{"resource":"Repository","code":"custom","field":"name","message":"name already exists on this account"}],"documentation_url":"https://docs.github.com/rest/repos/repos#create-an-organization-repository","status":"422"}
+[ELIFECYCLE] Command failed with exit code 1.
+→ github/n5-v2  tier1_workflow_status  arm=baseline  trial=1/2
+  trial 1 threw  error=GitHub API POST /orgs/chief-builder-lab/repos -> 422: {"message":"Repository creation failed.","errors":[{"resource":"Repository","code":"custom","field":"name","message":"name already exists on this account"}],"documentation_url":"https://docs.github.com/rest/repos/repos#create-an-organization-repository","status":"422"}
+→ github/n5-v2  tier1_workflow_status  arm=baseline  trial=2/2
+  trial 2 threw  error=GitHub API POST /orgs/chief-builder-lab/repos -> 422: {"message":"Repository creation failed.","errors":[{"resource":"Repository","code":"custom","field":"name","message":"name already exists on this account"}],"documentation_url":"https://docs.github.com/rest/repos/repos#create-an-organization-repository","status":"422"}
+[ELIFECYCLE] Command failed with exit code 1.
+finished=2026-10-03T00:42:00Z

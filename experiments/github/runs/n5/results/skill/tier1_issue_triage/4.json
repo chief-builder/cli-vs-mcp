@@ -44,7 +44,6 @@
     ],
     "toolCallCount": 6,
     "turns": 13,
-    "numTurns": 8,
     "wallClockMs": 31245,
     "contextWindowPeak": 19771,
     "totalCostUsd": 0.08819335,
@@ -66,7 +65,7 @@
         "name": "Bash",
         "turnIndex": 10,
         "command": "GITHUB_TOKEN=\"\" GH_TOKEN=\"\" gh api repos/chief-builder-lab/clivsmcp-tier1-issue-triage-4cba9e59/issues -X GET -f state=open --jq '.[] | {number, title, labels: [.labels[].name], body}' 2>&1 | head -50",
-        "reason": "shell redirection: GITHUB_TOKEN=\"\" GH_TOKEN=\"\" gh api repos/chief-builder-lab/clivsmcp-tier1-issue-triage-4cba9e59/issues -X GET -f state=o"
+        "reason": "non-gh Bash segment: GITHUB_TOKEN=\"\" GH_TOKEN=\"\" gh api repos/chief-builder-lab/clivsmcp-tier1-issue-triage-4cba9e59/issues -X GET -f state=o"
       }
     ],
     "singleCliCommandPerToolCall": false,
@@ -87,9 +86,11 @@
         "name": "Bash",
         "turnIndex": 10,
         "command": "GITHUB_TOKEN=\"\" GH_TOKEN=\"\" gh api repos/chief-builder-lab/clivsmcp-tier1-issue-triage-4cba9e59/issues -X GET -f state=open --jq '.[] | {number, title, labels: [.labels[].name], body}' 2>&1 | head -50",
-        "reason": "shell redirection: GITHUB_TOKEN=\"\" GH_TOKEN=\"\" gh api repos/chief-builder-lab/clivsmcp-tier1-issue-triage-4cba9e59/issues -X GET -f state=o"
+        "reason": "non-gh Bash segment: GITHUB_TOKEN=\"\" GH_TOKEN=\"\" gh api repos/chief-builder-lab/clivsmcp-tier1-issue-triage-4cba9e59/issues -X GET -f state=o"
       }
-    ]
+    ],
+    "incomplete": false,
+    "tokensEstimated": false
   },
   "success": {
     "pass": true,

@@ -8,10 +8,10 @@
   "timestamp": "2026-05-17T16:59:29.751Z",
   "seed": "d8ea4cc3b39adcf3",
   "metrics": {
-    "inputTokens": 0,
-    "outputTokens": 0,
-    "cachedInputTokens": 0,
-    "cacheCreationInputTokens": 0,
+    "inputTokens": 6,
+    "outputTokens": 79,
+    "cachedInputTokens": 63855,
+    "cacheCreationInputTokens": 8057,
     "toolCalls": [
       {
         "name": "Bash",
@@ -39,8 +39,7 @@
     ],
     "toolCallCount": 5,
     "turns": 11,
-    "numTurns": 0,
-    "wallClockMs": 0,
+    "wallClockMs": 240000,
     "contextWindowPeak": 19021,
     "totalCostUsd": 0,
     "modelsUsed": [],
@@ -49,7 +48,9 @@
     "escapeToolUsed": false,
     "escapeToolCalls": [],
     "singleCliCommandPerToolCall": true,
-    "cliCommandGranularityViolations": []
+    "cliCommandGranularityViolations": [],
+    "incomplete": true,
+    "tokensEstimated": true
   },
   "success": {
     "pass": false,

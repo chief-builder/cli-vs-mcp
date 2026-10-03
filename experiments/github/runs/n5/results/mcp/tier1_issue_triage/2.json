@@ -8,10 +8,10 @@
   "timestamp": "2026-05-17T03:50:29.816Z",
   "seed": "cb2278153a7b4a43",
   "metrics": {
-    "inputTokens": 0,
-    "outputTokens": 0,
-    "cachedInputTokens": 0,
-    "cacheCreationInputTokens": 0,
+    "inputTokens": 48,
+    "outputTokens": 439,
+    "cachedInputTokens": 540771,
+    "cacheCreationInputTokens": 25761,
     "toolCalls": [
       {
         "name": "ToolSearch",
@@ -144,22 +144,65 @@
     ],
     "toolCallCount": 32,
     "turns": 75,
-    "numTurns": 0,
-    "wallClockMs": 0,
+    "wallClockMs": 240000,
     "contextWindowPeak": 33254,
     "totalCostUsd": 0,
     "modelsUsed": [],
     "usedIntendedTool": true,
-    "validToolSurface": true,
-    "escapeToolUsed": false,
-    "escapeToolCalls": [],
-    "singleCliCommandPerToolCall": true,
-    "cliCommandGranularityViolations": []
+    "validToolSurface": false,
+    "escapeToolUsed": true,
+    "escapeToolCalls": [
+      {
+        "name": "Grep",
+        "turnIndex": 60,
+        "reason": "Grep is not allowed in the mcp arm"
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 61,
+        "reason": "Grep is not allowed in the mcp arm"
+      },
+      {
+        "name": "Read",
+        "turnIndex": 72,
+        "reason": "Read is not allowed in the mcp arm"
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 75,
+        "reason": "Grep is not allowed in the mcp arm"
+      }
+    ],
+    "singleCliCommandPerToolCall": false,
+    "cliCommandGranularityViolations": [
+      {
+        "name": "Grep",
+        "turnIndex": 60,
+        "reason": "Grep is not allowed in the mcp arm"
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 61,
+        "reason": "Grep is not allowed in the mcp arm"
+      },
+      {
+        "name": "Read",
+        "turnIndex": 72,
+        "reason": "Read is not allowed in the mcp arm"
+      },
+      {
+        "name": "Grep",
+        "turnIndex": 75,
+        "reason": "Grep is not allowed in the mcp arm"
+      }
+    ],
+    "incomplete": true,
+    "tokensEstimated": true
   },
   "success": {
     "pass": false,
     "score": 0,
-    "notes": "missing or invalid JSON at /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/n5/results/mcp/tier1_issue_triage/2/issue_triage.json"
+    "notes": "missing or invalid JSON at ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/github/runs/n5/results/mcp/tier1_issue_triage/2/issue_triage.json"
   },
   "error": "claude timed out after 240000ms"
 }

@@ -1,0 +1,69 @@
+{
+  "experiment": "github",
+  "runName": "n5-v2",
+  "arm": "skill",
+  "taskId": "tier2_issue_workflow",
+  "tier": 2,
+  "trialN": 4,
+  "timestamp": "2026-10-03T00:20:57.469Z",
+  "seed": "b2062f0d54215f56",
+  "metrics": {
+    "inputTokens": 9,
+    "outputTokens": 697,
+    "cachedInputTokens": 88736,
+    "cacheCreationInputTokens": 10717,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 3
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "gh issue list --repo chief-builder-lab/clivsmcp-tier2-issue-workflow-b2062f0d --state open --json number,title --jq '.[] | select(.title | contains(\"9B88CDFC\"))'"
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 7,
+        "command": "gh issue edit 2 --repo chief-builder-lab/clivsmcp-tier2-issue-workflow-b2062f0d --add-label \"priority-high\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 8,
+        "command": "gh issue comment 2 --repo chief-builder-lab/clivsmcp-tier2-issue-workflow-b2062f0d --body \"triaged-9B88CDFC\""
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 9,
+        "command": "gh issue close 2 --repo chief-builder-lab/clivsmcp-tier2-issue-workflow-b2062f0d"
+      }
+    ],
+    "toolCallCount": 5,
+    "turns": 10,
+    "wallClockMs": 18159,
+    "contextWindowPeak": 17287,
+    "totalCostUsd": 0.10140480000000002,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": true,
+    "score": 1,
+    "notes": "all workflow steps applied to target only",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-issue-workflow-b2062f0d",
+      "targetIssueNumber": 2,
+      "expectedLabel": "priority-high",
+      "expectedCommentPhrase": "triaged-9B88CDFC"
+    }
+  }
+}

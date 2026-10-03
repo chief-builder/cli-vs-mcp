@@ -8,10 +8,10 @@
   "timestamp": "2026-05-16T16:24:41.192Z",
   "seed": "bd3ed85b7173b1d8",
   "metrics": {
-    "inputTokens": 0,
-    "outputTokens": 0,
-    "cachedInputTokens": 0,
-    "cacheCreationInputTokens": 0,
+    "inputTokens": 7,
+    "outputTokens": 70,
+    "cachedInputTokens": 31865,
+    "cacheCreationInputTokens": 5944,
     "toolCalls": [
       {
         "name": "ToolSearch",
@@ -28,8 +28,7 @@
     ],
     "toolCallCount": 3,
     "turns": 6,
-    "numTurns": 0,
-    "wallClockMs": 0,
+    "wallClockMs": 240000,
     "contextWindowPeak": 13439,
     "totalCostUsd": 0,
     "modelsUsed": [],
@@ -38,12 +37,14 @@
     "escapeToolUsed": false,
     "escapeToolCalls": [],
     "singleCliCommandPerToolCall": true,
-    "cliCommandGranularityViolations": []
+    "cliCommandGranularityViolations": [],
+    "incomplete": true,
+    "tokensEstimated": true
   },
   "success": {
     "pass": false,
     "score": 0,
-    "notes": "missing /Users/chiefbuilder/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/baseline/tier2_checkout/3/order_id.txt",
+    "notes": "missing ~/Documents/Projects/Experiments/cli-vs-mcp/experiments/playwright/runs/n5/results/baseline/tier2_checkout/3/order_id.txt",
     "extras": {
       "orders_placed": 0,
       "sessions_seen": 0

@@ -1,0 +1,52 @@
+{
+  "experiment": "github",
+  "runName": "n5-v2",
+  "arm": "skill",
+  "taskId": "tier2_issue_create",
+  "tier": 2,
+  "trialN": 5,
+  "timestamp": "2026-10-03T00:33:21.970Z",
+  "seed": "8868d73c0fbf9d2a",
+  "metrics": {
+    "inputTokens": 6,
+    "outputTokens": 448,
+    "cachedInputTokens": 37965,
+    "cacheCreationInputTokens": 10187,
+    "toolCalls": [
+      {
+        "name": "Skill",
+        "turnIndex": 2
+      },
+      {
+        "name": "Bash",
+        "turnIndex": 5,
+        "command": "gh issue create --repo chief-builder-lab/clivsmcp-tier2-issue-create-8868d73c \\\n  --title \"Investigate 6175B261\" \\\n  --body \"report-6175B261\" \\\n  --label \"bug\" \\\n  --label \"priority-high\""
+      }
+    ],
+    "toolCallCount": 2,
+    "turns": 6,
+    "wallClockMs": 7335,
+    "contextWindowPeak": 16757,
+    "totalCostUsd": 0.0792495,
+    "modelsUsed": [
+      "claude-sonnet-4-6"
+    ],
+    "usedIntendedTool": true,
+    "validToolSurface": true,
+    "escapeToolUsed": false,
+    "escapeToolCalls": [],
+    "singleCliCommandPerToolCall": true,
+    "cliCommandGranularityViolations": [],
+    "incomplete": false,
+    "tokensEstimated": false
+  },
+  "success": {
+    "pass": false,
+    "score": 0,
+    "notes": "no open issue found with title \"Investigate 6175B261\" after 6 attempts",
+    "extras": {
+      "repoFullName": "chief-builder-lab/clivsmcp-tier2-issue-create-8868d73c",
+      "expectedTitle": "Investigate 6175B261"
+    }
+  }
+}
