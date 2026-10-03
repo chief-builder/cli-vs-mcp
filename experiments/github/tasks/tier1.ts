@@ -1,7 +1,14 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import type { Task, TaskContext } from '../../../harness/src/tasks.js';
-import { ghConfigFromEnv, provisionRepo, repoNameFor, type ProvisionedRepo, type RepoSeed } from '../provisioner.js';
+import {
+  deleteOnFailure,
+  ghConfigFromEnv,
+  provisionRepo,
+  repoNameFor,
+  type ProvisionedRepo,
+  type RepoSeed,
+} from '../provisioner.js';
 
 function hexFromSeed(seed: string, salt: string, len: number): string {
   // FNV-1a derived hex — same source style as harness/src/trialState.ts so
@@ -306,54 +313,61 @@ const tier1_pr_diff_answer: Task = {
     };
     const repo = await provisionRepo(cfg, repoNameFor('tier1_pr_diff_answer', seed), repoSeed);
 
-    // Create branch + updated file + PR
-    const baseRef = (await fetchJson(cfg.host, cfg.controllerToken, `/repos/${repo.fullName}/git/refs/heads/main`)) as {
-      object: { sha: string };
-    };
-    const branchName = `feature-${seed.slice(0, 8)}`;
-    await postJson(cfg.host, cfg.controllerToken, `/repos/${repo.fullName}/git/refs`, {
-      ref: `refs/heads/${branchName}`,
-      sha: baseRef.object.sha,
-    });
+    // Everything after repo creation runs under deleteOnFailure so a failed setup can't leak the repo.
+    return deleteOnFailure(repo, async () => {
+      // Create branch + updated file + PR
+      const baseRef = (await fetchJson(
+        cfg.host,
+        cfg.controllerToken,
+        `/repos/${repo.fullName}/git/refs/heads/main`,
+      )) as {
+        object: { sha: string };
+      };
+      const branchName = `feature-${seed.slice(0, 8)}`;
+      await postJson(cfg.host, cfg.controllerToken, `/repos/${repo.fullName}/git/refs`, {
+        ref: `refs/heads/${branchName}`,
+        sha: baseRef.object.sha,
+      });
 
-    // Update file on branch. A freshly-created branch ref can 404 on
-    // /contents/...?ref= for a brief window even though the file exists on
-    // the source ref — retry on 404 with backoff before giving up.
-    let currentFile: { sha: string } | undefined;
-    for (let attempt = 0; attempt < 6; attempt++) {
-      try {
-        currentFile = (await fetchJson(
-          cfg.host,
-          cfg.controllerToken,
-          `/repos/${repo.fullName}/contents/${encodeURI(changedFile)}?ref=${branchName}`,
-        )) as { sha: string };
-        break;
-      } catch (err) {
-        if (attempt === 5 || !/-> 404:/.test(String(err))) throw err;
-        await new Promise(r => setTimeout(r, 500));
+      // Update file on branch. A freshly-created branch ref can 404 on
+      // /contents/...?ref= for a brief window even though the file exists on
+      // the source ref — retry on 404 with backoff before giving up.
+      let currentFile: { sha: string } | undefined;
+      for (let attempt = 0; attempt < 6; attempt++) {
+        try {
+          currentFile = (await fetchJson(
+            cfg.host,
+            cfg.controllerToken,
+            `/repos/${repo.fullName}/contents/${encodeURI(changedFile)}?ref=${branchName}`,
+          )) as { sha: string };
+          break;
+        } catch (err) {
+          if (attempt === 5 || !/-> 404:/.test(String(err))) throw err;
+          await new Promise(r => setTimeout(r, 500));
+        }
       }
-    }
-    if (!currentFile) throw new Error('unreachable: retry loop exited without value');
-    await putJson(cfg.host, cfg.controllerToken, `/repos/${repo.fullName}/contents/${encodeURI(changedFile)}`, {
-      message: `add ${answerFunctionName}`,
-      content: Buffer.from(updatedContent, 'utf-8').toString('base64'),
-      sha: currentFile.sha,
-      branch: branchName,
+      if (!currentFile) throw new Error('unreachable: retry loop exited without value');
+      await putJson(cfg.host, cfg.controllerToken, `/repos/${repo.fullName}/contents/${encodeURI(changedFile)}`, {
+        message: `add ${answerFunctionName}`,
+        content: Buffer.from(updatedContent, 'utf-8').toString('base64'),
+        sha: currentFile.sha,
+        branch: branchName,
+      });
+
+      const pr = (await postJson(cfg.host, cfg.controllerToken, `/repos/${repo.fullName}/pulls`, {
+        title: `Add ${answerFunctionName}`,
+        head: branchName,
+        base: 'main',
+        body: `This PR adds a new exported function to ${changedFile}.`,
+      })) as { number: number };
+
+      return {
+        repo,
+        prNumber: pr.number,
+        answerFunctionName,
+        changedFile,
+      } satisfies PrDiffAnswerState;
     });
-
-    const pr = (await postJson(cfg.host, cfg.controllerToken, `/repos/${repo.fullName}/pulls`, {
-      title: `Add ${answerFunctionName}`,
-      head: branchName,
-      base: 'main',
-      body: `This PR adds a new exported function to ${changedFile}.`,
-    })) as { number: number };
-
-    return {
-      repo,
-      prNumber: pr.number,
-      answerFunctionName,
-      changedFile,
-    } satisfies PrDiffAnswerState;
   },
 
   cleanup: async state => {
@@ -478,73 +492,76 @@ const tier1_workflow_status: Task = {
       files: [{ path: 'README.md', content: '# workflow status sandbox\n' }],
     });
 
-    // Push the workflow file. The push triggers the workflow on the `push` event.
-    const workflowYaml = [
-      `name: ${expectedWorkflowName}`,
-      `on: [push]`,
-      `jobs:`,
-      `  build:`,
-      `    runs-on: ubuntu-latest`,
-      `    steps:`,
-      `      - run: echo "build ${marker}"`,
-      ``,
-    ].join('\n');
-    const putResp = (await putJson(
-      cfg.host,
-      cfg.controllerToken,
-      `/repos/${repo.fullName}/contents/${encodeURI('.github/workflows/seeded.yml')}`,
-      {
-        message: `add workflow ${marker}`,
-        content: Buffer.from(workflowYaml, 'utf-8').toString('base64'),
-      },
-    )) as { commit: { sha: string } };
-    const expectedHeadSha = putResp.commit.sha;
-
-    // Poll for the run to appear and complete. Workflow runs queue and execute
-    // asynchronously; we wait up to ~90s for a completed status.
-    const deadline = Date.now() + 90_000;
-    let runId = -1;
-    let conclusion: string | null = null;
-    while (Date.now() < deadline) {
-      const runs = (await fetchJson(
+    // Everything after repo creation runs under deleteOnFailure so a failed setup can't leak the repo.
+    return deleteOnFailure(repo, async () => {
+      // Push the workflow file. The push triggers the workflow on the `push` event.
+      const workflowYaml = [
+        `name: ${expectedWorkflowName}`,
+        `on: [push]`,
+        `jobs:`,
+        `  build:`,
+        `    runs-on: ubuntu-latest`,
+        `    steps:`,
+        `      - run: echo "build ${marker}"`,
+        ``,
+      ].join('\n');
+      const putResp = (await putJson(
         cfg.host,
         cfg.controllerToken,
-        `/repos/${repo.fullName}/actions/runs?per_page=5`,
-      )) as {
-        workflow_runs: Array<{
-          id: number;
-          status: string;
-          conclusion: string | null;
-          head_sha: string;
-          name?: string;
-        }>;
-      };
-      const match = runs.workflow_runs.find(r => r.head_sha === expectedHeadSha);
-      if (match) {
-        runId = match.id;
-        if (match.status === 'completed') {
-          conclusion = match.conclusion;
-          break;
+        `/repos/${repo.fullName}/contents/${encodeURI('.github/workflows/seeded.yml')}`,
+        {
+          message: `add workflow ${marker}`,
+          content: Buffer.from(workflowYaml, 'utf-8').toString('base64'),
+        },
+      )) as { commit: { sha: string } };
+      const expectedHeadSha = putResp.commit.sha;
+
+      // Poll for the run to appear and complete. Workflow runs queue and execute
+      // asynchronously; we wait up to ~90s for a completed status.
+      const deadline = Date.now() + 90_000;
+      let runId = -1;
+      let conclusion: string | null = null;
+      while (Date.now() < deadline) {
+        const runs = (await fetchJson(
+          cfg.host,
+          cfg.controllerToken,
+          `/repos/${repo.fullName}/actions/runs?per_page=5`,
+        )) as {
+          workflow_runs: Array<{
+            id: number;
+            status: string;
+            conclusion: string | null;
+            head_sha: string;
+            name?: string;
+          }>;
+        };
+        const match = runs.workflow_runs.find(r => r.head_sha === expectedHeadSha);
+        if (match) {
+          runId = match.id;
+          if (match.status === 'completed') {
+            conclusion = match.conclusion;
+            break;
+          }
         }
+        await new Promise(r => setTimeout(r, 3000));
       }
-      await new Promise(r => setTimeout(r, 3000));
-    }
 
-    if (conclusion !== 'success') {
-      throw new Error(
-        `workflow run did not complete with success within 90s ` +
-          `(runId=${runId}, conclusion=${conclusion ?? 'still-pending'})`,
-      );
-    }
+      if (conclusion !== 'success') {
+        throw new Error(
+          `workflow run did not complete with success within 90s ` +
+            `(runId=${runId}, conclusion=${conclusion ?? 'still-pending'})`,
+        );
+      }
 
-    return {
-      repo,
-      marker,
-      expectedWorkflowName,
-      expectedConclusion: 'success',
-      expectedHeadSha,
-      runId,
-    } satisfies WorkflowStatusState;
+      return {
+        repo,
+        marker,
+        expectedWorkflowName,
+        expectedConclusion: 'success',
+        expectedHeadSha,
+        runId,
+      } satisfies WorkflowStatusState;
+    });
   },
 
   cleanup: async state => {

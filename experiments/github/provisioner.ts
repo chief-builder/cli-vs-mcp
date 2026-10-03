@@ -61,6 +61,23 @@ async function ghRequest<T = unknown>(cfg: GhConfig, req: GhRequest): Promise<T 
   return (await res.json()) as T;
 }
 
+/**
+ * Runs `fn` after a repo has been created and deletes the repo if `fn` throws, so a
+ * failed setup never leaves a sandbox repo behind (the runner only calls
+ * Task.cleanup once setup has returned state).
+ */
+export async function deleteOnFailure<T>(
+  repo: { cleanupHandle: () => Promise<void> },
+  fn: () => Promise<T>,
+): Promise<T> {
+  try {
+    return await fn();
+  } catch (err) {
+    await repo.cleanupHandle().catch(() => undefined);
+    throw err;
+  }
+}
+
 export interface ProvisionedRepo {
   owner: string;
   name: string;
@@ -111,67 +128,71 @@ export async function provisionRepo(cfg: GhConfig, repoName: string, seed: RepoS
   });
 
   const fullName = `${cfg.sandboxOwner}/${repoName}`;
-
-  await waitForRepoReady(cfg, fullName);
-
-  if (seed.topics && seed.topics.length > 0) {
-    await ghRequest(cfg, {
-      method: 'PUT',
-      path: `/repos/${fullName}/topics`,
-      body: { names: seed.topics },
-    });
-  }
-
-  for (const file of seed.files) {
-    await ghRequest(cfg, {
-      method: 'PUT',
-      path: `/repos/${fullName}/contents/${encodeURI(file.path)}`,
-      body: {
-        message: `seed ${file.path}`,
-        content: Buffer.from(file.content, 'utf-8').toString('base64'),
-      },
-    });
-  }
-
-  if (seed.labels) {
-    for (const label of seed.labels) {
-      await ghRequest(cfg, {
-        method: 'POST',
-        path: `/repos/${fullName}/labels`,
-        body: { name: label.name, color: label.color },
-        acceptConflict: true,
-      });
-    }
-  }
-
-  if (seed.issues) {
-    for (const issue of seed.issues) {
-      const created = await ghRequest<{ number: number }>(cfg, {
-        method: 'POST',
-        path: `/repos/${fullName}/issues`,
-        body: {
-          title: issue.title,
-          body: issue.body,
-          ...(issue.labels ? { labels: issue.labels } : {}),
-        },
-      });
-      if (issue.closeAfter && created) {
-        await ghRequest(cfg, {
-          method: 'PATCH',
-          path: `/repos/${fullName}/issues/${created.number}`,
-          body: { state: 'closed' },
-        });
-      }
-    }
-  }
-
-  return {
+  const repo: ProvisionedRepo = {
     owner: cfg.sandboxOwner,
     name: repoName,
     fullName,
     htmlUrl: `https://github.com/${fullName}`,
     cleanupHandle: () => deleteRepo(cfg, fullName),
   };
+
+  // Seed inside deleteOnFailure so a failure partway through doesn't leak the repo.
+  return deleteOnFailure(repo, async () => {
+    await waitForRepoReady(cfg, fullName);
+
+    if (seed.topics && seed.topics.length > 0) {
+      await ghRequest(cfg, {
+        method: 'PUT',
+        path: `/repos/${fullName}/topics`,
+        body: { names: seed.topics },
+      });
+    }
+
+    for (const file of seed.files) {
+      await ghRequest(cfg, {
+        method: 'PUT',
+        path: `/repos/${fullName}/contents/${encodeURI(file.path)}`,
+        body: {
+          message: `seed ${file.path}`,
+          content: Buffer.from(file.content, 'utf-8').toString('base64'),
+        },
+      });
+    }
+
+    if (seed.labels) {
+      for (const label of seed.labels) {
+        await ghRequest(cfg, {
+          method: 'POST',
+          path: `/repos/${fullName}/labels`,
+          body: { name: label.name, color: label.color },
+          acceptConflict: true,
+        });
+      }
+    }
+
+    if (seed.issues) {
+      for (const issue of seed.issues) {
+        const created = await ghRequest<{ number: number }>(cfg, {
+          method: 'POST',
+          path: `/repos/${fullName}/issues`,
+          body: {
+            title: issue.title,
+            body: issue.body,
+            ...(issue.labels ? { labels: issue.labels } : {}),
+          },
+        });
+        if (issue.closeAfter && created) {
+          await ghRequest(cfg, {
+            method: 'PATCH',
+            path: `/repos/${fullName}/issues/${created.number}`,
+            body: { state: 'closed' },
+          });
+        }
+      }
+    }
+
+    return repo;
+  });
 }
 
 async function isOrganization(cfg: GhConfig, owner: string): Promise<boolean> {

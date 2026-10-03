@@ -16,6 +16,7 @@ writeFileSync(
     args,
     ghVars: Object.keys(process.env).filter(k => /^(GH|GITHUB)_/.test(k)),
     ghConfigDir: process.env.GH_CONFIG_DIR,
+    cwd: process.cwd(),
   }),
 );
 

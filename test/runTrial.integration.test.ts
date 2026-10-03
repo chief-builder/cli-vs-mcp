@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { cp, mkdtemp, readFile, readdir, rm, mkdir } from 'node:fs/promises';
+import { cp, mkdtemp, readFile, rm, mkdir } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { execa } from 'execa';
@@ -76,16 +77,14 @@ describe('runTrial end to end (fake claude)', () => {
     // The child saw no inherited GitHub credentials and an empty gh config dir.
     const childEnv = JSON.parse(
       await readFile(join(runDir, 'results', 'baseline', 'tier1_scrape', '1', 'child-env.json'), 'utf-8'),
-    ) as { ghVars: string[]; ghConfigDir: string; args: string[] };
+    ) as { ghVars: string[]; ghConfigDir: string; args: string[]; cwd: string };
     expect(childEnv.ghVars).not.toContain('GITHUB_CONTROLLER_TOKEN');
     expect(childEnv.ghConfigDir).toMatch(/clivsmcp-ghconfig-/);
     expect(childEnv.args).toContain('--tools');
 
-    // Trial directories are cleaned up.
-    const leftovers = (await readdir(tmpdir())).filter(
-      n => n.startsWith('clivsmcp-ghconfig-') || n.startsWith('clivsmcp-playwright-baseline-tier1_scrape-'),
-    );
-    expect(leftovers).toEqual([]);
+    // This trial's directories are cleaned up. (Checked by path: other harness runs may share tmpdir.)
+    expect(existsSync(childEnv.ghConfigDir)).toBe(false);
+    expect(existsSync(childEnv.cwd)).toBe(false);
 
     const report = await generateReport({
       rootDir,
